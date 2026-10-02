@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  ::selection {
+    background-color: #b9965b;
+    color: #0d0d0d;
+  }
+
+  html {
+    /* Prevent horizontal scroll on small devices */
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-ink font-sans text-ivory;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  img {
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  a {
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold;
+  }
+}
+
+@layer utilities {
+  .shimmer {
+    background-size: 400% 400%;
+    animation: shimmer 2.2s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%,
+    100% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+  }
+}
