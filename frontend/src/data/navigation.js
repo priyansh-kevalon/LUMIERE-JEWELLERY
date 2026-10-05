@@ -19,22 +19,22 @@ export const trustFeatures = [
   {
     icon: Gem,
     title: 'EXCEPTIONAL QUALITY',
-    text: 'Every piece is crafted with care.',
+    text: 'Only the finest diamonds and materials.',
   },
   {
     icon: Sparkles,
     title: 'MASTERFUL CRAFTSMANSHIP',
-    text: 'Designed and crafted with precision.',
+    text: 'Expertly crafted with precision and passion.',
   },
   {
     icon: ShieldCheck,
     title: 'CERTIFIED & TRUSTED',
-    text: 'Authenticity you can trust.',
+    text: 'Authentic, certified & ethically sourced.',
   },
   {
     icon: Gift,
-    title: 'LUXURY PACKAGING',
-    text: 'Beautifully packaged for every occasion.',
+    title: 'LUXURY GIFTING',
+    text: "Beautifully packaged for life's special moments.",
   },
 ];
 
@@ -73,7 +73,7 @@ export const footerColumns = [
       { label: 'About Us', href: '#story' },
       { label: 'Our Craftsmanship', href: '#story' },
       { label: 'Hallmark & Certifications', href: '#story' },
-      { label: 'Sustainability', href: '#story' },
+      { label: 'Testimonials', href: '#story' },
       { label: 'Store Locator', href: '#contact' },
       { label: 'Virtual Consultation', href: '#contact' },
     ],
@@ -90,11 +90,6 @@ export const footerColumns = [
     ],
   },
 ];
-
-/* ------------------------------------------------------------------ */
-/* Social — icons are resolved in the Footer component. Pinterest is   */
-/* not part of lucide-react, hence the custom `pinterest` key.          */
-/* ------------------------------------------------------------------ */
 
 export const socialLinks = [
   { label: 'Instagram', icon: 'instagram', href: '#' },

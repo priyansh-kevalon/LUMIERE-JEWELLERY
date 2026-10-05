@@ -1,42 +1,29 @@
 import { trustFeatures } from '../../data/navigation';
 
-/**
- * Floating bar that straddles the seam between the hero and the first dark
- * section. Pulled up with a negative margin rather than positioned absolutely
- * so it never overlaps the hero copy at any breakpoint.
- */
 export default function TrustFeatures() {
   return (
-    <section
-      aria-label="Why choose Lumiere"
-      className="relative z-20 -mt-14 px-4 sm:-mt-16 sm:px-6 lg:-mt-[4.5rem]"
-    >
-      <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-xl border border-white/[0.09] bg-ink-soft/85 shadow-luxe backdrop-blur-xl">
-        {/* 1 col → 2 cols on mobile · 4 cols from md up */}
-        <div className="grid grid-cols-2 md:grid-cols-4">
+    <section aria-label="Why choose Lumiere" className="relative z-20 -mt-12 sm:-mt-16 px-4 sm:px-6">
+      <div className="mx-auto w-full max-w-6xl rounded-[28px] border border-white/20 bg-[#1E1B18]/75 shadow-2xl backdrop-blur-xl px-6 py-6 sm:px-8 sm:py-7">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-4 lg:gap-0">
           {trustFeatures.map(({ icon: Icon, title, text }, i) => (
             <div
               key={title}
-              className={[
-                'flex items-start gap-3 px-5 py-6 sm:gap-4 sm:px-6 sm:py-7',
-                /* hairline dividers that survive the 2×2 mobile grid */
-                i % 2 === 1 ? 'border-l border-white/[0.07]' : '',
-                i >= 2 ? 'border-t border-white/[0.07] md:border-t-0' : '',
-                i > 0 ? 'md:border-l md:border-white/[0.07]' : '',
-              ].join(' ')}
+              className={`flex items-center gap-3.5 sm:px-4 ${
+                i > 0 ? 'lg:border-l lg:border-white/10' : ''
+              }`}
             >
               <Icon
-                size={26}
-                strokeWidth={1}
-                className="mt-0.5 shrink-0 text-gold transition-transform duration-700 ease-luxe"
+                size={30}
+                strokeWidth={1.2}
+                className="shrink-0 text-gold"
                 aria-hidden="true"
               />
 
               <div className="min-w-0">
-                <h3 className="text-[9px] leading-snug tracking-[0.14em] text-ivory sm:text-[10px] sm:tracking-[0.16em]">
+                <h3 className="text-[11px] sm:text-xs font-medium tracking-[0.14em] uppercase text-white leading-snug">
                   {title}
                 </h3>
-                <p className="mt-1.5 text-[10px] font-light leading-relaxed text-muted sm:text-[11px]">
+                <p className="mt-1 text-[11px] font-light leading-snug text-white/65">
                   {text}
                 </p>
               </div>

@@ -1,6 +1,6 @@
 /**
  * Catalogue groupings used across the homepage.
- * Image keys resolve against `data/images.js` — never hardcode URLs here.
+ * Image keys resolve against `data/images.js`.
  */
 
 export const collections = [
@@ -8,68 +8,72 @@ export const collections = [
     key: 'necklace',
     name: 'NECKLACE',
     tagline: 'Solitaire pendants, chokers and heirloom chains',
-    image: 'collections.necklace',
+    image: '/images/collections/necklace.png',
+    photo: '/images/collections/necklace-photo.png',
     href: '#collections',
-    alt: 'Diamond pendant necklace resting on dark silk',
+    alt: 'Diamond choker necklace on model',
   },
   {
     key: 'rings',
     name: 'RINGS',
     tagline: 'Engagement solitaires, halos and everyday bands',
-    image: 'collections.rings',
+    image: '/images/collections/rings.png',
+    photo: '/images/collections/rings-photo.png',
     href: '#collections',
-    alt: 'Diamond engagement ring in close-up detail',
+    alt: 'Solitaire diamond ring on display pedestal',
   },
   {
     key: 'bracelets',
     name: 'BRACELETS',
     tagline: 'Tennis lines, bangles and cuff silhouettes',
-    image: 'collections.bracelets',
+    image: '/images/collections/bracelets.png',
+    photo: '/images/collections/bracelets-photo.png',
     href: '#collections',
-    alt: 'Gold and diamond bracelet on a dark backdrop',
+    alt: 'Diamond bracelet on woman\'s wrist',
   },
   {
     key: 'earrings',
     name: 'EARRINGS',
     tagline: 'Studs, jhumkas and cascading drops',
-    image: 'collections.earrings',
+    image: '/images/collections/earrings.png',
+    photo: '/images/collections/earrings-photo.png',
     href: '#collections',
-    alt: 'Diamond drop earrings worn by a model',
+    alt: 'Diamond teardrop earrings on stand',
   },
 ];
 
 export const moments = [
   {
     key: 'wedding',
-    label: 'WEDDINGS',
+    label: 'WEDDING',
     title: 'Made for Forever',
-    description: 'Bridal sets, mangalsutras and heirloom pieces for the day you say yes.',
-    image: 'moments.wedding',
-    alt: 'Bride wearing a fine jewellery set on her wedding day',
+    description: 'Celebrate your love with timeless pieces crafted for beginning of forever.',
+    image: '/images/moments/moment-wedding.png',
+    alt: 'Antique gold and ruby wedding necklace',
   },
   {
     key: 'festive',
     label: 'FESTIVE',
     title: 'Celebrate in Brilliance',
-    description: 'Temple silhouettes and kundan work built for the season of celebration.',
-    image: 'moments.festive',
-    alt: 'Woman in festive attire wearing traditional gold jewellery',
+    description: 'Add a touch of timeless sparkle to every celebration.',
+    image: '/images/moments/moment-festive.png',
+    alt: 'Diamond and sapphire necklace set',
   },
   {
     key: 'anniversary',
     label: 'ANNIVERSARY',
     title: 'LOVE, ALWAYS',
-    description: 'Elegant keepsakes that mark another year, and the decades ahead.',
-    image: 'moments.anniversary',
-    alt: 'Couple celebrating their anniversary with jewellery gifts',
+    description: 'Honour the moments you\'ve shared with jewellery as enduring as your story.',
+    image: '/images/moments/moment-anniversary.png',
+    alt: 'Diamond ring resting on folded white silk',
   },
   {
     key: 'everyday',
     label: 'EVERYDAY',
     title: 'Everyday Elegance',
-    description: 'Quiet, refined pieces designed to be worn from morning to evening.',
-    image: 'moments.everyday',
-    alt: 'Model in minimalist everyday jewellery and soft tailoring',
+    description: 'Effortless pieces designed to bring a little luxury to every day.',
+    image: '/images/moments/moment-everyday.png',
+    alt: 'Delicate gold bracelet on pink satin',
   },
 ];
 
