@@ -8,16 +8,15 @@ import FinalCTA from '../components/home/FinalCTA';
 /* ------------------------------------------------------------------ */
 const img = {
   heroLeft: '/images/about/Rectangle 34624207.png',
-  heroRight: '/images/about/Rectangle 34624206.png',
   legacy: '/images/about/image 26.png',
-  storyMain: '/images/arrivals/arrival-2.png',
-  storySmallNecklace: '/images/story/story-inset.png',
-  storySmallRings: '/images/offers/ring.png',
-  craftConsult: '/images/arrivals/arrival-1.png',
-  craftArtisan: '/images/arrivals/arrival-3.png',
-  craftSetting: '/images/collections/rings-photo.png',
-  craftPatience: '/images/arrivals/arrival-4.png',
-  craftFinishing: '/images/moments/moment-anniversary.png',
+  storyMain: '/images/about/Rectangle 34624211.png',
+  storySmallNecklace: '/images/about/Rectangle 34624213.png',
+  storySmallRings: '/images/about/Rectangle 34624212.png',
+  craftConsult: '/images/about/Rectangle 34624219.png',
+  craftArtisan: '/images/about/Rectangle 34624220.png',
+  craftSetting: '/images/about/Rectangle 34624221.png',
+  craftPatience: '/images/about/Rectangle 34624223.png',
+  craftFinishing: '/images/about/Rectangle 34624222.png',
   certHallmark: '/images/about/cert-hallmark.svg',
   certDiamond: '/images/about/cert-diamond.svg',
   certAuthenticity: '/images/about/cert-authenticity.svg',
@@ -74,21 +73,13 @@ const certCards = [
 function AboutHero() {
   return (
     <section className="relative isolate overflow-hidden bg-ink">
-      {/* Edge-to-edge 50/50 split with no gap between panels */}
-      <div className="grid h-[560px] grid-cols-2 md:h-[520px] lg:h-[515px]">
+      {/* Single full-width hero image */}
+      <div className="h-[560px] md:h-[520px] lg:h-[515px]">
         <SmartImage
           src={img.heroLeft}
           alt="Woman’s hand wearing a diamond ring with a diamond necklace at the collarbone against a deep black background"
           priority
-          objectPosition="left 30%"
-          className="h-full w-full"
-          imgClassName="block"
-        />
-        <SmartImage
-          src={img.heroRight}
-          alt="Sparkling diamond drop earrings against flowing dark champagne-gold silk"
-          priority
-          objectPosition="center 40%"
+          objectPosition="center 30%"
           className="h-full w-full"
           imgClassName="block"
         />
@@ -100,7 +91,7 @@ function AboutHero() {
         className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(ellipse_60%_55%_at_50%_50%,rgba(13,13,13,0.62)_0%,rgba(13,13,13,0.30)_48%,rgba(13,13,13,0)_78%)]"
       />
 
-      {/* Single shared overlay crossing both panels */}
+      {/* Centered headline overlay */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center">
         <h1 className="max-w-[650px] font-serif text-[30px] font-normal leading-[1.15] tracking-[-0.01em] text-[#f5f0eb] [text-shadow:0_2px_26px_rgba(0,0,0,0.55)] md:text-[34px] lg:text-[40px]">
           Where Heritage Meets
@@ -244,93 +235,120 @@ function CertifiedSection() {
 /* ------------------------------------------------------------------ */
 /* 5. The Art Behind Every Creation                                    */
 /* ------------------------------------------------------------------ */
+const craftSteps = {
+  consultation: {
+    no: '01',
+    title: 'Consultation',
+    text: 'Every piece begins by listening — to the occasion, the wearer and the story yet to be told.',
+  },
+  experience: {
+    no: '02',
+    title: 'Experience',
+    text: 'Years of knowledge, passed quietly from one pair of skilled hands to the next.',
+  },
+  precision: {
+    no: '03',
+    title: 'Precision',
+    text: 'Each stone is measured, set and shaped by hand until every detail is exact.',
+  },
+  patience: {
+    no: '04',
+    title: 'Patience',
+    text: 'Fine jewellery cannot be rushed. Time is the truest material of the craft.',
+  },
+  finishing: {
+    no: '05',
+    title: 'Finishing',
+    text: 'The final polish draws out the light, and the design comes to life.',
+  },
+};
+
+function CraftCaption({ no, title, text, className = '' }) {
+  return (
+    <figcaption className={className}>
+      <div className="flex items-baseline gap-2">
+        <span className="font-serif text-[14px] leading-none text-[#b9965b]">{no}</span>
+        <span className="text-[11px] font-semibold uppercase tracking-[2px] text-[#171513]">
+          {title}
+        </span>
+      </div>
+      <p className="mt-1.5 max-w-[40ch] text-[11px] font-light leading-[1.55] text-[#5c554d] sm:text-[12px]">
+        {text}
+      </p>
+    </figcaption>
+  );
+}
+
 function CraftsmanshipSection() {
   return (
-    <section className="bg-[#EEE4D9] py-16 sm:py-20 lg:py-24">
+    <section className="bg-[#eee5db] py-16 sm:py-20 lg:py-28">
       <div className="mx-auto w-full max-w-shell px-6 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-6">
-          {/* Left — intro + consultation */}
-          <div className="sm:col-span-2 lg:col-span-5">
-            <h2 className="font-serif text-[23px] font-normal leading-tight tracking-tight text-ink sm:text-[25px] lg:text-[26px]">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-6">
+            <p className="text-[11px] font-medium uppercase tracking-[3px] text-[#b9965b]">
+              Our Craft
+            </p>
+            <h2 className="mt-3 font-serif text-[28px] font-normal leading-[1.15] tracking-tight text-[#171513] sm:text-[31px] lg:text-[34px]">
               The Art Behind Every Creation
             </h2>
-            <p className="mt-4 max-w-xl text-[11px] font-light leading-[1.85] text-ink/70 sm:text-[12px]">
-              Behind every finished piece is a process of tradition, precision and human touch. Our
-              artisans transform precious materials into jewellery that carries character, detail
-              and soul.
-            </p>
+          </div>
+         
+        </div>
+
+        <div className="mt-12 grid grid-cols-1 gap-6 lg:mt-16 lg:grid-cols-12 lg:items-start">
+          <figure className="lg:col-span-4">
             <SmartImage
               src={img.craftConsult}
-              alt="Jewellery consultation between a customer and a LUMIÈRE professional"
-              className="mt-6 aspect-[16/10] w-full rounded-sm"
+              alt="Jewellery consultant discussing a design with a customer"
+              className="aspect-[604/597] w-full rounded-sm"
+              imgClassName="block"
             />
+            <CraftCaption {...craftSteps.consultation} className="mt-4" />
+          </figure>
+
+          <div className="flex flex-col gap-6 lg:col-span-5">
+            <div className="grid grid-cols-2 gap-6">
+              <figure>
+                <SmartImage
+                  src={img.craftArtisan}
+                  alt="Experienced jewellery craftsman at work"
+                  className="aspect-[354/464] w-full rounded-sm"
+                  objectPosition="center 30%"
+                  imgClassName="block"
+                />
+                <CraftCaption {...craftSteps.experience} className="mt-4" />
+              </figure>
+              <figure>
+                <SmartImage
+                  src={img.craftSetting}
+                  alt="Close-up of hands setting a diamond into a ring"
+                  className="aspect-[354/464] w-full rounded-sm"
+                  imgClassName="block"
+                />
+                <CraftCaption {...craftSteps.precision} className="mt-4" />
+              </figure>
+            </div>
+            <figure>
+              <SmartImage
+                src={img.craftFinishing}
+                alt="Hands carefully assembling an ornate necklace"
+                className="aspect-[635/271] w-full rounded-sm"
+                imgClassName="block"
+              />
+              <CraftCaption {...craftSteps.finishing} className="mt-4" />
+            </figure>
           </div>
 
-          {/* Middle — experience + precision */}
-          <div className="lg:col-span-4 lg:pt-8">
-            <SmartImage
-              src={img.craftArtisan}
-              alt="Experienced jewellery artisan at work"
-              className="aspect-[4/5] w-full rounded-sm"
-              objectPosition="center 30%"
-            />
-            <div className="mt-4">
-              <h3 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink">
-                Experience
-              </h3>
-              <p className="mt-1 text-[10px] font-light leading-relaxed text-ink/60 sm:text-[11px]">
-                Years of knowledge passed through skilled hands.
-              </p>
-            </div>
-
-            <SmartImage
-              src={img.craftSetting}
-              alt="Jeweller setting a diamond into a ring"
-              className="mt-6 aspect-[4/3] w-full rounded-sm"
-            />
-            <div className="mt-4">
-              <h3 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink">
-                Precision
-              </h3>
-              <p className="mt-1 text-[10px] font-light leading-relaxed text-ink/60 sm:text-[11px]">
-                Every detail is carefully shaped, set and finished.
-              </p>
-            </div>
-          </div>
-
-          {/* Right — patience + finishing */}
-          <div className="lg:col-span-3 lg:pt-16">
-            <div>
-              <h3 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink">
-                Patience
-              </h3>
-              <p className="mt-1 text-[10px] font-light leading-relaxed text-ink/60 sm:text-[11px]">
-                Fine jewellery cannot be rushed. Every piece receives the attention it deserves.
-              </p>
-            </div>
-
+          <figure className="mx-auto w-full max-w-[260px] lg:col-span-3 lg:max-w-none">
             <SmartImage
               src={img.craftPatience}
-              alt="Traditional necklace craftsmanship detail"
-              className="mt-6 aspect-[3/4] w-full rounded-sm"
+              alt="Vertical detail of traditional jewellery craftsmanship"
+              className="aspect-[177/291] w-full rounded-sm"
               objectPosition="center 30%"
+              imgClassName="block"
             />
-
-            <div className="mt-6">
-              <h3 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink">
-                Finishing
-              </h3>
-              <p className="mt-1 text-[10px] font-light leading-relaxed text-ink/60 sm:text-[11px]">
-                The final polish brings the design to life.
-              </p>
-            </div>
-
-            <SmartImage
-              src={img.craftFinishing}
-              alt="Finished LUMIÈRE jewellery after final polish"
-              className="mt-6 aspect-[4/3] w-full rounded-sm"
-            />
-          </div>
+            <CraftCaption {...craftSteps.patience} className="mt-4" />
+          </figure>
         </div>
       </div>
     </section>
