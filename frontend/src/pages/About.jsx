@@ -74,7 +74,7 @@ function AboutHero() {
   return (
     <section className="relative isolate overflow-hidden bg-ink">
       {/* Single full-width hero image */}
-      <div className="h-[560px] md:h-[520px] lg:h-[515px]">
+      <div className="h-[680px] md:h-[640px] lg:h-[630px]">
         <SmartImage
           src={img.heroLeft}
           alt="Woman’s hand wearing a diamond ring with a diamond necklace at the collarbone against a deep black background"

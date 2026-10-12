@@ -3,12 +3,19 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import About from './pages/About';
+import Collections from './pages/Collections';
 
 /* Lightweight hash router — no dependency added.
-   `#/about` renders the About Us page; every other hash renders Home
-   and scrolls to the matching in-page section. */
+   `#/about` renders the About Us page, `#/collections` renders the
+   Collections page; every other hash renders Home and scrolls to the
+   matching in-page section. */
 const ABOUT_HASH = '#/about';
-const readRoute = () => (window.location.hash === ABOUT_HASH ? 'about' : 'home');
+const COLLECTIONS_HASH = '#/collections';
+const readRoute = () => {
+  if (window.location.hash === ABOUT_HASH) return 'about';
+  if (window.location.hash === COLLECTIONS_HASH) return 'collections';
+  return 'home';
+};
 
 export default function App() {
   const [route, setRoute] = useState(readRoute);
@@ -20,7 +27,7 @@ export default function App() {
       const next = readRoute();
       setRoute(next);
 
-      if (next === 'about') {
+      if (next === 'about' || next === 'collections') {
         window.scrollTo({ top: 0, behavior: 'auto' });
         return;
       }
@@ -43,8 +50,14 @@ export default function App() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-ink antialiased">
-      <Navbar activeId={route === 'about' ? 'about' : 'home'} />
-      {route === 'about' ? <About /> : <Home />}
+      <Navbar activeId={route === 'about' ? 'about' : route === 'collections' ? 'collections' : 'home'} />
+      {route === 'about' ? (
+        <About />
+      ) : route === 'collections' ? (
+        <Collections />
+      ) : (
+        <Home />
+      )}
       <Footer />
     </div>
   );
