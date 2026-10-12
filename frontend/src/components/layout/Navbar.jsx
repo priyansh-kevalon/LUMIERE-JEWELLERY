@@ -3,7 +3,7 @@ import { Search, User, ShoppingBag, Menu, ArrowRight } from 'lucide-react';
 import MobileMenu from './MobileMenu';
 import { navLinks } from '../../data/navigation';
 
-export default function Navbar() {
+export default function Navbar({ activeId = 'home' }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -50,11 +50,11 @@ export default function Navbar() {
                 key={link.id}
                 href={link.href}
                 className={`relative py-1 text-[11px] font-normal tracking-[0.22em] uppercase transition-colors duration-300 hover:text-gold ${
-                  link.id === 'home' ? 'text-white' : 'text-white/80'
+                  link.id === activeId ? 'text-white' : 'text-white/80'
                 }`}
               >
                 {link.label}
-                {link.id === 'home' && (
+                {link.id === activeId && (
                   <span
                     aria-hidden="true"
                     className="absolute -bottom-1 left-0 h-[1.5px] w-full bg-white/90"
