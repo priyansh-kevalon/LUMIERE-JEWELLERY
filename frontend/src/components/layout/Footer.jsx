@@ -30,7 +30,7 @@ export default function Footer() {
   return (
     <footer
       id="contact"
-      className="relative overflow-hidden bg-[#0D0D0D] pt-16 pb-12 text-white sm:pt-20"
+      className="relative overflow-hidden bg-[#0D0D0D] pt-12 pb-8 text-white sm:pt-14"
     >
       <div
         aria-hidden="true"
@@ -38,7 +38,7 @@ export default function Footer() {
       />
       <div className="relative mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-14">
         {/* Main Grid */}
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-8">
           {/* Left Column: Brand, Bio, Social, Newsletter */}
           <div className="lg:col-span-5 flex flex-col justify-between">
             <div>
@@ -56,13 +56,13 @@ export default function Footer() {
                 </div>
               </a>
 
-              <p className="mt-5 max-w-sm text-xs sm:text-[13px] font-light leading-relaxed text-white/60">
+              <p className="mt-4 max-w-sm text-xs sm:text-[13px] font-light leading-relaxed text-white/60">
                 Timeless jewellery, thoughtfully crafted to celebrate love, individuality, and life's
                 most beautiful moments.
               </p>
 
               {/* Social Icons */}
-              <div className="mt-6 flex items-center gap-3">
+              <div className="mt-5 flex items-center gap-3">
                 <a
                   href="#"
                   aria-label="Instagram"
@@ -88,7 +88,7 @@ export default function Footer() {
             </div>
 
             {/* Newsletter */}
-            <div className="mt-10 lg:mt-14">
+            <div className="mt-8 lg:mt-10">
               <span className="text-[10px] font-medium tracking-[0.24em] text-gold uppercase">
                 STAY CONNECTED
               </span>
@@ -123,13 +123,13 @@ export default function Footer() {
           </div>
 
           {/* Right Columns: Links */}
-          <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-8 lg:pt-2">
+          <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-7 lg:pt-1">
             {footerColumns.map((col) => (
               <div key={col.title}>
-                <h4 className="text-xs font-semibold tracking-[0.18em] uppercase text-white mb-4">
+                <h4 className="text-xs font-semibold tracking-[0.18em] uppercase text-white mb-3">
                   {col.title}
                 </h4>
-                <ul className="space-y-2.5">
+                <ul className="space-y-2">
                   {col.links.map((link) => (
                     <li key={link.label}>
                       <a
@@ -147,7 +147,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Line & Copyright */}
-        <div className="mt-16 sm:mt-20 border-t border-white/10 pt-8 flex justify-end">
+        <div className="mt-10 sm:mt-12 border-t border-white/10 pt-6 flex justify-end">
           <p className="text-[11px] tracking-wider text-white/60">
             &copy; 2026 LUMIÈRE JEWELLERY
           </p>

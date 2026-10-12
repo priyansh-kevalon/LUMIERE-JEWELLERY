@@ -22,7 +22,7 @@ const collections = [
   },
   {
     key: 'earrings',
-    name: 'EARRINGS',
+    name: 'EARINGS',
     alt: 'Diamond earrings',
     image: '/images/collections/earrings-photo.png',
     href: '#collections',

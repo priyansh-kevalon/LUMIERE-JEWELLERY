@@ -4,13 +4,13 @@ export default function BrandStory() {
   return (
     <section
       id="story"
-      className="relative isolate overflow-hidden bg-[#EFEAE2] py-12 sm:py-14 lg:py-16"
+      className="relative isolate overflow-hidden bg-[#EFEAE2] py-10 sm:py-12 lg:py-14"
     >
       <div className="relative mx-auto w-full max-w-[90rem] px-4 sm:px-8 lg:px-12 xl:px-14">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14 xl:gap-20">
           {/* LEFT COLUMN: IMAGE COLLAGE */}
           <div className="relative flex justify-center lg:col-span-6 lg:justify-start">
-            <div className="relative w-full max-w-[540px]">
+            <div className="relative w-full max-w-[460px]">
               <div className="relative aspect-[4/5] overflow-hidden rounded-sm shadow-xl">
                 <img
                   src="/images/story/story-main.png"
@@ -19,7 +19,7 @@ export default function BrandStory() {
                   loading="lazy"
                 />
               </div>
-              <div className="absolute -bottom-10 -right-4 aspect-[4/5] w-[40%] overflow-hidden rounded-sm border-4 border-[#EFEAE2] shadow-2xl sm:-bottom-12 sm:-right-8 sm:w-[38%]">
+              <div className="absolute -bottom-8 -right-4 aspect-[4/5] w-[40%] overflow-hidden rounded-sm border-4 border-[#EFEAE2] shadow-2xl sm:-bottom-10 sm:-right-8 sm:w-[38%]">
                 <img
                   src="/images/story/story-inset.png"
                   alt="Fine diamond ring detail"
