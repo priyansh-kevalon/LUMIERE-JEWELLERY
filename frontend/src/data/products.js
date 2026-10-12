@@ -433,3 +433,130 @@ export function discountPercent(product) {
     if (!product.compareAt) return null;
     return Math.round((1 - product.price / product.compareAt) * 100);
 }
+
+/* ------------------------------------------------------------------ */
+/* Product detail helpers                                              */
+/* ------------------------------------------------------------------ */
+
+/* Supporting shots per jewellery type so each product opens with a
+   coherent, type-appropriate gallery within the demo asset set. */
+const galleryPools = {
+    Rings: [
+        '/images/collections/rings-photo.png',
+        '/images/offers/ring.png',
+        '/images/moments/moment-anniversary.png',
+        '/images/about/Rectangle 34624213.png',
+    ],
+    Earrings: [
+        '/images/collections/earrings-photo.png',
+        '/images/offers/earrings.png',
+        '/images/arrivals/arrival-2.png',
+        '/images/arrivals/arrival-5.png',
+    ],
+    Necklaces: [
+        '/images/collections/necklace-photo.png',
+        '/images/arrivals/arrival-4.png',
+        '/images/about/Rectangle 34624211.png',
+        '/images/arrivals/arrival-1.png',
+    ],
+    Bracelets: [
+        '/images/collections/bracelets-photo.png',
+        '/images/arrivals/arrival-3.png',
+        '/images/moments/moment-everyday.png',
+        '/images/about/Rectangle 34624212.png',
+    ],
+    Bangles: [
+        '/images/collections/bracelets-photo.png',
+        '/images/arrivals/arrival-3.png',
+        '/images/about/Rectangle 34624220.png',
+        '/images/moments/moment-everyday.png',
+    ],
+    Pendants: [
+        '/images/about/Rectangle 34624223.png',
+        '/images/arrivals/arrival-4.png',
+        '/images/moments/moment-festive.png',
+        '/images/about/Rectangle 34624211.png',
+    ],
+    Chains: [
+        '/images/about/Rectangle 34624223.png',
+        '/images/about/Rectangle 34624222.png',
+        '/images/arrivals/arrival-1.png',
+        '/images/moments/moment-wedding.png',
+    ],
+    Sets: [
+        '/images/arrivals/arrival-1.png',
+        '/images/moments/moment-wedding.png',
+        '/images/moments/moment-festive.png',
+        '/images/collections/necklace-photo.png',
+    ],
+};
+
+export function getProductById(id) {
+    return products.find((product) => product.id === id) || null;
+}
+
+export function getGallery(product) {
+    const pool = [product.image, ...(galleryPools[product.type] || [])];
+    const unique = [];
+    for (const source of pool) {
+        if (source && !unique.includes(source)) unique.push(source);
+    }
+    return unique.slice(0, 4);
+}
+
+export function getRelated(product, count = 4) {
+    const sameType = products.filter((p) => p.id !== product.id && p.type === product.type);
+    const sameCategory = products.filter(
+        (p) => p.id !== product.id && p.category === product.category && p.type !== product.type,
+    );
+    const rest = products.filter((p) => p.id !== product.id && p.category !== product.category);
+
+    const seen = new Set([product.id]);
+    const result = [];
+    for (const candidate of [...sameType, ...sameCategory, ...rest]) {
+        if (!seen.has(candidate.id)) {
+            seen.add(candidate.id);
+            result.push(candidate);
+        }
+        if (result.length === count) break;
+    }
+    return result;
+}
+
+const stylePhrase = {
+    Minimal: 'effortless everyday elegance',
+    Classic: 'timeless sophistication',
+    Traditional: 'rich heritage craft',
+    Contemporary: 'modern refinement',
+    Statement: 'unmistakable presence',
+};
+
+export function describeProduct(product) {
+    const phrase = stylePhrase[product.style] || 'quiet luxury';
+    const type = product.type.replace(/s$/, '').toLowerCase();
+    const diamond = product.diamondType
+        ? ` Set with ${product.diamondType.toLowerCase()} diamonds${
+              product.diamondShape ? ` in a ${product.diamondShape.toLowerCase()} cut` : ''
+          }.`
+        : '';
+    return `An exquisite ${product.metal.toLowerCase()} ${type} crafted for ${product.occasion.toLowerCase()} moments, embodying ${phrase}.${diamond} Hallmarked, hand-finished and presented in signature Lumière packaging.`;
+}
+
+export function productSpecs(product) {
+    const rows = [
+        ['Metal', product.metal],
+        ['Jewellery Type', product.type],
+        ['Occasion', product.occasion],
+        ['Style', product.style],
+        product.diamondShape ? ['Diamond Shape', product.diamondShape] : null,
+        product.diamondType ? ['Diamond Type', `${product.diamondType} Diamonds`] : null,
+        ['Availability', product.availability],
+        ['Certification', 'BIS Hallmarked · IGI Certified'],
+        ['Product Code', `LUM-${String(product.id).padStart(3, '0')}`],
+    ];
+    return rows.filter(Boolean);
+}
+
+export function reviewCount(product) {
+    return 40 + product.id * 7;
+}

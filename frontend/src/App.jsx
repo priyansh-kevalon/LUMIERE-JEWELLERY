@@ -5,20 +5,33 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Collections from './pages/Collections';
 import Contact from './pages/Contact';
+import ProductDetail from './pages/ProductDetail';
 
 /* Lightweight hash router — no dependency added.
    `#/about` renders the About Us page, `#/collections` renders the
-   Collections page, `#/contact` renders the Contact Us page; every other
-   hash renders Home and scrolls to the matching in-page section. */
+   Collections page, `#/contact` renders the Contact Us page, and
+   `#/product/:id` renders a Product Detail page; every other hash renders
+   Home and scrolls to the matching in-page section. */
 const ABOUT_HASH = '#/about';
 const COLLECTIONS_HASH = '#/collections';
 const CONTACT_HASH = '#/contact';
+const PRODUCT_PREFIX = '#/product/';
+
 const readRoute = () => {
-  if (window.location.hash === ABOUT_HASH) return 'about';
-  if (window.location.hash === COLLECTIONS_HASH) return 'collections';
-  if (window.location.hash === CONTACT_HASH) return 'contact';
-  return 'home';
+  const { hash } = window.location;
+  if (hash === ABOUT_HASH) return { name: 'about' };
+  if (hash === COLLECTIONS_HASH) return { name: 'collections' };
+  if (hash === CONTACT_HASH) return { name: 'contact' };
+  if (hash.startsWith(PRODUCT_PREFIX)) {
+    const id = Number.parseInt(hash.slice(PRODUCT_PREFIX.length), 10);
+    return { name: 'product', id: Number.isNaN(id) ? null : id };
+  }
+  return { name: 'home' };
 };
+
+/* Routes that live at the top of their own page rather than as an
+   in-page scroll target. */
+const scrollsToTop = new Set(['about', 'collections', 'contact', 'product']);
 
 export default function App() {
   const [route, setRoute] = useState(readRoute);
@@ -30,7 +43,7 @@ export default function App() {
       const next = readRoute();
       setRoute(next);
 
-      if (next === 'about' || next === 'collections' || next === 'contact') {
+      if (scrollsToTop.has(next.name)) {
         window.scrollTo({ top: 0, behavior: 'auto' });
         return;
       }
@@ -51,18 +64,23 @@ export default function App() {
     };
   }, []);
 
+  const activeId =
+    route.name === 'about'
+      ? 'about'
+      : route.name === 'contact'
+        ? 'contact'
+        : route.name === 'collections' || route.name === 'product'
+          ? 'collections'
+          : 'home';
+
   return (
     <div className="flex min-h-dvh flex-col bg-ink antialiased">
-      <Navbar activeId={route === 'about' ? 'about' : route === 'collections' ? 'collections' : route === 'contact' ? 'contact' : 'home'} />
-      {route === 'about' ? (
-        <About />
-      ) : route === 'collections' ? (
-        <Collections />
-      ) : route === 'contact' ? (
-        <Contact />
-      ) : (
-        <Home />
-      )}
+      <Navbar activeId={activeId} />
+      {route.name === 'about' && <About />}
+      {route.name === 'collections' && <Collections />}
+      {route.name === 'contact' && <Contact />}
+      {route.name === 'product' && <ProductDetail key={route.id} productId={route.id} />}
+      {route.name === 'home' && <Home />}
       <Footer />
     </div>
   );
