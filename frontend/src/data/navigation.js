@@ -8,7 +8,7 @@ export const navLinks = [
   { label: 'HOME', href: '#home', id: 'home' },
   { label: 'COLLECTIONS', href: '#/collections', id: 'collections' },
   { label: 'ABOUT US', href: '#/about', id: 'about' },
-  { label: 'CONTACT US', href: '#contact', id: 'contact' },
+  { label: 'CONTACT US', href: '#/contact', id: 'contact' },
 ];
 
 /* ------------------------------------------------------------------ */
