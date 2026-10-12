@@ -1,79 +1,101 @@
 import { ArrowRight } from 'lucide-react';
 
+const tiles = [
+  {
+    key: 'bust-necklace',
+    image: '/images/arrivals/arrival-1.png',
+    alt: 'Traditional gold necklace with matching earrings and ring on cream jewellery stands',
+    frame: 'aspect-[802/540] sm:col-span-2',
+    span: 'lg:col-span-6',
+  },
+  {
+    key: 'chandelier-earrings',
+    image: '/images/arrivals/arrival-2.png',
+    alt: 'Traditional gold chandelier earrings with pink gemstone tops on burgundy velvet',
+    frame: 'aspect-[389/540]',
+    span: 'lg:col-span-3',
+  },
+  {
+    key: 'bracelet-model',
+    image: '/images/arrivals/arrival-3.png',
+    alt: 'Model wearing delicate gold bracelets in a cream satin outfit',
+    frame: 'aspect-[389/540]',
+    span: 'lg:col-span-3',
+  },
+  {
+    key: 'ruby-pendant',
+    image: '/images/arrivals/arrival-4.png',
+    alt: 'Statement gold necklace with deep ruby-red rectangular gemstone pendant',
+    frame: 'aspect-[389/540]',
+    span: 'lg:col-span-3',
+  },
+  {
+    key: 'green-earrings-model',
+    image: '/images/arrivals/arrival-5.png',
+    alt: 'Model wearing long gold chandelier earrings with green gemstones',
+    frame: 'aspect-[389/540]',
+    span: 'lg:col-span-3',
+  },
+];
+
 export default function NewArrivals() {
   return (
-    <section id="arrivals" className="bg-[#0D0D0D] py-20 sm:py-28">
-      <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-14">
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 gap-[14px] sm:grid-cols-2 lg:grid-cols-[42%_22%_28%] lg:grid-rows-[200px_200px] xl:grid-rows-[210px_210px]">
-          {/* 1. Large gold necklace on ivory bust - Top Left */}
-          <div className="relative overflow-hidden rounded-[12px] border border-[#292929] bg-[#141414] sm:col-span-2 lg:col-span-1 lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-2">
-            <img
-              src="/images/arrivals/arrival-1.png"
-              alt="Gold necklace displayed on ivory jewellery bust"
-              className="h-full w-full object-cover object-center"
-              loading="lazy"
-            />
-          </div>
+    <section id="arrivals" className="bg-[#101010] py-20 sm:py-24 lg:py-28">
+      <div className="mx-auto w-full max-w-shell px-5 sm:px-8 lg:px-12 xl:px-14">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:aspect-[16/10] lg:grid-cols-12 lg:grid-rows-2">
+          {tiles.map(({ key, image, alt, frame, span }) => (
+            <a
+              key={key}
+              href="#collections"
+              className={`group relative isolate overflow-hidden rounded-[18px] border border-white/10 bg-ink-soft transition-colors duration-500 ease-luxe hover:border-gold/40 lg:aspect-auto lg:h-full ${frame} ${span}`}
+            >
+              <img
+                src={image}
+                alt={alt}
+                loading="lazy"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="absolute inset-0 h-full w-full transform-gpu object-cover object-center transition-transform duration-[1600ms] ease-luxe group-hover:scale-[1.05]"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 transition-opacity duration-500 ease-luxe group-hover:opacity-100"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0 h-[1px] origin-left scale-x-0 bg-gold transition-transform duration-700 ease-luxe group-hover:scale-x-100"
+              />
+            </a>
+          ))}
 
-          {/* 2. Gold chandelier earrings - Top Middle */}
-          <div className="relative overflow-hidden rounded-[12px] border border-[#292929] bg-[#141414] lg:col-start-2 lg:col-end-3 lg:row-start-1 lg:row-end-2">
-            <img
-              src="/images/arrivals/arrival-2.png"
-              alt="Gold chandelier earrings"
-              className="h-full w-full object-cover object-center"
-              loading="lazy"
-            />
-          </div>
+          {/* Promotional banner card */}
+          <div className="col-span-1 flex flex-col items-center justify-center rounded-[18px] border border-white/15 bg-[#0B0B0B] px-8 py-14 text-center sm:col-span-2 sm:py-16 lg:col-span-6 lg:py-0">
+            <span className="text-[10px] uppercase tracking-wideluxe text-gold">JUST IN</span>
 
-          {/* 3. Model wearing gold bracelets - Top Right */}
-          <div className="relative overflow-hidden rounded-[12px] border border-[#292929] bg-[#141414] lg:col-start-3 lg:col-end-4 lg:row-start-1 lg:row-end-2">
-            <img
-              src="/images/arrivals/arrival-3.png"
-              alt="Model wearing gold bracelets"
-              className="h-full w-full object-cover object-center"
-              loading="lazy"
-            />
-          </div>
+            <h2 className="mt-5 font-serif text-3xl font-normal leading-[1.1] tracking-tight text-ivory sm:text-4xl lg:text-[2.6rem]">
+              New Arrivals
+            </h2>
 
-          {/* 4. Ruby pendant necklace - Bottom Left */}
-          <div className="relative overflow-hidden rounded-[12px] border border-[#292929] bg-[#141414] lg:col-start-1 lg:col-end-2 lg:row-start-2 lg:row-end-3">
-            <img
-              src="/images/arrivals/arrival-4.png"
-              alt="Statement necklace with ruby gemstone pendant"
-              className="h-full w-full object-cover object-center"
-              loading="lazy"
+            <span
+              aria-hidden="true"
+              className="mt-6 h-px w-14 bg-gradient-to-r from-gold/0 via-gold to-gold/0"
             />
-          </div>
 
-          {/* 5. Model wearing green gemstone earrings - Bottom Middle */}
-          <div className="relative overflow-hidden rounded-[12px] border border-[#292929] bg-[#141414] lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-3">
-            <img
-              src="/images/arrivals/arrival-5.png"
-              alt="Model wearing green gemstone gold earrings"
-              className="h-full w-full object-cover object-center"
-              loading="lazy"
-            />
-          </div>
-
-          {/* 6. New Arrivals Card - Bottom Right */}
-          <div className="flex flex-col justify-center rounded-[12px] border border-[#292929] bg-[#0D0D0D] px-8 py-10 min-h-[280px] sm:px-10 sm:py-12 lg:col-start-3 lg:col-end-4 lg:row-start-2 lg:row-end-3 lg:px-10 lg:py-0 lg:min-h-0">
-            <div className="flex justify-start">
-              <span className="text-[10px] uppercase tracking-[0.32em] text-gold">JUST IN</span>
-            </div>
-            <h2 className="mt-4 font-serif text-3xl font-normal leading-[1.08] text-white sm:text-4xl lg:text-[2.75rem]">New Arrivals</h2>
-            <p className="mt-3 max-w-[320px] text-sm font-medium leading-[1.8] text-white/90">
+            <p className="mt-6 max-w-sm text-sm font-light leading-relaxed text-white/70">
               Discover our latest expressions of timeless elegance, thoughtfully crafted to make
               every moment unforgettable.
             </p>
-            <div className="mt-6">
-              <a
-                href="#collections"
-                className="group inline-flex items-center gap-2 rounded-full border border-white/80 px-6 py-2 text-[10px] font-medium uppercase tracking-[0.16em] text-white transition-all duration-300 hover:bg-white hover:text-black"
-              >
-                EXPLORE COLLECTION →
-              </a>
-            </div>
+
+            <a
+              href="#collections"
+              className="group mt-9 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.04] px-7 py-3 text-[10px] font-medium uppercase tracking-[0.16em] text-ivory transition-all duration-300 ease-luxe hover:border-gold/40 hover:bg-white/[0.08] hover:text-gold"
+            >
+              <span>Explore Collection</span>
+              <ArrowRight
+                size={13}
+                strokeWidth={1.6}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              />
+            </a>
           </div>
         </div>
       </div>
