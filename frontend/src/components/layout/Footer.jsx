@@ -30,14 +30,13 @@ export default function Footer() {
   return (
     <footer
       id="contact"
-      className="relative bg-[#0D0D0D] text-white pt-16 pb-12 sm:pt-20"
-      style={{
-        backgroundImage: 'url(/images/footer/footer-bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'top center',
-      }}
+      className="relative overflow-hidden bg-[#0D0D0D] pt-16 pb-12 text-white sm:pt-20"
     >
-      <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-14">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(ellipse_at_top,rgba(185,150,91,0.08),transparent_70%)]"
+      />
+      <div className="relative mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-14">
         {/* Main Grid */}
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
           {/* Left Column: Brand, Bio, Social, Newsletter */}
