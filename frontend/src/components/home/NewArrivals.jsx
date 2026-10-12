@@ -5,9 +5,9 @@ export default function NewArrivals() {
     <section id="arrivals" className="bg-[#0D0D0D] py-20 sm:py-28">
       <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-14">
         {/* Bento Grid */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1.35fr] lg:auto-rows-[240px] lg:grid-rows-[240px_240px] lg:gap-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[2fr_1fr_1.35fr] lg:auto-rows-[245px] lg:grid-rows-[245px_245px] lg:gap-[20px] xl:auto-rows-[250px] xl:grid-rows-[250px_250px]">
           {/* 1. Large landscape */}
-          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#141414] lg:col-span-1 lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-2">
+          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#141414] md:col-span-2 lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-2">
             <img
               src="/images/arrivals/arrival-1.png"
               alt="Diamond necklace"
@@ -57,10 +57,12 @@ export default function NewArrivals() {
           </div>
 
           {/* 6. Card */}
-          <div className="flex flex-col justify-center rounded-2xl border border-white/15 bg-[#0D0D0D] px-6 py-8 sm:px-8 sm:py-10 lg:col-start-3 lg:col-end-4 lg:row-start-2 lg:row-end-3 lg:px-9 lg:py-0">
-            <span className="text-[10px] uppercase tracking-[0.28em] text-gold">JUST IN</span>
-            <h2 className="mt-3 font-serif text-3xl font-normal leading-[1.08] text-white">New Arrivals</h2>
-            <p className="mt-3 max-w-[320px] text-sm font-medium leading-[1.75] text-white/90">
+          <div className="flex flex-col justify-center rounded-2xl border border-white/15 bg-[#0D0D0D] px-8 py-10 sm:px-10 sm:py-12 lg:col-start-3 lg:col-end-4 lg:row-start-2 lg:row-end-3 lg:px-10 lg:py-0">
+            <div className="flex justify-end">
+              <span className="text-[10px] uppercase tracking-[0.32em] text-gold">JUST IN</span>
+            </div>
+            <h2 className="mt-4 font-serif text-3xl font-normal leading-[1.08] text-white sm:text-4xl lg:text-[2.75rem]">New Arrivals</h2>
+            <p className="mt-3 max-w-[320px] text-sm font-medium leading-[1.8] text-white/90">
               Discover our latest expressions of timeless elegance, thoughtfully crafted to make
               every moment unforgettable.
             </p>
