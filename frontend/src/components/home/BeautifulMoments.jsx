@@ -14,7 +14,7 @@ export default function BeautifulMoments() {
           </h2>
         </div>
 
-        {/* 4 Cards */}
+        4 Cards
         <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
           {moments.map(({ key, title, image, alt }) => (
             <a

@@ -4,18 +4,11 @@ export default function FinalCTA() {
   return (
     <section className="bg-[#0D0D0D] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-14">
-        <div
-          className="relative overflow-hidden rounded-[32px] border border-white/15 bg-[#F4EFEA] px-6 py-16 sm:px-12 sm:py-20 text-center shadow-2xl"
-          style={{
-            backgroundImage: 'url(/images/story/story-bg.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          {/* Subtle overlay */}
+        <div className="relative overflow-hidden rounded-[32px] border border-white/15 bg-gradient-to-br from-[#F7F2EB] via-[#F1E8DB] to-[#E7D9C4] px-6 py-16 sm:px-12 sm:py-20 text-center shadow-2xl">
+          {/* Subtle warm glow */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-white/40 pointer-events-none"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(185,150,91,0.16),transparent_62%)]"
           />
 
           <div className="relative z-10 mx-auto max-w-3xl">
