@@ -341,39 +341,34 @@ function BenefitsBar() {
 
 function CollectionsHero({ onExplore }) {
   return (
-    <section className="relative isolate overflow-hidden bg-[#0D0D0D]">
-      <div className="absolute inset-0 h-full w-full" aria-hidden="true">
+    <section className="relative isolate mt-20 overflow-hidden bg-[#0D0D0D] lg:aspect-[1920/1079]">
+      <div className="absolute inset-0 h-full w-full">
         <SmartImage
-          src="/images/about/Rectangle 34624207.png"
-          alt=""
+          src="/images/collections/image 11.png"
+          alt="Model wearing a diamond necklace and drop earrings beside sparkling loose diamonds on a glossy black surface"
           priority
           className="h-full w-full"
-          objectPosition="center 30%"
+          imgClassName="!object-[30%_center] sm:!object-[center_45%] lg:!object-[center_42%]"
         />
       </div>
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(13,13,13,0.94)_0%,rgba(13,13,13,0.72)_42%,rgba(13,13,13,0.38)_100%)]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(13,13,13,0.96)_0%,rgba(13,13,13,0.74)_34%,rgba(13,13,13,0.34)_62%,rgba(13,13,13,0.08)_100%)] lg:bg-[radial-gradient(60%_84%_at_62%_50%,rgba(13,13,13,0.72)_0%,rgba(13,13,13,0.22)_58%,rgba(13,13,13,0)_100%)]"
       />
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_80%_at_62%_50%,rgba(13,13,13,0.55)_0%,rgba(13,13,13,0)_100%)]"
-      />
-
-      <div className="relative z-10 mx-auto flex h-[680px] w-full max-w-shell items-center px-6 sm:h-[620px] sm:px-10 lg:h-[600px] lg:px-14">
-        <div className="max-w-xl">
-          <p className="text-[10px] font-medium uppercase tracking-[0.34em] text-[#C6A16A] sm:text-[11px]">
+      <div className="relative z-10 mx-auto flex h-[580px] w-full max-w-shell items-end px-6 pb-16 sm:px-10 md:h-[440px] lg:h-full lg:items-center lg:pb-0 lg:px-14">
+        <div className="w-full max-w-[330px] lg:ml-[42%] lg:max-w-[380px]">
+          <p className="text-[10px] font-medium uppercase tracking-[0.34em] text-[#C6A16A]">
             THE COLLECTIONS
           </p>
 
-          <h1 className="mt-5 font-serif text-[32px] font-normal leading-[1.12] tracking-tight text-[#f4eee8] sm:text-[38px] lg:text-[42px]">
+          <h1 className="mt-4 font-serif text-[30px] font-normal leading-[1.1] tracking-[-0.01em] text-[#f4eee8] sm:text-[34px] lg:text-[38px]">
             Elegance Crafted
             <span className="block">For Royalty.</span>
           </h1>
 
-          <p className="mt-6 max-w-md text-[13px] font-light leading-[1.75] text-[#efe7df]/85 sm:text-[14px]">
+          <p className="mt-4 max-w-[320px] text-[12px] font-light leading-[1.7] text-[#b8b1a9] sm:text-[13px]">
             Discover exquisite jewellery crafted to celebrate every moment, from everyday
             elegance to unforgettable occasions.
           </p>
@@ -381,7 +376,7 @@ function CollectionsHero({ onExplore }) {
           <button
             type="button"
             onClick={onExplore}
-            className="group mt-9 inline-flex items-center gap-2.5 rounded-full bg-[#353535] px-8 py-3.5 text-[10px] font-medium uppercase tracking-[0.2em] text-[#f4eee8] transition-colors duration-300 hover:bg-[#454545] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A16A]"
+            className="group mt-5 inline-flex items-center gap-2.5 rounded-full bg-[#353535] px-7 py-3 text-[10px] font-medium uppercase tracking-[0.2em] text-[#f4eee8] transition-colors duration-300 hover:bg-[#454545] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A16A]"
           >
             <span>Explore Collection</span>
             <ArrowRight

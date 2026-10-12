@@ -72,7 +72,7 @@ const certCards = [
 /* ------------------------------------------------------------------ */
 function AboutHero() {
   return (
-    <section className="relative isolate overflow-hidden bg-ink">
+    <section className="relative isolate mt-20 overflow-hidden bg-ink">
       {/* Single full-width hero image */}
       <div className="h-[680px] md:h-[640px] lg:h-[630px]">
         <SmartImage
