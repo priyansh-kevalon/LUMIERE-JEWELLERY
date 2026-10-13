@@ -6,6 +6,7 @@ import About from './pages/About';
 import Collections from './pages/Collections';
 import Contact from './pages/Contact';
 import ProductDetail from './pages/ProductDetail';
+import ScrollToTop from './components/common/ScrollToTop';
 
 /* Lightweight hash router — no dependency added.
    `#/about` renders the About Us page, `#/collections` renders the
@@ -82,6 +83,7 @@ export default function App() {
       {route.name === 'product' && <ProductDetail key={route.id} productId={route.id} />}
       {route.name === 'home' && <Home />}
       <Footer />
+      <ScrollToTop />
     </div>
   );
 }
