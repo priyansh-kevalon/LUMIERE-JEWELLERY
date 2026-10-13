@@ -266,88 +266,93 @@ const craftSteps = {
 function CraftCaption({ no, title, text, className = '' }) {
   return (
     <figcaption className={className}>
-      <div className="flex items-baseline gap-2">
-        <span className="font-serif text-[14px] leading-none text-[#b9965b]">{no}</span>
+      <div className="flex items-baseline gap-2.5">
+        <span className="font-serif text-[15px] leading-none text-[#b9965b]">{no}</span>
         <span className="text-[11px] font-semibold uppercase tracking-[2px] text-[#171513]">
           {title}
         </span>
       </div>
-      <p className="mt-1.5 max-w-[40ch] text-[11px] font-light leading-[1.55] text-[#5c554d] sm:text-[12px]">
+      <p className="mt-2 max-w-[46ch] text-[11px] font-light leading-[1.6] text-[#5c554d] sm:text-[12px]">
         {text}
       </p>
     </figcaption>
   );
 }
 
+/* Five-step composition. Aspect ratios are chosen from the source images so
+   columns sharing a row resolve to matching heights without hard crops. */
 function CraftsmanshipSection() {
   return (
-    <section className="bg-[#eee5db] py-16 sm:py-20 lg:py-28">
-      <div className="mx-auto w-full max-w-shell px-6 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-6">
+    <section className="bg-[#eee5db] py-12 sm:py-14 lg:py-16">
+      <div className="w-full px-6 sm:px-8 lg:px-12">
+        {/* Section header */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end lg:gap-8">
+          <div className="lg:col-span-7">
             <p className="text-[11px] font-medium uppercase tracking-[3px] text-[#b9965b]">
               Our Craft
             </p>
-            <h2 className="mt-3 font-serif text-[28px] font-normal leading-[1.15] tracking-tight text-[#171513] sm:text-[31px] lg:text-[34px]">
+            <h2 className="mt-3 font-serif text-[24px] font-normal leading-[1.15] tracking-tight text-[#171513] sm:text-[27px] lg:text-[30px]">
               The Art Behind Every Creation
             </h2>
           </div>
-         
+          <p className="max-w-md text-[12px] font-light leading-[1.8] text-[#5c554d] lg:col-span-5 lg:justify-self-end">
+            From the first sketch to the final polish, every LUMIÈRE piece is shaped by hand —
+            guided by patience, precision and a devotion to detail passed down through generations.
+          </p>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 lg:mt-16 lg:grid-cols-12 lg:items-start">
-          <figure className="lg:col-span-4">
+        {/* Five craft steps — 1 col (mobile) · 2 col (tablet) · 12 col (desktop) */}
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:mt-10 lg:grid-cols-12 lg:items-start lg:gap-x-6 lg:gap-y-8">
+          <figure className="sm:col-span-2 lg:col-span-6">
             <SmartImage
               src={img.craftConsult}
               alt="Jewellery consultant discussing a design with a customer"
-              className="aspect-[604/597] w-full rounded-sm"
+              className="aspect-[16/10] w-full rounded-sm"
               imgClassName="block"
             />
             <CraftCaption {...craftSteps.consultation} className="mt-4" />
           </figure>
 
-          <div className="flex flex-col gap-6 lg:col-span-5">
-            <div className="grid grid-cols-2 gap-6">
-              <figure>
-                <SmartImage
-                  src={img.craftArtisan}
-                  alt="Experienced jewellery craftsman at work"
-                  className="aspect-[354/464] w-full rounded-sm"
-                  objectPosition="center 30%"
-                  imgClassName="block"
-                />
-                <CraftCaption {...craftSteps.experience} className="mt-4" />
-              </figure>
-              <figure>
-                <SmartImage
-                  src={img.craftSetting}
-                  alt="Close-up of hands setting a diamond into a ring"
-                  className="aspect-[354/464] w-full rounded-sm"
-                  imgClassName="block"
-                />
-                <CraftCaption {...craftSteps.precision} className="mt-4" />
-              </figure>
-            </div>
-            <figure>
-              <SmartImage
-                src={img.craftFinishing}
-                alt="Hands carefully assembling an ornate necklace"
-                className="aspect-[635/271] w-full rounded-sm"
-                imgClassName="block"
-              />
-              <CraftCaption {...craftSteps.finishing} className="mt-4" />
-            </figure>
-          </div>
+          <figure className="lg:col-span-3">
+            <SmartImage
+              src={img.craftArtisan}
+              alt="Experienced jewellery craftsman at work"
+              className="aspect-[4/5] w-full rounded-sm"
+              objectPosition="center 30%"
+              imgClassName="block"
+            />
+            <CraftCaption {...craftSteps.experience} className="mt-4" />
+          </figure>
 
-          <figure className="mx-auto w-full max-w-[260px] lg:col-span-3 lg:max-w-none">
+          <figure className="lg:col-span-3">
+            <SmartImage
+              src={img.craftSetting}
+              alt="Close-up of hands setting a diamond into a ring"
+              className="aspect-[4/5] w-full rounded-sm"
+              imgClassName="block"
+            />
+            <CraftCaption {...craftSteps.precision} className="mt-4" />
+          </figure>
+
+          <figure className="lg:col-span-4">
             <SmartImage
               src={img.craftPatience}
               alt="Vertical detail of traditional jewellery craftsmanship"
-              className="aspect-[177/291] w-full rounded-sm"
+              className="aspect-[4/5] w-full rounded-sm"
               objectPosition="center 30%"
               imgClassName="block"
             />
             <CraftCaption {...craftSteps.patience} className="mt-4" />
+          </figure>
+
+          <figure className="lg:col-span-8">
+            <SmartImage
+              src={img.craftFinishing}
+              alt="Hands carefully assembling an ornate necklace"
+              className="aspect-[16/10] w-full rounded-sm sm:aspect-[4/5] lg:aspect-[16/10]"
+              imgClassName="block"
+            />
+            <CraftCaption {...craftSteps.finishing} className="mt-4" />
           </figure>
         </div>
       </div>
