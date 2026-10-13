@@ -19,7 +19,7 @@ const tones = {
 const sizes = {
   sm: 'px-5 py-2 text-[9px]',
   md: 'px-7 py-3 text-[10px]',
-  lg: 'px-9 py-4 text-[11px]',
+  lg: 'px-6 py-4 text-[11px] sm:px-9',
 };
 
 const base =

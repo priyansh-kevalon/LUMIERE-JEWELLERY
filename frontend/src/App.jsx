@@ -59,6 +59,8 @@ export default function App() {
     };
 
     window.addEventListener('hashchange', onHashChange);
+    onHashChange();
+
     return () => {
       document.documentElement.style.scrollBehavior = '';
       window.removeEventListener('hashchange', onHashChange);
@@ -75,7 +77,7 @@ export default function App() {
           : 'home';
 
   return (
-    <div className="flex min-h-dvh flex-col bg-ink antialiased">
+    <div className="flex min-h-dvh flex-col overflow-x-clip bg-ink antialiased">
       <Navbar activeId={activeId} />
       {route.name === 'about' && <About />}
       {route.name === 'collections' && <Collections />}

@@ -40,7 +40,7 @@ function ContactHero({ onTalkToConcierge }) {
         className="absolute inset-0 bg-[#0d0d0d]/40 sm:hidden"
       />
 
-      <div className="relative z-10 mx-auto flex h-[560px] w-full max-w-[88rem] items-center px-6 sm:h-[500px] sm:px-10 md:h-[480px] lg:h-[520px] lg:px-14">
+      <div className="relative z-10 mx-auto flex h-[640px] w-full max-w-[88rem] items-center px-6 sm:h-[560px] sm:px-10 md:h-[560px] lg:h-[600px] lg:px-14">
         <div className="max-w-[400px]">
           <h1 className="font-serif text-[32px] font-normal leading-[1.12] tracking-[-0.01em] text-[#f0eae5] sm:text-[36px] lg:text-[40px]">
             Let&rsquo;s Create Something

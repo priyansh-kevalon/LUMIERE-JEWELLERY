@@ -2,7 +2,7 @@ import { moments } from '../../data/collections';
 
 export default function BeautifulMoments() {
   return (
-    <section id="moments" className="bg-[#0D0D0D] py-20 sm:py-28">
+    <section id="moments" className="scroll-mt-20 bg-[#0D0D0D] py-20 sm:py-28">
       <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-14">
         {/* Title */}
         <div className="text-center">

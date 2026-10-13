@@ -2,7 +2,7 @@ import { ArrowRight } from 'lucide-react';
 
 export default function OfferBanners() {
   return (
-    <section id="offers" className="bg-[#0D0D0D]">
+    <section id="offers" className="scroll-mt-20 bg-[#0D0D0D]">
       <div className="grid grid-cols-1 lg:grid-cols-2">
         {/* ---------- LEFT BANNER — Diamond ---------- */}
         <a

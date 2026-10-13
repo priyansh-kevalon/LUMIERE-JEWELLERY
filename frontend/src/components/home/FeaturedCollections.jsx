@@ -31,7 +31,7 @@ const collections = [
 
 export default function FeaturedCollections() {
   return (
-    <section id="collections" className="bg-ink py-24 sm:py-28 lg:py-36">
+    <section id="collections" className="scroll-mt-24 bg-ink py-24 sm:py-28 lg:py-36">
       <div className="mx-auto w-full max-w-shell px-5 sm:px-8 lg:px-12 xl:px-14">
         <div className="flex flex-col items-center text-center">
           <span className="text-[10px] uppercase tracking-wideluxe text-gold sm:text-[11px]">

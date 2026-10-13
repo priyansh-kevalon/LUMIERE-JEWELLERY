@@ -4,7 +4,7 @@ export default function BrandStory() {
   return (
     <section
       id="story"
-      className="relative isolate overflow-hidden bg-[#EFEAE2] py-10 sm:py-12 lg:py-14"
+      className="relative isolate scroll-mt-24 overflow-hidden bg-[#EFEAE2] py-10 sm:py-12 lg:py-14"
     >
       <div className="relative mx-auto w-full max-w-[90rem] px-4 sm:px-8 lg:px-12 xl:px-14">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14 xl:gap-20">

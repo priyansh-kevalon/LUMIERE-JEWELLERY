@@ -5,7 +5,7 @@ export default function HeroSection() {
   return (
     <section
       id="home"
-      className="relative isolate flex min-h-[92vh] w-full items-center overflow-hidden bg-ink sm:min-h-[96vh] lg:min-h-[98vh]"
+      className="relative isolate flex min-h-[92dvh] w-full items-center overflow-hidden bg-ink sm:min-h-[96dvh] lg:min-h-[98dvh]">
     >
       {/* ---------- Full-bleed cinematic image ---------- */}
       <img
@@ -30,8 +30,8 @@ export default function HeroSection() {
       />
 
       {/* ---------- Content ---------- */}
-      <div className="mx-auto w-full max-w-shell px-5 sm:px-8 lg:px-12 xl:px-14 pt-16 sm:pt-20">
-        <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl lg:pl-[1%]">
+      <div className="mx-auto w-full min-w-0 max-w-shell px-5 sm:px-8 lg:px-12 xl:px-14 pt-16 sm:pt-20">
+        <div className="min-w-0 max-w-xl sm:max-w-2xl lg:max-w-3xl lg:pl-[1%]">
           <span className="inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.26em] text-gold sm:text-[11px] sm:tracking-wideluxe">
             <span aria-hidden="true" className="h-px w-7 bg-gold/70 sm:w-9" />
             CRAFTED TO CAPTIVATE
