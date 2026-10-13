@@ -30,8 +30,8 @@ export default function HeroSection() {
       />
 
       {/* ---------- Content ---------- */}
-      <div className="mx-auto w-full min-w-0 max-w-shell px-5 sm:px-8 lg:px-12 xl:px-14 pt-16 sm:pt-20">
-        <div className="min-w-0 max-w-xl sm:max-w-2xl lg:max-w-3xl lg:pl-[1%]">
+      <div className="mx-auto w-full min-w-0 max-w-[92rem] px-5 sm:px-8 lg:px-12 xl:px-14 pt-16 sm:pt-20">
+        <div className="min-w-0 max-w-xl sm:max-w-2xl lg:max-w-4xl lg:pl-[1%]">
           <span className="inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.26em] text-gold sm:text-[11px] sm:tracking-wideluxe">
             <span aria-hidden="true" className="h-px w-7 bg-gold/70 sm:w-9" />
             CRAFTED TO CAPTIVATE
@@ -42,7 +42,7 @@ export default function HeroSection() {
             <span className="mt-1 block text-white">Made to Be Yours</span>
           </h1>
 
-          <p className="mt-6 max-w-lg animate-fade-up text-[14px] font-light leading-[1.85] text-gold sm:text-[15px] lg:mt-8 lg:text-base xl:text-[17px]">
+          <p className="mt-6 max-w-2xl animate-fade-up text-[14px] font-light leading-[1.85] text-gold sm:text-[15px] lg:mt-8 lg:text-base xl:text-[17px]">
             Discover exquisite jewellery crafted to celebrate your most beautiful moments and become
             a part of your story.
           </p>
