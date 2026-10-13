@@ -109,7 +109,7 @@ function AboutHero() {
 function LegacySection() {
   return (
     <section className="bg-[#0d0d0d]">
-      <div className="mx-auto grid w-full max-w-[68rem] grid-cols-1 items-stretch gap-9 px-6 py-10 sm:px-8 md:grid-cols-[0.9fr_1.1fr] md:px-10 lg:gap-[clamp(36px,5.5vw,84px)]">
+      <div className="mx-auto grid w-full max-w-[60rem] grid-cols-1 items-stretch gap-9 px-6 py-10 sm:px-8 md:grid-cols-[0.9fr_1.1fr] md:px-10 lg:gap-[clamp(32px,5vw,72px)]">
         {/* Portrait — existing bridal asset, square-ish corners, no overlay */}
         <SmartImage
           src={img.legacy}
@@ -120,17 +120,17 @@ function LegacySection() {
 
         {/* Text column — heading + four stacked blocks */}
         <div className="flex flex-col">
-          <h2 className="font-serif text-[clamp(24px,2vw,40px)] font-normal leading-[1.2] tracking-tight text-[#f2ece6]">
+          <h2 className="font-serif text-[clamp(26px,2.4vw,48px)] font-normal leading-[1.2] tracking-tight text-[#f2ece6]">
             A Legacy That Continues
           </h2>
 
-          <div className="mt-[clamp(18px,1.8vw,38px)] flex flex-col gap-[clamp(18px,2vw,42px)]">
+          <div className="mt-[clamp(20px,2.2vw,46px)] flex flex-col gap-[clamp(20px,2.4vw,50px)]">
             {legacyBlocks.map((block) => (
               <div key={block.title}>
-                <h3 className="text-[clamp(10px,0.8vw,15px)] font-medium uppercase tracking-[2px] text-[#eee7e0]">
+                <h3 className="text-[clamp(10px,0.95vw,18px)] font-medium uppercase tracking-[2px] text-[#eee7e0]">
                   {block.title}
                 </h3>
-                <p className="mt-[clamp(7px,0.6vw,12px)] max-w-[480px] text-[clamp(12px,1.2vw,24px)] font-light leading-[1.7] text-[#aaa39b] lg:max-w-none">
+                <p className="mt-[clamp(8px,0.72vw,14px)] max-w-[480px] text-[clamp(13px,1.45vw,29px)] font-light leading-[1.7] text-[#aaa39b] lg:max-w-none">
                   {block.text}
                 </p>
               </div>
