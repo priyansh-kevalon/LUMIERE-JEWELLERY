@@ -517,7 +517,7 @@ export default function Collections() {
           >
             {desktopSidebar && (
               <aside className="hidden lg:block">
-                <div className="sticky top-24 max-h-[calc(100vh-9rem)] overflow-y-auto pr-1 [scrollbar-width:thin]">
+                <div className="sticky top-24 max-h-[calc(100vh-9rem)] overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   <FilterSidebar
                     filters={filters}
                     counts={counts}
@@ -528,7 +528,13 @@ export default function Collections() {
               </aside>
             )}
 
-            <div>
+            <div
+              className={
+                desktopSidebar
+                  ? 'lg:sticky lg:top-24 lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto lg:pr-1 lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden'
+                  : ''
+              }
+            >
               <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
                 <p className="text-[11px] tracking-wide text-[#a7a19b]">
                   Showing <span className="text-[#f4eee8]">{visible.length}</span> of{' '}
