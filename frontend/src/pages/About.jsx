@@ -199,10 +199,10 @@ function CertifiedSection() {
     <section className="bg-[#0d0d0d] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto w-full max-w-shell px-6 sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-          <h2 className="font-serif text-[22px] font-normal leading-tight tracking-tight text-ivory sm:text-[24px] lg:text-[25px]">
+          <h2 className="font-serif text-[24px] font-normal leading-tight tracking-tight text-ivory sm:text-[26px] lg:text-[28px]">
             Certified. Authentic. Assured.
           </h2>
-          <p className="mt-4 max-w-2xl text-[10px] font-light leading-relaxed text-muted sm:text-[11px]">
+          <p className="mt-4 max-w-2xl text-[12px] font-light leading-relaxed text-muted sm:text-[13px]">
             Every precious piece deserves complete transparency. Our jewellery is accompanied by
             appropriate purity and authenticity certification, giving you confidence in what you
             wear and cherish.
@@ -217,7 +217,7 @@ function CertifiedSection() {
                 alt={card.alt}
                 className="aspect-[4/3] w-full rounded-sm"
               />
-              <figcaption className="mt-4 text-center text-[10px] font-light leading-relaxed text-muted">
+              <figcaption className="mt-4 text-center text-[12px] font-light leading-relaxed text-muted">
                 {card.caption}
               </figcaption>
             </figure>
