@@ -1,5 +1,4 @@
 import SmartImage from '../components/common/SmartImage';
-import FinalCTA from '../components/home/FinalCTA';
 
 /* ------------------------------------------------------------------ */
 /* Imagery                                                            */
@@ -109,12 +108,12 @@ function AboutHero() {
 function LegacySection() {
   return (
     <section className="bg-[#0d0d0d]">
-      <div className="mx-auto grid w-full max-w-[54rem] grid-cols-1 items-stretch gap-9 px-6 py-10 sm:px-8 md:grid-cols-[0.9fr_1.1fr] md:px-10 lg:gap-[clamp(32px,5vw,72px)]">
+      <div className="mx-auto grid w-full max-w-[80rem] grid-cols-1 items-stretch gap-9 px-6 py-10 sm:px-8 md:grid-cols-[0.7fr_1.3fr] md:px-10 lg:gap-[clamp(32px,5vw,72px)]">
         {/* Portrait — existing bridal asset, square-ish corners, no overlay */}
         <SmartImage
           src={img.legacy}
           alt="Woman wearing traditional Indian gold jewellery with a statement necklace and earrings"
-          className="aspect-[4/5] w-full self-center rounded-sm"
+          className="aspect-[4/5] w-full self-center rounded-sm lg:aspect-auto lg:h-[clamp(340px,28vw,420px)]"
           objectPosition="center 30%"
         />
 
@@ -148,7 +147,7 @@ function LegacySection() {
 function StoryInGold() {
   return (
     <section className="bg-[#EEE4D9] py-12 sm:py-16 lg:py-20">
-      <div className="mx-auto w-full max-w-[54rem] px-6 sm:px-8 lg:px-10">
+      <div className="mx-auto w-full max-w-[80rem] px-6 sm:px-8 lg:px-10">
         <div className="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-2 lg:gap-14">
           {/* Copy */}
           <div className="flex flex-col justify-center">
@@ -168,7 +167,7 @@ function StoryInGold() {
           </div>
 
           {/* Image composition */}
-          <div className="grid grid-cols-2 gap-2 self-center sm:gap-3 lg:h-[400px]">
+          <div className="grid grid-cols-2 gap-2 self-center sm:gap-3 lg:h-[clamp(320px,26vw,380px)]">
             <SmartImage
               src={img.storyMain}
               alt="Woman wearing a gold choker necklace"
@@ -281,72 +280,69 @@ function CraftCaption({ no, title, text, className = '' }) {
 function CraftsmanshipSection() {
   return (
     <section className="bg-[#eee5db] py-12 sm:py-14 lg:py-16">
-      <div className="w-full px-6 sm:px-8 lg:px-12">
+      <div className="mx-auto w-full max-w-[80rem] px-6 sm:px-8 lg:px-10">
         {/* Section header */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end lg:gap-8">
           <div className="lg:col-span-7">
             <p className="text-[11px] font-medium uppercase tracking-[3px] text-[#b9965b]">
               Our Craft
             </p>
-            <h2 className="mt-3 font-serif text-[24px] font-normal leading-[1.15] tracking-tight text-[#171513] sm:text-[27px] lg:text-[30px]">
+            <h2 className="mt-3 font-serif text-[22px] font-normal leading-tight tracking-tight text-[#171513] sm:text-[24px] lg:text-[26px]">
               The Art Behind Every Creation
             </h2>
           </div>
-          <p className="max-w-md text-[12px] font-light leading-[1.8] text-[#5c554d] lg:col-span-5 lg:justify-self-end">
-            From the first sketch to the final polish, every LUMIÈRE piece is shaped by hand —
-            guided by patience, precision and a devotion to detail passed down through generations.
-          </p>
+         
         </div>
 
         {/* Five craft steps — 1 col (mobile) · 2 col (tablet) · 12 col (desktop) */}
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:mt-10 lg:grid-cols-12 lg:items-start lg:gap-x-6 lg:gap-y-8">
-          <figure className="sm:col-span-2 lg:col-span-6">
+        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:mt-10 lg:grid-cols-5 lg:gap-x-6 lg:gap-y-8">
+          <figure className="sm:col-span-2 lg:col-span-1">
             <SmartImage
               src={img.craftConsult}
               alt="Jewellery consultant discussing a design with a customer"
-              className="aspect-[16/10] w-full rounded-sm"
+              className="aspect-[16/10] w-full rounded-sm lg:aspect-[4/5]"
               imgClassName="block"
             />
             <CraftCaption {...craftSteps.consultation} className="mt-4" />
           </figure>
 
-          <figure className="lg:col-span-3">
+          <figure>
             <SmartImage
               src={img.craftArtisan}
               alt="Experienced jewellery craftsman at work"
-              className="aspect-[4/5] w-full rounded-sm"
+              className="aspect-[4/5] w-full rounded-sm lg:aspect-[4/5]"
               objectPosition="center 30%"
               imgClassName="block"
             />
             <CraftCaption {...craftSteps.experience} className="mt-4" />
           </figure>
 
-          <figure className="lg:col-span-3">
+          <figure>
             <SmartImage
               src={img.craftSetting}
               alt="Close-up of hands setting a diamond into a ring"
-              className="aspect-[4/5] w-full rounded-sm"
+              className="aspect-[4/5] w-full rounded-sm lg:aspect-[4/5]"
               imgClassName="block"
             />
             <CraftCaption {...craftSteps.precision} className="mt-4" />
           </figure>
 
-          <figure className="lg:col-span-4">
+          <figure>
             <SmartImage
               src={img.craftPatience}
               alt="Vertical detail of traditional jewellery craftsmanship"
-              className="aspect-[4/5] w-full rounded-sm"
+              className="aspect-[4/5] w-full rounded-sm lg:aspect-[4/5]"
               objectPosition="center 30%"
               imgClassName="block"
             />
             <CraftCaption {...craftSteps.patience} className="mt-4" />
           </figure>
 
-          <figure className="lg:col-span-8">
+          <figure>
             <SmartImage
               src={img.craftFinishing}
               alt="Hands carefully assembling an ornate necklace"
-              className="aspect-[16/10] w-full rounded-sm sm:aspect-[4/5] lg:aspect-[16/10]"
+              className="aspect-[16/10] w-full rounded-sm sm:aspect-[4/5] lg:aspect-[4/5]"
               imgClassName="block"
             />
             <CraftCaption {...craftSteps.finishing} className="mt-4" />
@@ -368,7 +364,6 @@ export default function About() {
       <StoryInGold />
       <CertifiedSection />
       <CraftsmanshipSection />
-      <FinalCTA />
     </main>
   );
 }
