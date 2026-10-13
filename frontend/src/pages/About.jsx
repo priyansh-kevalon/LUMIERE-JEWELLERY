@@ -109,7 +109,7 @@ function AboutHero() {
 function LegacySection() {
   return (
     <section className="bg-[#0d0d0d]">
-      <div className="grid grid-cols-1 items-stretch gap-10 px-6 py-11 md:grid-cols-[0.9fr_1.1fr] md:px-[6.3%] lg:gap-[clamp(40px,8vw,115px)]">
+      <div className="mx-auto grid w-full max-w-[68rem] grid-cols-1 items-stretch gap-9 px-6 py-10 sm:px-8 md:grid-cols-[0.9fr_1.1fr] md:px-10 lg:gap-[clamp(36px,5.5vw,84px)]">
         {/* Portrait — existing bridal asset, square-ish corners, no overlay */}
         <SmartImage
           src={img.legacy}
@@ -120,17 +120,17 @@ function LegacySection() {
 
         {/* Text column — heading + four stacked blocks */}
         <div className="flex flex-col">
-          <h2 className="font-serif text-[clamp(30px,2.65vw,52px)] font-normal leading-[1.2] tracking-tight text-[#f2ece6]">
+          <h2 className="font-serif text-[clamp(24px,2vw,40px)] font-normal leading-[1.2] tracking-tight text-[#f2ece6]">
             A Legacy That Continues
           </h2>
 
-          <div className="mt-[clamp(22px,2.5vw,52px)] flex flex-col gap-[clamp(22px,2.7vw,56px)]">
+          <div className="mt-[clamp(18px,1.8vw,38px)] flex flex-col gap-[clamp(18px,2vw,42px)]">
             {legacyBlocks.map((block) => (
               <div key={block.title}>
-                <h3 className="text-[clamp(11px,1vw,18px)] font-medium uppercase tracking-[2px] text-[#eee7e0]">
+                <h3 className="text-[clamp(10px,0.8vw,15px)] font-medium uppercase tracking-[2px] text-[#eee7e0]">
                   {block.title}
                 </h3>
-                <p className="mt-[clamp(8px,0.75vw,15px)] max-w-[520px] text-[clamp(13px,1.5vw,30px)] font-light leading-[1.75] text-[#aaa39b] lg:max-w-none">
+                <p className="mt-[clamp(7px,0.6vw,12px)] max-w-[480px] text-[clamp(12px,1.2vw,24px)] font-light leading-[1.7] text-[#aaa39b] lg:max-w-none">
                   {block.text}
                 </p>
               </div>
@@ -147,19 +147,19 @@ function LegacySection() {
 /* ------------------------------------------------------------------ */
 function StoryInGold() {
   return (
-    <section className="bg-[#EEE4D9] py-16 sm:py-20 lg:py-24">
-      <div className="mx-auto w-full max-w-shell px-6 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-2 lg:gap-16">
+    <section className="bg-[#EEE4D9] py-12 sm:py-16 lg:py-20">
+      <div className="mx-auto w-full max-w-[68rem] px-6 sm:px-8 lg:px-10">
+        <div className="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-2 lg:gap-14">
           {/* Copy */}
           <div className="flex flex-col justify-center">
-            <h2 className="font-serif text-[clamp(24px,2.2vw,34px)] font-normal leading-tight tracking-tight text-ink">
+            <h2 className="font-serif text-[clamp(20px,1.8vw,28px)] font-normal leading-tight tracking-tight text-ink">
               A Story Written in Gold
             </h2>
-            <div className="mt-[clamp(18px,1.7vw,26px)] space-y-[clamp(14px,1.4vw,22px)]">
+            <div className="mt-[clamp(14px,1.4vw,22px)] space-y-[clamp(12px,1.2vw,18px)]">
               {goldParagraphs.map((paragraph) => (
                 <p
                   key={paragraph.slice(0, 24)}
-                  className="max-w-xl text-[clamp(12px,1.6vw,22px)] font-light leading-[1.9] text-ink/70 lg:max-w-none"
+                  className="max-w-xl text-[clamp(11px,1.25vw,18px)] font-light leading-[1.85] text-ink/70 lg:max-w-none"
                 >
                   {paragraph}
                 </p>
@@ -168,7 +168,7 @@ function StoryInGold() {
           </div>
 
           {/* Image composition */}
-          <div className="grid grid-cols-2 gap-2 self-center sm:gap-3 lg:h-[clamp(360px,38vw,560px)]">
+          <div className="grid grid-cols-2 gap-2 self-center sm:gap-3 lg:h-[clamp(300px,30vw,440px)]">
             <SmartImage
               src={img.storyMain}
               alt="Woman wearing a gold choker necklace"
