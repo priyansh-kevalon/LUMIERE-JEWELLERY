@@ -109,7 +109,7 @@ function AboutHero() {
 function LegacySection() {
   return (
     <section className="bg-[#0d0d0d]">
-      <div className="mx-auto grid w-full max-w-[60rem] grid-cols-1 items-stretch gap-9 px-6 py-10 sm:px-8 md:grid-cols-[0.9fr_1.1fr] md:px-10 lg:gap-[clamp(32px,5vw,72px)]">
+      <div className="mx-auto grid w-full max-w-[54rem] grid-cols-1 items-stretch gap-9 px-6 py-10 sm:px-8 md:grid-cols-[0.9fr_1.1fr] md:px-10 lg:gap-[clamp(32px,5vw,72px)]">
         {/* Portrait — existing bridal asset, square-ish corners, no overlay */}
         <SmartImage
           src={img.legacy}
@@ -120,17 +120,17 @@ function LegacySection() {
 
         {/* Text column — heading + four stacked blocks */}
         <div className="flex flex-col">
-          <h2 className="font-serif text-[clamp(26px,2.4vw,48px)] font-normal leading-[1.2] tracking-tight text-[#f2ece6]">
+          <h2 className="font-serif text-[26px] font-normal leading-[1.2] tracking-tight text-[#f2ece6] lg:text-[30px]">
             A Legacy That Continues
           </h2>
 
-          <div className="mt-[clamp(20px,2.2vw,46px)] flex flex-col gap-[clamp(20px,2.4vw,50px)]">
+          <div className="mt-6 flex flex-col gap-6 lg:mt-7 lg:gap-7">
             {legacyBlocks.map((block) => (
               <div key={block.title}>
-                <h3 className="text-[clamp(10px,0.95vw,18px)] font-medium uppercase tracking-[2px] text-[#eee7e0]">
+                <h3 className="text-[11px] font-medium uppercase tracking-[2px] text-[#eee7e0] lg:text-[12px]">
                   {block.title}
                 </h3>
-                <p className="mt-[clamp(8px,0.72vw,14px)] max-w-[480px] text-[clamp(13px,1.45vw,29px)] font-light leading-[1.7] text-[#aaa39b] lg:max-w-none">
+                <p className="mt-2 max-w-[480px] text-[13px] font-light leading-[1.95] text-[#aaa39b] sm:text-[14px] lg:max-w-none lg:text-[16px]">
                   {block.text}
                 </p>
               </div>
@@ -148,18 +148,18 @@ function LegacySection() {
 function StoryInGold() {
   return (
     <section className="bg-[#EEE4D9] py-12 sm:py-16 lg:py-20">
-      <div className="mx-auto w-full max-w-[68rem] px-6 sm:px-8 lg:px-10">
+      <div className="mx-auto w-full max-w-[54rem] px-6 sm:px-8 lg:px-10">
         <div className="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-2 lg:gap-14">
           {/* Copy */}
           <div className="flex flex-col justify-center">
-            <h2 className="font-serif text-[clamp(20px,1.8vw,28px)] font-normal leading-tight tracking-tight text-ink">
+            <h2 className="font-serif text-[20px] font-normal leading-tight tracking-tight text-ink sm:text-[22px] lg:text-[26px]">
               A Story Written in Gold
             </h2>
-            <div className="mt-[clamp(14px,1.4vw,22px)] space-y-[clamp(12px,1.2vw,18px)]">
+            <div className="mt-5 space-y-3 lg:mt-7 lg:space-y-5">
               {goldParagraphs.map((paragraph) => (
                 <p
                   key={paragraph.slice(0, 24)}
-                  className="max-w-xl text-[clamp(11px,1.25vw,18px)] font-light leading-[1.85] text-ink/70 lg:max-w-none"
+                  className="max-w-xl text-[12px] font-light leading-[1.9] text-ink/70 sm:text-[13px] lg:max-w-none lg:text-[18px]"
                 >
                   {paragraph}
                 </p>
@@ -168,7 +168,7 @@ function StoryInGold() {
           </div>
 
           {/* Image composition */}
-          <div className="grid grid-cols-2 gap-2 self-center sm:gap-3 lg:h-[clamp(300px,30vw,440px)]">
+          <div className="grid grid-cols-2 gap-2 self-center sm:gap-3 lg:h-[400px]">
             <SmartImage
               src={img.storyMain}
               alt="Woman wearing a gold choker necklace"
