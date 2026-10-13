@@ -40,7 +40,7 @@ const tiles = [
 
 export default function NewArrivals() {
   return (
-    <section id="arrivals" className="scroll-mt-20 bg-[#101010] py-20 sm:py-24 lg:py-28">
+    <section id="arrivals" className="scroll-mt-20 bg-[#101010] py-14 sm:py-16 lg:py-20">
       <div className="mx-auto w-full max-w-shell px-5 sm:px-8 lg:px-12 xl:px-14">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:aspect-[16/10] lg:grid-cols-12 lg:grid-rows-2">
           {tiles.map(({ key, image, alt, frame, span }) => (

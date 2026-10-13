@@ -2,9 +2,9 @@ import { ArrowRight } from 'lucide-react';
 
 export default function FinalCTA() {
   return (
-    <section id="cta" className="scroll-mt-20 bg-[#0D0D0D] py-16 sm:py-20 lg:py-24">
+    <section id="cta" className="scroll-mt-20 bg-[#0D0D0D] py-12 sm:py-14 lg:py-16">
       <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-14">
-        <div className="relative overflow-hidden rounded-[32px] border border-white/15 bg-gradient-to-br from-[#F7F2EB] via-[#F1E8DB] to-[#E7D9C4] px-6 py-16 sm:px-12 sm:py-20 text-center shadow-2xl">
+        <div className="relative overflow-hidden rounded-[32px] border border-white/15 bg-gradient-to-br from-[#F7F2EB] via-[#F1E8DB] to-[#E7D9C4] px-6 py-12 sm:px-12 sm:py-16 text-center shadow-2xl">
           {/* Subtle warm glow */}
           <div
             aria-hidden="true"

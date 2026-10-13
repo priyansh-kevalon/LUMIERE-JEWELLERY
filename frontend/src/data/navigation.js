@@ -81,6 +81,8 @@ export const footerColumns = [
   {
     title: 'CUSTOMER CARE',
     links: [
+      { label: 'Sign In', href: '#/login' },
+      { label: 'Create Account', href: '#/register' },
       { label: 'Contact Us', href: '#contact' },
       { label: 'FAQs', href: '#contact' },
       { label: 'Shipping & Delivery', href: '#contact' },

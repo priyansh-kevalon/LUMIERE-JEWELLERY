@@ -7,12 +7,15 @@ import { forwardRef } from 'react';
  *   glass  — dark translucent w/ thin border (hero, editorial cards)
  *   solid  — near-black fill (ivory sections)
  *   gold   — gold fill (single accents)
- *   light  — ivory fill on dark sections
+ *   transparent — transparent fill w/ gold outline
+ *   light  — ivory fill (on dark sections)
  */
 const tones = {
   glass: 'border-white/25 bg-black/35 text-white backdrop-blur-sm hover:border-gold hover:bg-gold hover:text-ink',
   solid: 'border-ink bg-ink text-white hover:border-gold-deep hover:bg-gold-deep hover:text-ink',
   gold: 'border-gold bg-gold text-ink hover:border-gold-light hover:bg-gold-light',
+  transparent:
+    'border-white/30 bg-white/10 text-white backdrop-blur-md hover:border-gold hover:bg-gold hover:text-ink',
   light: 'border-ivory/70 bg-ivory text-ink hover:border-gold hover:bg-gold',
 };
 

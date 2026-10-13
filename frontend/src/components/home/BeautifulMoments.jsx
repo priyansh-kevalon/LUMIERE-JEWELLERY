@@ -2,10 +2,10 @@ import { moments } from '../../data/collections';
 
 export default function BeautifulMoments() {
   return (
-    <section id="moments" className="scroll-mt-20 bg-[#0D0D0D] py-20 sm:py-28">
+    <section id="moments" className="scroll-mt-20 bg-[#0D0D0D] py-12 sm:py-16">
       <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-14">
         {/* Title */}
-        <div className="text-center">
+        <div className="text-left">
           <span className="text-[11px] font-medium tracking-[0.25em] text-gold uppercase">
             JEWELLERY FOR EVERY MOMENT
           </span>

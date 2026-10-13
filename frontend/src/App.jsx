@@ -6,16 +6,20 @@ import About from './pages/About';
 import Collections from './pages/Collections';
 import Contact from './pages/Contact';
 import ProductDetail from './pages/ProductDetail';
+import Auth from './pages/Auth';
 import ScrollToTop from './components/common/ScrollToTop';
 
 /* Lightweight hash router — no dependency added.
    `#/about` renders the About Us page, `#/collections` renders the
-   Collections page, `#/contact` renders the Contact Us page, and
+   Collections page, `#/contact` renders the Contact Us page,
+   `#/login` and `#/register` render the account page, and
    `#/product/:id` renders a Product Detail page; every other hash renders
    Home and scrolls to the matching in-page section. */
 const ABOUT_HASH = '#/about';
 const COLLECTIONS_HASH = '#/collections';
 const CONTACT_HASH = '#/contact';
+const LOGIN_HASH = '#/login';
+const REGISTER_HASH = '#/register';
 const PRODUCT_PREFIX = '#/product/';
 
 const readRoute = () => {
@@ -23,6 +27,8 @@ const readRoute = () => {
   if (hash === ABOUT_HASH) return { name: 'about' };
   if (hash === COLLECTIONS_HASH) return { name: 'collections' };
   if (hash === CONTACT_HASH) return { name: 'contact' };
+  if (hash === LOGIN_HASH) return { name: 'login' };
+  if (hash === REGISTER_HASH) return { name: 'register' };
   if (hash.startsWith(PRODUCT_PREFIX)) {
     const id = Number.parseInt(hash.slice(PRODUCT_PREFIX.length), 10);
     return { name: 'product', id: Number.isNaN(id) ? null : id };
@@ -32,7 +38,7 @@ const readRoute = () => {
 
 /* Routes that live at the top of their own page rather than as an
    in-page scroll target. */
-const scrollsToTop = new Set(['about', 'collections', 'contact', 'product']);
+const scrollsToTop = new Set(['about', 'collections', 'contact', 'product', 'login', 'register']);
 
 export default function App() {
   const [route, setRoute] = useState(readRoute);
@@ -74,18 +80,24 @@ export default function App() {
         ? 'contact'
         : route.name === 'collections' || route.name === 'product'
           ? 'collections'
-          : 'home';
+          : route.name === 'login' || route.name === 'register'
+            ? 'account'
+            : 'home';
+
+  const isAuthRoute = route.name === 'login' || route.name === 'register';
 
   return (
     <div className="flex min-h-dvh flex-col overflow-x-clip bg-ink antialiased">
-      <Navbar activeId={activeId} />
+      {!isAuthRoute && <Navbar activeId={activeId} />}
       {route.name === 'about' && <About />}
       {route.name === 'collections' && <Collections />}
       {route.name === 'contact' && <Contact />}
+      {route.name === 'login' && <Auth mode="login" />}
+      {route.name === 'register' && <Auth mode="register" />}
       {route.name === 'product' && <ProductDetail key={route.id} productId={route.id} />}
       {route.name === 'home' && <Home />}
-      <Footer />
-      <ScrollToTop />
+      {!isAuthRoute && <Footer />}
+      {!isAuthRoute && <ScrollToTop />}
     </div>
   );
 }

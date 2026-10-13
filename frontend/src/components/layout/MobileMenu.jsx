@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { navLinks } from '../../data/navigation';
 
 const ease = 'transition-all duration-500 ease-luxe';
@@ -80,7 +80,16 @@ export default function MobileMenu({ open, onClose }) {
             ))}
           </nav>
 
-          <div className="mt-10 flex items-center gap-3">
+          <a
+            href="#/login"
+            onClick={onClose}
+            className="mt-6 flex items-center justify-between rounded-full border border-white/15 px-5 py-3.5 text-[10px] tracking-luxe text-ivory transition hover:border-gold hover:text-gold"
+          >
+            SIGN IN / CREATE ACCOUNT
+            <ArrowRight size={14} strokeWidth={1.6} />
+          </a>
+
+          <div className="mt-4 flex items-center gap-3">
             <a
               href="#contact"
               onClick={onClose}

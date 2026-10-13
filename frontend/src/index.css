@@ -41,11 +41,13 @@
 
   .collection-card {
     --arch: clamp(64px, 30vw, 150px);
+    --frame: clamp(5px, 0.8vw, 9px);
     position: relative;
     display: flex;
     flex-direction: column;
     min-width: 0;
     overflow: hidden;
+    padding: var(--frame);
     border: 1px solid rgba(240, 230, 220, 0.45);
     border-radius: var(--arch) var(--arch) 2px 2px;
     background: #f4eee8;
@@ -59,8 +61,9 @@
   .collection-card__media {
     position: relative;
     width: 100%;
-    height: clamp(176px, 58vw, 360px);
+    height: clamp(160px, 52vw, 320px);
     overflow: hidden;
+    border-radius: calc(var(--arch) - var(--frame)) calc(var(--arch) - var(--frame)) 6px 6px;
   }
 
   .collection-card__media img {

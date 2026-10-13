@@ -92,7 +92,7 @@ export default function Navbar({ activeId = 'home' }) {
             </div>
 
             <a
-              href="#contact"
+              href="#/login"
               aria-label="Account"
               className="text-white/90 transition-colors duration-200 hover:text-gold"
             >

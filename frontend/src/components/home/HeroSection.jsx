@@ -5,7 +5,7 @@ export default function HeroSection() {
   return (
     <section
       id="home"
-      className="relative isolate flex min-h-[92dvh] w-full items-center overflow-hidden bg-ink sm:min-h-[96dvh] lg:min-h-[98dvh]">
+      className="relative isolate flex min-h-[92dvh] w-full items-center overflow-hidden bg-ink sm:min-h-[96dvh] lg:min-h-[98dvh]"
     >
       {/* ---------- Full-bleed cinematic image ---------- */}
       <img
@@ -39,16 +39,16 @@ export default function HeroSection() {
 
           <h1 className="mt-6 animate-fade-up font-serif text-[40px] font-normal leading-[1.08] tracking-tight text-ivory sm:text-5xl md:text-[60px] lg:text-[70px] xl:text-[78px]">
             Timeless Beauty,
-            <span className="mt-1 block italic text-gold-light">Made to Be Yours</span>
+            <span className="mt-1 block text-white">Made to Be Yours</span>
           </h1>
 
-          <p className="mt-6 max-w-lg animate-fade-up text-[14px] font-light leading-[1.85] text-ivory/75 sm:text-[15px] lg:mt-8 lg:text-base xl:text-[17px]">
+          <p className="mt-6 max-w-lg animate-fade-up text-[14px] font-light leading-[1.85] text-gold sm:text-[15px] lg:mt-8 lg:text-base xl:text-[17px]">
             Discover exquisite jewellery crafted to celebrate your most beautiful moments and become
             a part of your story.
           </p>
 
           <div className="mt-9 animate-fade-up lg:mt-12">
-            <Button as="a" href="#collections" tone="gold" size="lg">
+            <Button as="a" href="#collections" tone="transparent" size="lg">
               Explore Collection
               <ArrowRight
                 size={15}
