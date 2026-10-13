@@ -3,7 +3,7 @@ export const contactInfo = {
   phoneDial: '+919999900000',
   whatsappDisplay: '+91 99999 00000',
   whatsappNumber: '919999900000',
-  email: 'ravisales@gamil.com',
+  email: 'ravisales@gmail.com',
   address: 'Ahmedabad, Gujarat',
   mapQuery: 'Ahmedabad, Gujarat, India',
 };

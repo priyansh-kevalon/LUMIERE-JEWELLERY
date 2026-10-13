@@ -24,7 +24,7 @@ export default function OfferBanners() {
         >
           <img
             src="/images/offers/banner-emerald.png"
-            alt="Flat 20% Off On Diamond Jewellery"
+            alt="Flat 20% Off On Emerald Jewellery"
             className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
             loading="lazy"
           />

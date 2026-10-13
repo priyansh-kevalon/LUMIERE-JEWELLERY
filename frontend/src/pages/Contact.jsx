@@ -130,8 +130,8 @@ function ContactForm() {
       setStatus('error');
       setFeedback(
         error.message === 'contact-not-configured'
-          ? 'Our contact service is not connected yet. Please email us at ravisales@gamil.com.'
-          : 'We could not send your message right now. Please try again, or email us at ravisales@gamil.com.',
+          ? `Our contact service is not connected yet. Please email us at ${contactInfo.email}.`
+          : `We could not send your message right now. Please try again, or email us at ${contactInfo.email}.`,
       );
     }
   };
