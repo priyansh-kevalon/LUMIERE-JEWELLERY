@@ -415,6 +415,39 @@ export const products = [{
         image: '/images/offers/ring.png',
         alt: 'Statement gold ring on a dark surface',
     },
+    {
+        id: 24,
+        name: 'Eternal Diamond Ring',
+        category: 'GOLD',
+        categoryLabel: 'GOLD RINGS',
+        type: 'Rings',
+        metal: '18K Gold',
+        material: '18K Gold',
+        weight: '3.82g',
+        diamondShape: 'Round',
+        diamondType: 'Natural',
+        diamondCarat: '0.45 ct',
+        occasion: 'Engagement',
+        style: 'Classic',
+        availability: 'In Stock',
+        price: 48500,
+        popularity: 95,
+        rating: 4.8,
+        reviews: 120,
+        description:
+            'A timeless gold ring featuring a delicate diamond setting, crafted to add understated elegance.',
+        details:
+            'Designed to celebrate timeless elegance, the Eternal Grace Ring combines refined craftsmanship with a delicate diamond setting.',
+        about:
+            'Designed to celebrate timeless elegance, the Eternal Grace Ring combines refined craftsmanship with a delicate diamond setting. Its minimal silhouette makes it equally suited for everyday elegance and special occasions.',
+        sizes: ['6', '7', '8', '9', '10'],
+        finishes: [
+            { name: 'Yellow Gold', color: '#C6A16A' },
+            { name: 'Rose Gold', color: '#C98A6B' },
+        ],
+        image: '/images/collections/rings-photo.png',
+        alt: 'Gold diamond ring resting on a soft ivory jewellery display',
+    },
 ];
 
 export const PER_PAGE = 9;
@@ -446,48 +479,65 @@ const galleryPools = {
         '/images/offers/ring.png',
         '/images/moments/moment-anniversary.png',
         '/images/about/Rectangle 34624213.png',
+        '/images/offers/banner-diamond.png',
+        '/images/collections/image 11.png',
+        '/images/about/Rectangle 34624211.png',
     ],
     Earrings: [
         '/images/collections/earrings-photo.png',
         '/images/offers/earrings.png',
         '/images/arrivals/arrival-2.png',
         '/images/arrivals/arrival-5.png',
+        '/images/about/Rectangle 34624220.png',
+        '/images/moments/moment-festive.png',
     ],
     Necklaces: [
         '/images/collections/necklace-photo.png',
         '/images/arrivals/arrival-4.png',
         '/images/about/Rectangle 34624211.png',
         '/images/arrivals/arrival-1.png',
+        '/images/moments/moment-wedding.png',
+        '/images/story/story-main.png',
     ],
     Bracelets: [
         '/images/collections/bracelets-photo.png',
         '/images/arrivals/arrival-3.png',
         '/images/moments/moment-everyday.png',
         '/images/about/Rectangle 34624212.png',
+        '/images/moments/moment-anniversary.png',
+        '/images/about/Rectangle 34624222.png',
     ],
     Bangles: [
         '/images/collections/bracelets-photo.png',
         '/images/arrivals/arrival-3.png',
         '/images/about/Rectangle 34624220.png',
         '/images/moments/moment-everyday.png',
+        '/images/moments/moment-festive.png',
+        '/images/about/Rectangle 34624222.png',
     ],
     Pendants: [
         '/images/about/Rectangle 34624223.png',
         '/images/arrivals/arrival-4.png',
         '/images/moments/moment-festive.png',
         '/images/about/Rectangle 34624211.png',
+        '/images/about/Rectangle 34624222.png',
+        '/images/story/story-inset.png',
     ],
     Chains: [
         '/images/about/Rectangle 34624223.png',
         '/images/about/Rectangle 34624222.png',
         '/images/arrivals/arrival-1.png',
         '/images/moments/moment-wedding.png',
+        '/images/story/story-main.png',
+        '/images/about/Rectangle 34624219.png',
     ],
     Sets: [
         '/images/arrivals/arrival-1.png',
         '/images/moments/moment-wedding.png',
         '/images/moments/moment-festive.png',
         '/images/collections/necklace-photo.png',
+        '/images/arrivals/arrival-4.png',
+        '/images/story/story-main.png',
     ],
 };
 
@@ -501,7 +551,7 @@ export function getGallery(product) {
     for (const source of pool) {
         if (source && !unique.includes(source)) unique.push(source);
     }
-    return unique.slice(0, 4);
+    return unique.slice(0, 7);
 }
 
 export function getRelated(product, count = 4) {
@@ -558,5 +608,65 @@ export function productSpecs(product) {
 }
 
 export function reviewCount(product) {
+    if (product.reviews != null) return product.reviews;
     return 40 + product.id * 7;
 }
+
+/* ------------------------------------------------------------------ */
+/* Product detail presentation helpers                                 */
+/* ------------------------------------------------------------------ */
+
+/* Only product types that are sized at purchase show the ring-size picker. */
+const SIZED_TYPES = { Rings: ['6', '7', '8', '9', '10'] };
+
+export function sizesOf(product) {
+    if (product.sizes) return product.sizes;
+    return SIZED_TYPES[product.type] || null;
+}
+
+export function materialOf(product) {
+    return product.material || product.metal;
+}
+
+export function weightOf(product) {
+    return product.weight || null;
+}
+
+/* Metal finishes shown as swatches. Prefers an explicit `finishes` list and
+   otherwise derives a sensible pair from the product's metal. */
+const finishesByMetal = {
+    Gold: [
+        { name: 'Yellow Gold', color: '#C6A16A' },
+        { name: 'Rose Gold', color: '#C98A6B' },
+    ],
+    Silver: [
+        { name: 'Silver', color: '#C9CBCF' },
+        { name: 'White Gold', color: '#E3E1DC' },
+    ],
+};
+
+export function finishesOf(product) {
+    if (product.finishes && product.finishes.length) return product.finishes;
+    const group = product.metal && product.metal.includes('Gold') ? 'Gold' : 'Silver';
+    return finishesByMetal[group] || null;
+}
+
+export function categoryLabelOf(product) {
+    if (product.categoryLabel) return product.categoryLabel;
+    return `${product.category} ${product.type}`.toUpperCase();
+}
+
+/* Sample review summary — replace with live review data when the reviews
+   service is connected. Bars are derived from these counts at render time. */
+export const sampleReviewSummary = {
+    isSample: true,
+    average: 4.9,
+    total: 1248,
+    distribution: [
+        { stars: 5, count: 1042 },
+        { stars: 4, count: 146 },
+        { stars: 3, count: 42 },
+        { stars: 2, count: 12 },
+        { stars: 1, count: 6 },
+    ],
+};
