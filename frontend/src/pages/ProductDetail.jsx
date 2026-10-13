@@ -7,7 +7,7 @@ import ProductAccordions from '../components/product/ProductAccordions';
 import ProductStory from '../components/product/ProductStory';
 import ReviewsSection from '../components/product/ReviewsSection';
 import BenefitsBar from '../components/common/BenefitsBar';
-import usePersistentState from '../hooks/usePersistentState';
+import { useCart, mergeBagLines } from '../context/CartContext';
 import { startCheckout } from '../services/checkout';
 import {
   products,
@@ -50,8 +50,7 @@ function NotFound() {
 export default function ProductDetail({ productId }) {
   const product = products.find((item) => item.id === productId);
 
-  const [wishlist, setWishlist] = usePersistentState('lumiere-wishlist', []);
-  const [bag, setBag] = usePersistentState('lumiere-bag', []);
+  const { bag, addToBag, toggleWishlist, isWishlisted } = useCart();
   const [toast, setToast] = useState(null);
   const [activeImage, setActiveImage] = useState(product ? product.image : '');
   const [qty, setQty] = useState(1);
@@ -78,7 +77,7 @@ export default function ProductDetail({ productId }) {
   const reviews = reviewCount(product);
   const categoryLabel = categoryLabelOf(product);
   const sizes = sizesOf(product);
-  const wishlisted = wishlist.includes(product.id);
+  const wishlisted = isWishlisted(product.id);
   const needsSize = Boolean(sizes) && !size;
 
   /* Related pieces, de-duplicated by image so the row never repeats a shot. */
@@ -100,40 +99,10 @@ export default function ProductDetail({ productId }) {
     toastTimer.current = setTimeout(() => setToast(null), 2600);
   };
 
-  const toggleWishlist = (item) => {
-    setWishlist((current) => {
-      const has = current.includes(item.id);
-      showToast(has ? `${item.name} removed from wishlist` : `${item.name} saved to wishlist`);
-      return has ? current.filter((id) => id !== item.id) : [...current, item.id];
-    });
-  };
-
-  const mergeIntoBag = (current, line) => {
-    const sameLine = (entry) =>
-      entry.id === line.id &&
-      (entry.size ?? null) === line.size &&
-      (entry.metal ?? null) === line.metal;
-    const existing = current.find(sameLine);
-    if (existing) {
-      return current.map((entry) =>
-        sameLine(entry) ? { ...entry, qty: entry.qty + line.qty } : entry,
-      );
-    }
-    return [...current, line];
-  };
-
-  const addToBag = (item, quantity = 1, extras = {}) => {
-    const line = {
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      image: item.image,
-      qty: quantity,
-      size: extras.size ?? null,
-      metal: extras.metal ?? null,
-    };
-    setBag((current) => mergeIntoBag(current, line));
-    return line;
+  const handleToggleWishlist = (item) => {
+    const has = isWishlisted(item.id);
+    toggleWishlist(item);
+    showToast(has ? `${item.name} removed from wishlist` : `${item.name} saved to wishlist`);
   };
 
   const handleAddToCart = () => {
@@ -142,7 +111,7 @@ export default function ProductDetail({ productId }) {
       return;
     }
     setAdding(true);
-    addToBag(product, qty, { size, metal: finish?.name });
+    addToBag(product, { qty, size, metal: finish?.name });
     showToast(`${product.name}${qty > 1 ? ` × ${qty}` : ''} added to bag`);
     window.setTimeout(() => setAdding(false), 500);
   };
@@ -153,8 +122,8 @@ export default function ProductDetail({ productId }) {
       return;
     }
     setAdding(true);
-    const line = addToBag(product, qty, { size, metal: finish?.name });
-    const cartForCheckout = mergeIntoBag(bag, line);
+    const line = addToBag(product, { qty, size, metal: finish?.name });
+    const cartForCheckout = mergeBagLines(bag, line);
 
     try {
       /* Integration point — forwards the cart when a checkout endpoint is
@@ -278,7 +247,7 @@ export default function ProductDetail({ productId }) {
               qty={qty}
               onQtyChange={setQty}
               wishlisted={wishlisted}
-              onToggleWishlist={() => toggleWishlist(product)}
+              onToggleWishlist={() => handleToggleWishlist(product)}
               onAddToCart={handleAddToCart}
               onBuyNow={handleBuyNow}
               adding={adding}
@@ -325,10 +294,10 @@ export default function ProductDetail({ productId }) {
                 <ProductCard
                   key={item.id}
                   product={item}
-                  wishlisted={wishlist.includes(item.id)}
-                  onToggleWishlist={toggleWishlist}
+                  wishlisted={isWishlisted(item.id)}
+                  onToggleWishlist={handleToggleWishlist}
                   onAddToBag={(target) => {
-                    addToBag(target, 1);
+                    addToBag(target, { qty: 1 });
                     showToast(`${target.name} added to bag`);
                   }}
                 />

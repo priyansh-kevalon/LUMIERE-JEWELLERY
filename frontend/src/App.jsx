@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import Navbar from './components/layout/Navbar';
+import ShopDrawer from './components/layout/ShopDrawer';
 import Footer from './components/layout/Footer';
+import { CartProvider } from './context/CartContext';
 import Home from './pages/Home';
 import About from './pages/About';
 import Collections from './pages/Collections';
@@ -94,23 +96,26 @@ export default function App() {
   const isAuthRoute = route.name === 'login' || route.name === 'register';
 
   return (
-    <div className="flex min-h-dvh flex-col overflow-x-clip bg-ink antialiased">
-      {!isAuthRoute && <Navbar activeId={activeId} />}
-      {route.name === 'about' && <About />}
-      {route.name === 'collections' && (
-        <Collections
-          category={route.category}
-          occasion={route.occasion}
-          sort={route.sort}
-        />
-      )}
-      {route.name === 'contact' && <Contact />}
-      {route.name === 'login' && <Auth mode="login" />}
-      {route.name === 'register' && <Auth mode="register" />}
-      {route.name === 'product' && <ProductDetail key={route.id} productId={route.id} />}
-      {route.name === 'home' && <Home />}
-      {!isAuthRoute && <Footer />}
-      {!isAuthRoute && <ScrollToTop />}
-    </div>
+    <CartProvider>
+      <div className="flex min-h-dvh flex-col overflow-x-clip bg-ink antialiased">
+        {!isAuthRoute && <Navbar activeId={activeId} />}
+        {route.name === 'about' && <About />}
+        {route.name === 'collections' && (
+          <Collections
+            category={route.category}
+            occasion={route.occasion}
+            sort={route.sort}
+          />
+        )}
+        {route.name === 'contact' && <Contact />}
+        {route.name === 'login' && <Auth mode="login" />}
+        {route.name === 'register' && <Auth mode="register" />}
+        {route.name === 'product' && <ProductDetail key={route.id} productId={route.id} />}
+        {route.name === 'home' && <Home />}
+        {!isAuthRoute && <Footer />}
+        {!isAuthRoute && <ScrollToTop />}
+        {!isAuthRoute && <ShopDrawer />}
+      </div>
+    </CartProvider>
   );
 }

@@ -1,12 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Search, User, ShoppingBag, Menu, ArrowRight } from 'lucide-react';
+import { Search, User, ShoppingBag, Heart, Menu } from 'lucide-react';
 import MobileMenu from './MobileMenu';
 import { navLinks } from '../../data/navigation';
+import { useCart } from '../../context/CartContext';
+
+function CountBadge({ count }) {
+  if (!count) return null;
+  return (
+    <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#C6A16A] px-1 text-[9px] font-semibold leading-none text-[#0D0D0D]">
+      {count > 9 ? '9+' : count}
+    </span>
+  );
+}
 
 export default function Navbar({ activeId = 'home' }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const { bagCount, wishlistCount, openDrawer } = useCart();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -99,13 +110,25 @@ export default function Navbar({ activeId = 'home' }) {
               <User size={18} strokeWidth={1.5} />
             </a>
 
-            <a
-              href="#collections"
-              aria-label="Shopping bag"
-              className="text-white/90 transition-colors duration-200 hover:text-gold"
+            <button
+              type="button"
+              onClick={() => openDrawer('wishlist')}
+              aria-label={`Wishlist, ${wishlistCount} item${wishlistCount === 1 ? '' : 's'}`}
+              className="relative text-white/90 transition-colors duration-200 hover:text-gold"
+            >
+              <Heart size={18} strokeWidth={1.5} />
+              <CountBadge count={wishlistCount} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => openDrawer('bag')}
+              aria-label={`Shopping bag, ${bagCount} item${bagCount === 1 ? '' : 's'}`}
+              className="relative text-white/90 transition-colors duration-200 hover:text-gold"
             >
               <ShoppingBag size={18} strokeWidth={1.5} />
-            </a>
+              <CountBadge count={bagCount} />
+            </button>
 
             {/* Mobile Menu Button */}
             <button

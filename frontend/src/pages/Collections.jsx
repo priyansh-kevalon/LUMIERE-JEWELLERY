@@ -11,7 +11,7 @@ import {
 import SmartImage from '../components/common/SmartImage';
 import ProductCard from '../components/product/ProductCard';
 import BenefitsBar from '../components/common/BenefitsBar';
-import usePersistentState from '../hooks/usePersistentState';
+import { useCart } from '../context/CartContext';
 import {
   categories,
   filterGroups,
@@ -319,8 +319,7 @@ export default function Collections({ category = null, occasion = null, sort: so
   const [desktopSidebar, setDesktopSidebar] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [toast, setToast] = useState(null);
-  const [wishlist, setWishlist] = usePersistentState('lumiere-wishlist', []);
-  const [bag, setBag] = usePersistentState('lumiere-bag', []);
+  const { addToBag, toggleWishlist, isWishlisted } = useCart();
 
   const shopRef = useRef(null);
   const toastTimer = useRef(null);
@@ -413,24 +412,14 @@ export default function Collections({ category = null, occasion = null, sort: so
     setPage(1);
   };
 
-  const toggleWishlist = (product) => {
-    setWishlist((current) => {
-      const has = current.includes(product.id);
-      showToast(has ? `${product.name} removed from wishlist` : `${product.name} saved to wishlist`);
-      return has ? current.filter((id) => id !== product.id) : [...current, product.id];
-    });
+  const handleToggleWishlist = (product) => {
+    const has = isWishlisted(product.id);
+    toggleWishlist(product);
+    showToast(has ? `${product.name} removed from wishlist` : `${product.name} saved to wishlist`);
   };
 
-  const addToBag = (product) => {
-    setBag((current) => {
-      const existing = current.find((entry) => entry.id === product.id);
-      if (existing) {
-        return current.map((entry) =>
-          entry.id === product.id ? { ...entry, qty: entry.qty + 1 } : entry,
-        );
-      }
-      return [...current, { id: product.id, name: product.name, price: product.price, qty: 1 }];
-    });
+  const handleAddToBag = (product) => {
+    addToBag(product, { qty: 1 });
     showToast(`${product.name} added to bag`);
   };
 
@@ -571,9 +560,9 @@ export default function Collections({ category = null, occasion = null, sort: so
                     <ProductCard
                       key={product.id}
                       product={product}
-                      wishlisted={wishlist.includes(product.id)}
-                      onToggleWishlist={() => toggleWishlist(product)}
-                      onAddToBag={addToBag}
+                      wishlisted={isWishlisted(product.id)}
+                      onToggleWishlist={() => handleToggleWishlist(product)}
+                      onAddToBag={handleAddToBag}
                     />
                   ))}
                 </div>
