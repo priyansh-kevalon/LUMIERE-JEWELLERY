@@ -109,28 +109,17 @@ function FilterSidebar({ filters, counts, onToggle, onClear }) {
 }
 
 function CategoryRow({ active, onSelect }) {
-  const items = [
-    {
-      key: ALL_CATEGORY,
-      label: 'ALL',
-      circle: (
-        <span className="flex h-full w-full items-center justify-center bg-[#191919] font-serif text-lg tracking-[0.2em] text-[#C6A16A]">
-          ALL
-        </span>
-      ),
-    },
-    ...categories.map((category) => ({
-      key: category.key,
-      label: category.label,
-      image: category.image,
-      alt: category.alt,
-    })),
-  ];
+  const items = categories.map((category) => ({
+    key: category.key,
+    label: category.label,
+    image: category.image,
+    alt: category.alt,
+  }));
 
   return (
     <div className="border-b border-white/10 bg-[#0D0D0D]">
-      <div className="mx-auto w-full max-w-shell px-6 sm:px-10 lg:px-14">
-        <div className="flex items-center gap-7 overflow-x-auto pb-7 pt-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:justify-center lg:gap-10 lg:overflow-visible">
+      <div className="w-full px-6 sm:px-10 lg:px-14">
+        <div className="flex items-center justify-between gap-5 overflow-x-auto pb-8 pt-9 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:gap-10 lg:overflow-visible">
           {items.map((item) => {
             const selected = active === item.key;
             return (
@@ -139,10 +128,10 @@ function CategoryRow({ active, onSelect }) {
                 type="button"
                 onClick={() => onSelect(item.key)}
                 aria-pressed={selected}
-                className="group flex w-[92px] shrink-0 flex-col items-center gap-3 outline-offset-4 focus-visible:outline-2 focus-visible:outline-[#C6A16A] lg:w-[120px]"
+                className="group flex w-[116px] shrink-0 flex-col items-center gap-3 outline-offset-4 focus-visible:outline-2 focus-visible:outline-[#C6A16A] lg:w-[160px] xl:w-[200px]"
               >
                 <span
-                  className={`relative flex h-[92px] w-[92px] items-center justify-center overflow-hidden rounded-full border transition-all duration-500 ease-luxe lg:h-[120px] lg:w-[120px] ${
+                  className={`relative flex h-[116px] w-[116px] items-center justify-center overflow-hidden rounded-full border transition-all duration-500 ease-luxe lg:h-[160px] lg:w-[160px] xl:h-[200px] xl:w-[200px] ${
                     selected
                       ? 'border-[#C6A16A] ring-1 ring-[#C6A16A]/40'
                       : 'border-white/15 group-hover:border-[#C6A16A]/60'
@@ -160,7 +149,7 @@ function CategoryRow({ active, onSelect }) {
                   )}
                 </span>
                 <span
-                  className={`text-[10px] font-medium uppercase tracking-[0.18em] transition-colors duration-300 ${
+                  className={`text-[11px] font-medium uppercase tracking-[0.18em] transition-colors duration-300 lg:text-[13px] ${
                     selected ? 'text-[#C6A16A]' : 'text-[#a7a19b] group-hover:text-[#f4eee8]'
                   }`}
                 >
@@ -274,17 +263,17 @@ function CollectionsHero({ onExplore }) {
       />
 
       <div className="relative z-10 mx-auto flex h-[580px] w-full max-w-shell items-end px-6 pb-16 sm:px-10 md:h-[440px] lg:h-full lg:items-center lg:pb-0 lg:px-14">
-        <div className="w-full max-w-[330px] lg:ml-[42%] lg:max-w-[380px]">
-          <p className="text-[10px] font-medium uppercase tracking-[0.34em] text-[#C6A16A]">
+        <div className="w-full max-w-[400px] lg:ml-[40%] lg:max-w-[470px]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.34em] text-[#C6A16A]">
             THE COLLECTIONS
           </p>
 
-          <h1 className="mt-4 font-serif text-[30px] font-normal leading-[1.1] tracking-[-0.01em] text-[#f4eee8] sm:text-[34px] lg:text-[38px]">
+          <h1 className="mt-4 font-serif text-[34px] font-normal leading-[1.1] tracking-[-0.01em] text-[#f4eee8] sm:text-[40px] lg:text-[46px]">
             Elegance Crafted
             <span className="block">For Royalty.</span>
           </h1>
 
-          <p className="mt-4 max-w-[320px] text-[12px] font-light leading-[1.7] text-[#b8b1a9] sm:text-[13px]">
+          <p className="mt-4 max-w-[380px] text-[13px] font-light leading-[1.7] text-[#C6A16A] sm:text-[15px]">
             Discover exquisite jewellery crafted to celebrate every moment, from everyday
             elegance to unforgettable occasions.
           </p>
@@ -292,7 +281,7 @@ function CollectionsHero({ onExplore }) {
           <button
             type="button"
             onClick={onExplore}
-            className="group mt-5 inline-flex items-center gap-2.5 rounded-full bg-[#353535] px-7 py-3 text-[10px] font-medium uppercase tracking-[0.2em] text-[#f4eee8] transition-colors duration-300 hover:bg-[#454545] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A16A]"
+            className="group mt-6 inline-flex items-center gap-2.5 rounded-full bg-[#353535] px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.2em] text-[#f4eee8] transition-colors duration-300 hover:bg-[#454545] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A16A]"
           >
             <span>Explore Collection</span>
             <ArrowRight
@@ -461,6 +450,7 @@ export default function Collections() {
         : [...selected, option];
       return { ...current, [groupKey]: next };
     });
+    setPage(1);
   };
 
   const clearAll = () => {
@@ -497,6 +487,12 @@ export default function Collections() {
       setDrawerOpen(true);
     }
   };
+
+  const activeCategoryItem = categories.find((category) => category.key === activeCategory);
+  const activeFilters = filterGroups.flatMap((group) =>
+    (filters[group.key] || []).map((option) => ({ groupKey: group.key, option })),
+  );
+  const hasActiveFilters = activeFilters.length > 0 || activeCategory !== ALL_CATEGORY;
 
   return (
     <main>
@@ -574,6 +570,46 @@ export default function Collections() {
                   </label>
                 </div>
               </div>
+
+              {hasActiveFilters && (
+                <div className="mt-6 flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-[0.16em] text-[#a7a19b]">
+                    Active:
+                  </span>
+
+                  {activeCategory !== ALL_CATEGORY && activeCategoryItem && (
+                    <button
+                      type="button"
+                      onClick={() => selectCategory(ALL_CATEGORY)}
+                      className="group inline-flex items-center gap-2 rounded-full border border-[#C6A16A]/45 bg-[#C6A16A]/10 px-3.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.14em] text-[#C6A16A] transition-colors duration-300 hover:bg-[#C6A16A] hover:text-[#0D0D0D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]"
+                aria-label={`Remove ${activeCategoryItem.label} category filter`}
+              >
+                {activeCategoryItem.label}
+                <X size={12} strokeWidth={2} aria-hidden="true" />
+              </button>
+            )}
+
+                  {activeFilters.map(({ groupKey, option }) => (
+                    <button
+                      key={`${groupKey}-${option}`}
+                      type="button"
+                      onClick={() => toggleFilter(groupKey, option)}
+                      className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3.5 py-2 text-[10px] font-medium uppercase tracking-[0.14em] text-[#f4eee8] transition-colors duration-300 hover:border-[#C6A16A]/70 hover:text-[#C6A16A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]"
+                    >
+                      {option}
+                      <X size={12} strokeWidth={2} aria-hidden="true" />
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={clearAll}
+                    className="text-[10px] font-medium uppercase tracking-[0.16em] text-[#C6A16A] underline-offset-4 transition-colors hover:text-[#e2c694] hover:underline"
+                  >
+                    Clear All
+                  </button>
+                </div>
+              )}
 
               {visible.length > 0 ? (
                 <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-5 lg:mt-10 lg:grid-cols-3 lg:gap-y-14">
