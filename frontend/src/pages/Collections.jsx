@@ -364,10 +364,10 @@ function FilterDrawer({ open, onClose, filters, counts, onToggle, onClear, resul
   );
 }
 
-export default function Collections() {
-  const [activeCategory, setActiveCategory] = useState(ALL_CATEGORY);
-  const [filters, setFilters] = useState({});
-  const [sort, setSort] = useState('popularity');
+export default function Collections({ category = null, occasion = null, sort: sortPreset = null }) {
+  const [activeCategory, setActiveCategory] = useState(category || ALL_CATEGORY);
+  const [filters, setFilters] = useState(() => (occasion ? { occasion: [occasion] } : {}));
+  const [sort, setSort] = useState(sortPreset || 'popularity');
   const [page, setPage] = useState(1);
   const [desktopSidebar, setDesktopSidebar] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -377,6 +377,13 @@ export default function Collections() {
 
   const shopRef = useRef(null);
   const toastTimer = useRef(null);
+
+  useEffect(() => {
+    setActiveCategory(category || ALL_CATEGORY);
+    setFilters(occasion ? { occasion: [occasion] } : {});
+    setSort(sortPreset || 'popularity');
+    setPage(1);
+  }, [category, occasion, sortPreset]);
 
   useEffect(() => {
     return () => clearTimeout(toastTimer.current);

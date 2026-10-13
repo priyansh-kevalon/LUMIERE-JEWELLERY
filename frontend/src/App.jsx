@@ -15,26 +15,33 @@ import ScrollToTop from './components/common/ScrollToTop';
    `#/login` and `#/register` render the account page, and
    `#/product/:id` renders a Product Detail page; every other hash renders
    Home and scrolls to the matching in-page section. */
-const ABOUT_HASH = '#/about';
-const COLLECTIONS_HASH = '#/collections';
-const CONTACT_HASH = '#/contact';
-const LOGIN_HASH = '#/login';
-const REGISTER_HASH = '#/register';
-const PRODUCT_PREFIX = '#/product/';
 
-const readRoute = () => {
-  const { hash } = window.location;
-  if (hash === ABOUT_HASH) return { name: 'about' };
-  if (hash === COLLECTIONS_HASH) return { name: 'collections' };
-  if (hash === CONTACT_HASH) return { name: 'contact' };
-  if (hash === LOGIN_HASH) return { name: 'login' };
-  if (hash === REGISTER_HASH) return { name: 'register' };
-  if (hash.startsWith(PRODUCT_PREFIX)) {
-    const id = Number.parseInt(hash.slice(PRODUCT_PREFIX.length), 10);
-    return { name: 'product', id: Number.isNaN(id) ? null : id };
+function readRoute() {
+  const hash = window.location.hash;
+  if (!hash.startsWith('#/')) return { name: 'home' };
+
+  const [rawPath, queryString = ''] = hash.slice(2).split('?');
+  const path = rawPath.replace(/\/+$/, '');
+  const params = new URLSearchParams(queryString);
+
+  if (path === 'about') return { name: 'about' };
+  if (path === 'collections') {
+    return {
+      name: 'collections',
+      category: params.get('category') || null,
+      occasion: params.get('occasion') || null,
+      sort: params.get('sort') || null,
+    };
   }
+  if (path === 'contact') return { name: 'contact' };
+  if (path === 'login') return { name: 'login' };
+  if (path === 'register') return { name: 'register' };
+
+  const productMatch = path.match(/^product\/(\d+)$/);
+  if (productMatch) return { name: 'product', id: Number(productMatch[1]) };
+
   return { name: 'home' };
-};
+}
 
 /* Routes that live at the top of their own page rather than as an
    in-page scroll target. */
@@ -90,7 +97,13 @@ export default function App() {
     <div className="flex min-h-dvh flex-col overflow-x-clip bg-ink antialiased">
       {!isAuthRoute && <Navbar activeId={activeId} />}
       {route.name === 'about' && <About />}
-      {route.name === 'collections' && <Collections />}
+      {route.name === 'collections' && (
+        <Collections
+          category={route.category}
+          occasion={route.occasion}
+          sort={route.sort}
+        />
+      )}
       {route.name === 'contact' && <Contact />}
       {route.name === 'login' && <Auth mode="login" />}
       {route.name === 'register' && <Auth mode="register" />}
