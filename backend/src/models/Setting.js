@@ -3,8 +3,6 @@ const { Schema, model } = mongoose;
 
 const toJSONOpts = { transform: (doc, ret) => { delete ret._id; delete ret.__v; return ret; } };
 
-const SocialSchema = new Schema({ instagram: String, facebook: String, pinterest: String }, { _id: false });
-
 export const Setting = model('Setting', new Schema({
   key: { type: String, default: 'main', unique: true },
   storeName: String,
@@ -16,6 +14,6 @@ export const Setting = model('Setting', new Schema({
   gstRate: Number,
   freeShippingThreshold: Number,
   lowStockThreshold: Number,
-  social: SocialSchema,
+  social: { type: Map, of: String, default: {} },
   paymentMethods: [String],
 }, { timestamps: false, versionKey: false }).set('toJSON', toJSONOpts));
