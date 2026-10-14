@@ -8,6 +8,7 @@ import {
   TicketPercent,
   Star,
   Settings as SettingsIcon,
+  UserRound,
   LogOut,
   Store,
   Menu,
@@ -28,6 +29,7 @@ import AdminCustomers from './pages/AdminCustomers';
 import AdminCoupons from './pages/AdminCoupons';
 import AdminReviews from './pages/AdminReviews';
 import AdminSettings from './pages/AdminSettings';
+import AdminProfile from './pages/AdminProfile';
 
 const NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
@@ -38,6 +40,7 @@ const NAV = [
   { id: 'coupons', label: 'Coupons', icon: TicketPercent, path: '/admin/coupons' },
   { id: 'reviews', label: 'Reviews', icon: Star, path: '/admin/reviews' },
   { id: 'settings', label: 'Settings', icon: SettingsIcon, path: '/admin/settings' },
+  { id: 'profile', label: 'Profile', icon: UserRound, path: '/admin/profile' },
 ];
 
 function go(path) {
@@ -45,7 +48,7 @@ function go(path) {
   window.scrollTo({ top: 0 });
 }
 
-function resolvePage(segments) {
+function resolvePage(segments, context = {}) {
   const [first, second] = segments;
   switch (first) {
     case undefined:
@@ -71,6 +74,11 @@ function resolvePage(segments) {
       return { id: 'reviews', node: <AdminReviews /> };
     case 'settings':
       return { id: 'settings', node: <AdminSettings /> };
+    case 'profile':
+      return {
+        id: 'profile',
+        node: <AdminProfile session={context.session} onSessionChange={context.onSessionChange} />,
+      };
     default:
       return { id: 'dashboard', node: <Dashboard /> };
   }
@@ -129,8 +137,11 @@ function SidebarContent({ activeId, onNavigate }) {
   );
 }
 
-function AdminShell({ session, onSignOut, segments }) {
-  const page = useMemo(() => resolvePage(segments), [segments]);
+function AdminShell({ session, onSignOut, onSessionChange, segments }) {
+  const page = useMemo(
+    () => resolvePage(segments, { session, onSessionChange }),
+    [segments, session, onSessionChange],
+  );
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -236,7 +247,7 @@ export default function AdminApp({ segments = [] }) {
   return (
     <ToastProvider>
       {session ? (
-        <AdminShell session={session} onSignOut={handleSignOut} segments={segments} />
+        <AdminShell session={session} onSignOut={handleSignOut} onSessionChange={setSession} segments={segments} />
       ) : (
         <AdminLogin onAuthenticated={setSession} />
       )}

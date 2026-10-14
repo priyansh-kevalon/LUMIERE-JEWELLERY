@@ -62,12 +62,81 @@ export function getAdminSession() {
     return readStorage(SESSION_KEY, null);
 }
 
+export function setAdminSession(session) {
+    try {
+        window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    } catch {
+        /* storage unavailable */
+    }
+}
+
 export function adminSignOut() {
     try {
         window.localStorage.removeItem(SESSION_KEY);
     } catch {
         /* storage unavailable */
     }
+}
+
+/* Update the signed-in admin's name/email. Returns the refreshed session. */
+export async function updateAdminProfile({ name, email }) {
+    const current = getAdminSession();
+    if (isApiConfigured) {
+        try {
+            const updated = await api.patch('/admin/me', { name, email }, { admin: true });
+            const merged = { ...current, ...updated };
+            setAdminSession(merged);
+            return merged;
+        } catch (error) {
+            if (error.status) throw error;
+        }
+    }
+
+    await ensureSeed();
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    const admins = readStorage(ADMINS_KEY, []);
+    const index = admins.findIndex((entry) => entry.email === current?.email);
+    if (index === -1) throw new Error('Admin account not found.');
+    if (admins.some((entry, i) => i !== index && entry.email === normalizedEmail)) {
+        throw new Error('That email is already in use.');
+    }
+    admins[index] = {
+        ...admins[index],
+        name: String(name || '').trim() || admins[index].name,
+        email: normalizedEmail,
+    };
+    writeAdmins(admins);
+    const merged = { ...current, name: admins[index].name, email: admins[index].email };
+    setAdminSession(merged);
+    return merged;
+}
+
+/* Change the signed-in admin's password. */
+export async function changeAdminPassword({ currentPassword, newPassword }) {
+    if (isApiConfigured) {
+        try {
+            return await api.post('/admin/me/password', { currentPassword, newPassword }, { admin: true });
+        } catch (error) {
+            if (error.status) throw error;
+        }
+    }
+
+    await ensureSeed();
+    const current = getAdminSession();
+    const admins = readStorage(ADMINS_KEY, []);
+    const index = admins.findIndex((entry) => entry.email === current?.email);
+    if (index === -1) throw new Error('Admin account not found.');
+
+    const hashed = await hashPassword(currentPassword, admins[index].salt);
+    if (hashed !== admins[index].password) throw new Error('Current password is incorrect.');
+    if (String(newPassword || '').length < 6) {
+        throw new Error('New password must be at least 6 characters.');
+    }
+
+    const salt = randomSalt();
+    admins[index] = { ...admins[index], salt, password: await hashPassword(newPassword, salt) };
+    writeAdmins(admins);
+    return { ok: true };
 }
 
 export async function adminSignIn({ email, password }) {
