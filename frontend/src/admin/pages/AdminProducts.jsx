@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Plus, Search, Pencil, Trash2, Star } from 'lucide-react';
 import {
-  Badge,
   Button,
   Card,
   EmptyState,

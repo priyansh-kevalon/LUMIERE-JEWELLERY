@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowLeft, Check, Truck, Save } from 'lucide-react';
+import { ArrowLeft, Check, Truck, Save, RotateCcw } from 'lucide-react';
 import {
   Badge,
   Button,
@@ -204,7 +204,15 @@ export default function AdminOrderDetail({ orderId }) {
           </Card>
 
           <Card className="space-y-4">
-            <SectionTitle>Payment</SectionTitle>
+            <SectionTitle
+              action={
+                <Badge tone={order.payment}>
+                  {order.payment.charAt(0).toUpperCase() + order.payment.slice(1)}
+                </Badge>
+              }
+            >
+              Payment
+            </SectionTitle>
             <Field label="Payment Status">
               <Select value={order.payment} onChange={(event) => setPayment(event.target.value)}>
                 {PAYMENT_STATUSES.map((entry) => (
@@ -217,6 +225,22 @@ export default function AdminOrderDetail({ orderId }) {
             <p className="text-[12px] text-[#8d867f]">
               Method: <span className="text-[#c9c2bb]">{order.paymentMethod}</span>
             </p>
+            {order.payment === 'refunded' ? (
+              <p className="flex items-center gap-2 text-[12px] text-[#e8d3a0]">
+                <RotateCcw size={14} strokeWidth={1.8} />
+                Refund issued to the customer.
+              </p>
+            ) : (
+              <Button
+                variant="ghost"
+                className="w-full justify-center"
+                disabled={order.payment !== 'paid'}
+                onClick={() => setPayment('refunded')}
+              >
+                <RotateCcw size={14} strokeWidth={1.8} />
+                Issue Refund
+              </Button>
+            )}
           </Card>
 
           <Card className="space-y-4">

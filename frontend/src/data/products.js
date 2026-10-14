@@ -655,7 +655,7 @@ export function getGallery(product) {
 }
 
 export function getRelated(product, count = 4) {
-    const all = getProducts();
+    const all = getStorefrontProducts();
     const sameType = all.filter((p) => p.id !== product.id && p.type === product.type);
     const sameCategory = all.filter(
         (p) => p.id !== product.id && p.category === product.category && p.type !== product.type,

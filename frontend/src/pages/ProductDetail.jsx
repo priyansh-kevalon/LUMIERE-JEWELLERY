@@ -10,7 +10,7 @@ import BenefitsBar from '../components/common/BenefitsBar';
 import { useCart, mergeBagLines } from '../context/CartContext';
 import { startCheckout } from '../services/checkout';
 import {
-  useProducts,
+  useStorefrontProducts,
   discountPercent,
   getGallery,
   getRelated,
@@ -48,7 +48,7 @@ function NotFound() {
 }
 
 export default function ProductDetail({ productId }) {
-  const products = useProducts();
+  const products = useStorefrontProducts();
   const product = products.find((item) => item.id === productId);
 
   const { bag, addToBag, toggleWishlist, isWishlisted } = useCart();

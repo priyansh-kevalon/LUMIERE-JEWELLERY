@@ -15,7 +15,7 @@ import { useCart } from '../context/CartContext';
 import {
   filterGroups,
   useCategories,
-  useProducts,
+  useStorefrontProducts,
   PER_PAGE,
   ALL_CATEGORY,
 } from '../data/products';
@@ -312,7 +312,7 @@ function FilterDrawer({ open, onClose, filters, counts, onToggle, onClear, resul
 }
 
 export default function Collections({ category = null, occasion = null, sort: sortPreset = null }) {
-  const products = useProducts();
+  const products = useStorefrontProducts();
   const categories = useCategories();
   const [activeCategory, setActiveCategory] = useState(category || ALL_CATEGORY);
   const [filters, setFilters] = useState(() => (occasion ? { occasion: [occasion] } : {}));

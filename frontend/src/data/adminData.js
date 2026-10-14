@@ -11,7 +11,7 @@ import { api, apiUpsert, apiWrite } from '../services/api';
 
 export const ORDER_STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
 export const ORDER_FLOW = [...ORDER_STATUSES, 'cancelled'];
-export const PAYMENT_STATUSES = ['paid', 'pending', 'failed'];
+export const PAYMENT_STATUSES = ['paid', 'pending', 'failed', 'refunded'];
 
 const day = 24 * 60 * 60 * 1000;
 const now = Date.now();

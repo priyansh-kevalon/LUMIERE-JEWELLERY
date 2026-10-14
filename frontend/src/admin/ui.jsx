@@ -201,6 +201,7 @@ const statusStyles = {
   cancelled: 'border-[#e07a7a]/40 bg-[#e07a7a]/10 text-[#f0b4b4]',
   paid: 'border-[#9fc6a2]/40 bg-[#9fc6a2]/10 text-[#bfe0c2]',
   failed: 'border-[#e07a7a]/40 bg-[#e07a7a]/10 text-[#f0b4b4]',
+  refunded: 'border-[#e0c07a]/40 bg-[#e0c07a]/10 text-[#e8d3a0]',
   approved: 'border-[#9fc6a2]/40 bg-[#9fc6a2]/10 text-[#bfe0c2]',
   rejected: 'border-[#e07a7a]/40 bg-[#e07a7a]/10 text-[#f0b4b4]',
   active: 'border-[#9fc6a2]/40 bg-[#9fc6a2]/10 text-[#bfe0c2]',
