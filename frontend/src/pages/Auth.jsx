@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Eye, EyeOff, ArrowRight, Check, AlertCircle, Loader2, ShieldCheck } from 'lucide-react';
-import SmartImage from '../components/common/SmartImage';
 import { contactInfo } from '../data/contact';
 import { signIn, register, signOut, getCurrentUser, isLocalAuth } from '../services/auth';
 
@@ -477,155 +476,129 @@ export default function Auth({ mode: initialMode = 'login' }) {
   const isRegister = mode === 'register';
 
   return (
-    <main className="h-dvh overflow-hidden bg-[#0d0d0d]">
-      <section className="relative h-full">
-        <div className="mx-auto grid h-full w-full max-w-[88rem] grid-cols-1 items-stretch lg:grid-cols-[1.05fr_1fr]">
-          <aside className="relative hidden min-h-0 overflow-hidden lg:block">
-            <SmartImage
-              src="/images/hero/image 5.png"
-              alt=""
-              priority
-              objectPosition="center 30%"
-              className="h-full w-full"
+    <main className="min-h-dvh bg-[#0d0d0d]">
+      <div className="mx-auto flex min-h-dvh w-full max-w-[88rem] flex-col px-6 py-5 sm:px-10 lg:px-14">
+        <div className="flex shrink-0 items-center justify-between">
+          <a
+            href="#home"
+            className="inline-flex flex-col leading-none"
+            aria-label="Lumiere Jewellery — Home"
+          >
+            <span className="font-serif text-lg font-normal tracking-[0.28em] text-white">
+              LUMIÈRE
+            </span>
+            <span className="mt-1 text-[7.5px] uppercase tracking-[0.38em] text-gold">
+              JEWELLERY
+            </span>
+          </a>
+          <a
+            href="#home"
+            className="group inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.16em] text-[#8c867f] transition-colors hover:text-gold"
+          >
+            Back to home
+            <ArrowRight
+              size={13}
+              strokeWidth={1.6}
+              className="transition-transform duration-300 group-hover:translate-x-1"
             />
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-[linear-gradient(to_top,rgba(13,13,13,0.92)_0%,rgba(13,13,13,0.45)_45%,rgba(13,13,13,0.15)_100%)]"
-            />
-            <div className="absolute inset-x-0 bottom-0 p-10 xl:p-14">
-              <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-[#b99662]">
-                Lumière Jewellery
-              </p>
-              <p className="mt-4 max-w-md font-serif text-[26px] font-normal leading-[1.3] text-[#f5f0eb] xl:text-[30px]">
-                Your pieces, your wishlist and your orders — all in one place.
-              </p>
-            </div>
-          </aside>
+          </a>
+        </div>
 
-          <div className="flex h-full min-h-0 flex-col px-6 py-5 sm:px-10 lg:px-14">
-            <div className="flex shrink-0 items-center justify-between">
-              <a
-                href="#home"
-                className="inline-flex flex-col leading-none"
-                aria-label="Lumiere Jewellery — Home"
-              >
-                <span className="font-serif text-lg font-normal tracking-[0.28em] text-white">
-                  LUMIÈRE
-                </span>
-                <span className="mt-1 text-[7.5px] uppercase tracking-[0.38em] text-gold">
-                  JEWELLERY
-                </span>
-              </a>
-              <a
-                href="#home"
-                className="group inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.16em] text-[#8c867f] transition-colors hover:text-gold"
-              >
-                Back to store
-                <ArrowRight
-                  size={13}
-                  strokeWidth={1.6}
-                  className="transition-transform duration-300 group-hover:translate-x-1"
-                />
-              </a>
-            </div>
-
-            <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              <div className="w-full max-w-[440px]">
-                {user ? (
-                  <AccountPanel user={user} onSignOut={handleSignOut} />
-                ) : (
-                <>
-                  <div className="text-center">
-                    <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-[#b99662]">
-                      {mode === 'register' ? 'Join Lumière' : 'Account'}
-                    </p>
-                    <h1 className="mt-2 font-serif text-[26px] font-normal leading-tight text-[#f0eae5] sm:text-[28px]">
-                      {mode === 'register' ? 'Create Your Account' : 'Welcome Back'}
-                    </h1>
-                    <p className="mt-2 text-[13px] font-light leading-relaxed text-[#a7a19b]">
-                      {mode === 'register'
-                        ? 'Save your favourite pieces and follow your orders.'
-                        : 'Sign in to access your wishlist, orders and a faster checkout.'}
-                    </p>
-                  </div>
-
-                  <div
-                    role="tablist"
-                    aria-label="Sign in or create account"
-                    className="mt-6 grid grid-cols-2 border-b border-white/10"
-                  >
-                    <button
-                      type="button"
-                      role="tab"
-                      aria-selected={mode !== 'register'}
-                      onClick={() => switchMode('login')}
-                      className={`relative pb-2.5 text-[12px] font-medium uppercase tracking-[0.16em] transition-colors duration-300 ${
-                        mode !== 'register'
-                          ? 'text-[#f0eae5]'
-                          : 'text-[#8c867f] hover:text-[#c9c2bb]'
-                      }`}
-                    >
-                      Sign In
-                      {mode !== 'register' && (
-                        <span
-                          aria-hidden="true"
-                          className="absolute -bottom-px left-0 h-[2px] w-full bg-[#b99662]"
-                        />
-                      )}
-                    </button>
-                    <button
-                      type="button"
-                      role="tab"
-                      aria-selected={mode === 'register'}
-                      onClick={() => switchMode('register')}
-                      className={`relative pb-2.5 text-[12px] font-medium uppercase tracking-[0.16em] transition-colors duration-300 ${
-                        mode === 'register'
-                          ? 'text-[#f0eae5]'
-                          : 'text-[#8c867f] hover:text-[#c9c2bb]'
-                      }`}
-                    >
-                      Create Account
-                      {mode === 'register' && (
-                        <span
-                          aria-hidden="true"
-                          className="absolute -bottom-px left-0 h-[2px] w-full bg-[#b99662]"
-                        />
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="mt-7">
-                    {mode === 'register' ? (
-                      <RegisterForm onAuthenticated={setUser} />
-                    ) : (
-                      <LoginForm onAuthenticated={setUser} />
-                    )}
-                  </div>
-
-                  <p className="mt-6 text-center text-[12px] text-[#8c867f]">
-                    {mode === 'register' ? 'Already have an account? ' : "Don't have an account? "}
-                    <button
-                      type="button"
-                      onClick={() => switchMode(mode === 'register' ? 'login' : 'register')}
-                      className="text-[#b99662] transition-colors hover:text-[#d8b47e]"
-                    >
-                      {mode === 'register' ? 'Sign in' : 'Create one'}
-                    </button>
+        <div className="flex min-h-0 flex-1 items-center justify-center py-6">
+          <div className="w-full max-w-[440px]">
+            {user ? (
+              <AccountPanel user={user} onSignOut={handleSignOut} />
+            ) : (
+              <>
+                <div className="text-center">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-[#b99662]">
+                    {mode === 'register' ? 'Join Lumière' : 'Account'}
                   </p>
+                  <h1 className="mt-2 font-serif text-[26px] font-normal leading-tight text-[#f0eae5] sm:text-[28px]">
+                    {mode === 'register' ? 'Create Your Account' : 'Welcome Back'}
+                  </h1>
+                  <p className="mt-2 text-[13px] font-light leading-relaxed text-[#a7a19b]">
+                    {mode === 'register'
+                      ? 'Save your favourite pieces and follow your orders.'
+                      : 'Sign in to access your wishlist, orders and a faster checkout.'}
+                  </p>
+                </div>
 
-                  {isLocalAuth && (
-                    <p className="mt-4 flex items-start justify-center gap-1.5 text-center text-[10.5px] leading-relaxed text-[#6f6a64]">
-                      <ShieldCheck size={13} strokeWidth={1.5} className="mt-0.5 shrink-0" />
-                      Demo mode: accounts are stored on this device only.
-                    </p>
+                <div
+                  role="tablist"
+                  aria-label="Sign in or create account"
+                  className="mt-6 grid grid-cols-2 border-b border-white/10"
+                >
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={mode !== 'register'}
+                    onClick={() => switchMode('login')}
+                    className={`relative pb-2.5 text-[12px] font-medium uppercase tracking-[0.16em] transition-colors duration-300 ${
+                      mode !== 'register'
+                        ? 'text-[#f0eae5]'
+                        : 'text-[#8c867f] hover:text-[#c9c2bb]'
+                    }`}
+                  >
+                    Sign In
+                    {mode !== 'register' && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute -bottom-px left-0 h-[2px] w-full bg-[#b99662]"
+                      />
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={mode === 'register'}
+                    onClick={() => switchMode('register')}
+                    className={`relative pb-2.5 text-[12px] font-medium uppercase tracking-[0.16em] transition-colors duration-300 ${
+                      mode === 'register'
+                        ? 'text-[#f0eae5]'
+                        : 'text-[#8c867f] hover:text-[#c9c2bb]'
+                    }`}
+                  >
+                    Create Account
+                    {mode === 'register' && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute -bottom-px left-0 h-[2px] w-full bg-[#b99662]"
+                      />
+                    )}
+                  </button>
+                </div>
+
+                <div className="mt-7">
+                  {mode === 'register' ? (
+                    <RegisterForm onAuthenticated={setUser} />
+                  ) : (
+                    <LoginForm onAuthenticated={setUser} />
                   )}
-                  </>
+                </div>
+
+                <p className="mt-6 text-center text-[12px] text-[#8c867f]">
+                  {mode === 'register' ? 'Already have an account? ' : "Don't have an account? "}
+                  <button
+                    type="button"
+                    onClick={() => switchMode(mode === 'register' ? 'login' : 'register')}
+                    className="text-[#b99662] transition-colors hover:text-[#d8b47e]"
+                  >
+                    {mode === 'register' ? 'Sign in' : 'Create one'}
+                  </button>
+                </p>
+
+                {isLocalAuth && (
+                  <p className="mt-4 flex items-start justify-center gap-1.5 text-center text-[10.5px] leading-relaxed text-[#6f6a64]">
+                    <ShieldCheck size={13} strokeWidth={1.5} className="mt-0.5 shrink-0" />
+                    Demo mode: accounts are stored on this device only.
+                  </p>
                 )}
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </div>
-      </section>
+      </div>
     </main>
   );
 }
