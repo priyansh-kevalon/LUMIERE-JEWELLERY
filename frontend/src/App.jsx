@@ -9,6 +9,7 @@ import Collections from './pages/Collections';
 import Contact from './pages/Contact';
 import ProductDetail from './pages/ProductDetail';
 import Auth from './pages/Auth';
+import AdminApp from './admin/AdminApp';
 import ScrollToTop from './components/common/ScrollToTop';
 
 /* Lightweight hash router — no dependency added.
@@ -25,6 +26,10 @@ function readRoute() {
   const [rawPath, queryString = ''] = hash.slice(2).split('?');
   const path = rawPath.replace(/\/+$/, '');
   const params = new URLSearchParams(queryString);
+
+  if (path === 'admin' || path.startsWith('admin/')) {
+    return { name: 'admin', segments: path.split('/').slice(1) };
+  }
 
   if (path === 'about') return { name: 'about' };
   if (path === 'collections') {
@@ -47,7 +52,7 @@ function readRoute() {
 
 /* Routes that live at the top of their own page rather than as an
    in-page scroll target. */
-const scrollsToTop = new Set(['about', 'collections', 'contact', 'product', 'login', 'register']);
+const scrollsToTop = new Set(['about', 'collections', 'contact', 'product', 'login', 'register', 'admin']);
 
 export default function App() {
   const [route, setRoute] = useState(readRoute);
@@ -94,6 +99,10 @@ export default function App() {
             : 'home';
 
   const isAuthRoute = route.name === 'login' || route.name === 'register';
+
+  if (route.name === 'admin') {
+    return <AdminApp segments={route.segments} />;
+  }
 
   return (
     <CartProvider>

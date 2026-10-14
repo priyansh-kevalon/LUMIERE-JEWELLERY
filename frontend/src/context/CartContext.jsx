@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import usePersistentState from '../hooks/usePersistentState';
-import { getProductById } from '../data/products';
+import { getProductById, productsStore } from '../data/products';
+import { useStore } from '../data/store';
 
 /**
  * Global shopping bag + wishlist state, shared by every page so an item added
@@ -28,6 +29,7 @@ export function CartProvider({ children }) {
   const [bag, setBag] = usePersistentState('lumiere-bag', []);
   const [wishlist, setWishlist] = usePersistentState('lumiere-wishlist', []);
   const [drawer, setDrawer] = useState(null);
+  const catalogue = useStore(productsStore);
 
   const addToBag = useCallback(
     (product, options = {}) => {
@@ -110,6 +112,7 @@ export function CartProvider({ children }) {
   }, [
     bag,
     wishlist,
+    catalogue,
     addToBag,
     removeFromBag,
     setBagQty,

@@ -1,4 +1,6 @@
-export const categories = [{
+import { createStore, useStore } from './store';
+
+const seedCategories = [{
         key: 'GOLD',
         label: 'GOLD',
         image: '/images/about/Rectangle 34624212.png',
@@ -25,6 +27,44 @@ export const categories = [{
 
 ];
 
+/* Live, editable category list shared by the storefront and the admin panel. */
+export const categoriesStore = createStore('lumiere-categories', seedCategories);
+
+export function getCategories() {
+    return categoriesStore.get();
+}
+
+export function useCategories() {
+    return useStore(categoriesStore);
+}
+
+const slug = (value) =>
+    String(value || '')
+        .trim()
+        .toUpperCase()
+        .replace(/[^A-Z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'CATEGORY';
+
+export function saveCategory(category) {
+    const record = {
+        key: category.key || slug(category.label || category.key),
+        label: category.label || category.key,
+        image: category.image || '',
+        alt: category.alt || category.label || '',
+    };
+    categoriesStore.set((current) => {
+        const exists = current.some((entry) => entry.key === record.key);
+        return exists
+            ? current.map((entry) => (entry.key === record.key ? { ...entry, ...record } : entry))
+            : [...current, record];
+    });
+    return record;
+}
+
+export function deleteCategory(key) {
+    categoriesStore.set((current) => current.filter((entry) => entry.key !== key));
+}
+
 export const filterGroups = [
     { key: 'type', label: 'JEWELLERY TYPE', options: ['Rings', 'Earrings', 'Necklaces', 'Pendants', 'Bracelets', 'Bangles', 'Chains', 'Sets'] },
     { key: 'metal', label: 'METAL', options: ['18K Gold', '22K Gold', '14K Gold', 'Sterling Silver'] },
@@ -35,7 +75,7 @@ export const filterGroups = [
     { key: 'availability', label: 'AVAILABILITY', options: ['In Stock', 'Made to Order'] },
 ];
 
-export const products = [{
+const seedProducts = [{
         id: 1,
         name: 'Gold Prestige Intertwined Earrings',
         category: 'GOLD',
@@ -453,6 +493,51 @@ export const products = [{
 export const PER_PAGE = 9;
 export const ALL_CATEGORY = 'ALL';
 
+/* ------------------------------------------------------------------ */
+/* Live catalogue store                                                */
+/*                                                                     */
+/* Seeded from the static demo catalogue above, then persisted to       */
+/* `localStorage` so the admin panel can add, edit and remove pieces    */
+/* and have the changes show up across the storefront.                  */
+/* ------------------------------------------------------------------ */
+
+export const productsStore = createStore('lumiere-products', () =>
+    seedProducts.map((product, index) => ({
+        ...product,
+        stock: product.stock ?? (4 + ((index * 7) % 28)),
+        active: product.active ?? true,
+        featured: product.featured ?? Boolean(product.badge),
+    })),
+);
+
+export function getProducts() {
+    return productsStore.get();
+}
+
+export function useProducts() {
+    return useStore(productsStore);
+}
+
+export function nextProductId() {
+    return productsStore.get().reduce((max, product) => Math.max(max, product.id), 0) + 1;
+}
+
+export function saveProduct(product) {
+    const id = product.id ?? nextProductId();
+    const record = { ...product, id };
+    productsStore.set((current) => {
+        const exists = current.some((entry) => entry.id === id);
+        return exists
+            ? current.map((entry) => (entry.id === id ? { ...entry, ...record } : entry))
+            : [...current, record];
+    });
+    return record;
+}
+
+export function deleteProduct(id) {
+    productsStore.set((current) => current.filter((entry) => entry.id !== id));
+}
+
 export function formatINR(value) {
     if (value == null || Number.isNaN(Number(value))) return '';
     const digits = Math.round(Number(value)).toString();
@@ -542,7 +627,7 @@ const galleryPools = {
 };
 
 export function getProductById(id) {
-    return products.find((product) => product.id === id) || null;
+    return getProducts().find((product) => product.id === id) || null;
 }
 
 export function getGallery(product) {
@@ -555,11 +640,12 @@ export function getGallery(product) {
 }
 
 export function getRelated(product, count = 4) {
-    const sameType = products.filter((p) => p.id !== product.id && p.type === product.type);
-    const sameCategory = products.filter(
+    const all = getProducts();
+    const sameType = all.filter((p) => p.id !== product.id && p.type === product.type);
+    const sameCategory = all.filter(
         (p) => p.id !== product.id && p.category === product.category && p.type !== product.type,
     );
-    const rest = products.filter((p) => p.id !== product.id && p.category !== product.category);
+    const rest = all.filter((p) => p.id !== product.id && p.category !== product.category);
 
     const seen = new Set([product.id]);
     const result = [];

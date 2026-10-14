@@ -13,9 +13,9 @@ import ProductCard from '../components/product/ProductCard';
 import BenefitsBar from '../components/common/BenefitsBar';
 import { useCart } from '../context/CartContext';
 import {
-  categories,
   filterGroups,
-  products,
+  useCategories,
+  useProducts,
   PER_PAGE,
   ALL_CATEGORY,
 } from '../data/products';
@@ -85,7 +85,7 @@ function FilterSidebar({ filters, counts, onToggle, onClear }) {
   );
 }
 
-function CategoryRow({ active, onSelect }) {
+function CategoryRow({ categories, active, onSelect }) {
   const items = categories.map((category) => ({
     key: category.key,
     label: category.label,
@@ -312,6 +312,8 @@ function FilterDrawer({ open, onClose, filters, counts, onToggle, onClear, resul
 }
 
 export default function Collections({ category = null, occasion = null, sort: sortPreset = null }) {
+  const products = useProducts();
+  const categories = useCategories();
   const [activeCategory, setActiveCategory] = useState(category || ALL_CATEGORY);
   const [filters, setFilters] = useState(() => (occasion ? { occasion: [occasion] } : {}));
   const [sort, setSort] = useState(sortPreset || 'popularity');
@@ -352,7 +354,7 @@ export default function Collections({ category = null, occasion = null, sort: so
       }
     }
     return result;
-  }, [activeCategory]);
+  }, [activeCategory, products]);
 
   const filtered = useMemo(() => {
     let list = products.filter(
@@ -381,7 +383,7 @@ export default function Collections({ category = null, occasion = null, sort: so
     }
 
     return list;
-  }, [activeCategory, filters, sort]);
+  }, [activeCategory, filters, sort, products]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const safePage = Math.min(page, totalPages);
@@ -445,7 +447,7 @@ export default function Collections({ category = null, occasion = null, sort: so
         }
       />
 
-      <CategoryRow active={activeCategory} onSelect={selectCategory} />
+      <CategoryRow categories={categories} active={activeCategory} onSelect={selectCategory} />
 
       <section id="shop" ref={shopRef} className="scroll-mt-20 bg-[#101010]" aria-label="Product catalogue">
         <div className="mx-auto w-full max-w-[90rem] px-5 pb-20 pt-9 sm:px-7 sm:pt-12 lg:px-10 lg:pb-28 lg:pt-14">
