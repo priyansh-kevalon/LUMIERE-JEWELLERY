@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Heart, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react';
+import { Heart, Minus, Plus, ShoppingBag, Trash2, X, CheckCircle2 } from 'lucide-react';
 import SmartImage from '../common/SmartImage';
 import { useCart } from '../../context/CartContext';
 import { formatINR } from '../../data/products';
@@ -48,6 +48,28 @@ function EmptyState({ icon, title, copy, onBrowse }) {
   );
 }
 
+function PlacedState({ orderId, onDone }) {
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center px-8 py-20 text-center">
+      <span className="flex h-14 w-14 items-center justify-center rounded-full border border-[#C6A16A]/60 text-[#C6A16A]">
+        <CheckCircle2 size={24} strokeWidth={1.4} />
+      </span>
+      <p className="mt-5 font-serif text-[19px] text-[#f2ece8]">Thank you</p>
+      <p className="mt-2 max-w-[16rem] text-[12px] font-light leading-relaxed text-[#9d968f]">
+        {orderId ? `Your order ${orderId} has been placed. ` : 'Your order has been placed. '}
+        You&apos;ll receive a confirmation by email shortly.
+      </p>
+      <button
+        type="button"
+        onClick={onDone}
+        className="mt-6 rounded-full border border-[#C6A16A]/50 px-6 py-2.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[#C6A16A] transition-colors hover:bg-[#C6A16A] hover:text-[#0D0D0D]"
+      >
+        Continue Shopping
+      </button>
+    </div>
+  );
+}
+
 export default function ShopDrawer() {
   const {
     bag,
@@ -59,12 +81,14 @@ export default function ShopDrawer() {
     setBagQty,
     addToBag,
     removeFromWishlist,
+    clearBag,
     drawer,
     openDrawer,
     closeDrawer,
   } = useCart();
 
   const [checkout, setCheckout] = useState(null);
+  const [placedOrder, setPlacedOrder] = useState(null);
   const open = drawer !== null;
   const tab = drawer || 'bag';
 
@@ -90,11 +114,23 @@ export default function ShopDrawer() {
     if (bag.length === 0) return;
     setCheckout('loading');
     try {
-      await startCheckout(bag);
-      setCheckout('redirecting');
+      const result = await startCheckout(bag);
+      if (result && typeof result.url === 'string' && result.url) {
+        setCheckout('redirecting');
+        return;
+      }
+      setPlacedOrder(result?.orderId || null);
+      setCheckout('placed');
+      clearBag();
     } catch (error) {
       setCheckout(error.message === 'checkout-not-configured' ? 'not-configured' : 'error');
     }
+  };
+
+  const dismissPlaced = () => {
+    setPlacedOrder(null);
+    setCheckout(null);
+    closeDrawer();
   };
 
   const handleAddWishlistItem = (product) => {
@@ -165,12 +201,16 @@ export default function ShopDrawer() {
         {tab === 'bag' && (
           <>
             {bag.length === 0 ? (
-              <EmptyState
-                icon={<ShoppingBag size={22} strokeWidth={1.4} />}
-                title="Your bag is empty"
-                copy="Pieces you add to your bag will appear here, ready for checkout."
-                onBrowse={closeDrawer}
-              />
+              placedOrder !== null || checkout === 'placed' ? (
+                <PlacedState orderId={placedOrder} onDone={dismissPlaced} />
+              ) : (
+                <EmptyState
+                  icon={<ShoppingBag size={22} strokeWidth={1.4} />}
+                  title="Your bag is empty"
+                  copy="Pieces you add to your bag will appear here, ready for checkout."
+                  onBrowse={closeDrawer}
+                />
+              )
             ) : (
               <div className="flex-1 overflow-y-auto px-5 py-5">
                 <ul className="flex flex-col gap-5">

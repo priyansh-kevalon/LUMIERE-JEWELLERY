@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ArrowRight, IndianRupee, ShoppingCart, Users, TrendingUp, PackageX, Boxes } from 'lucide-react';
 import { Badge, Card, PageHeader, SectionTitle, TableWrap, Td, Th, cx } from '../ui';
-import { useOrders, useSettings, buildCustomers } from '../../data/adminData';
+import { useOrders, useSettings, useCustomers, buildCustomers } from '../../data/adminData';
 import { readStorage } from '../../data/store';
 import { formatINR, useProducts } from '../../data/products';
 
@@ -26,12 +26,13 @@ export default function Dashboard() {
   const orders = useOrders();
   const products = useProducts();
   const settings = useSettings();
+  const remoteCustomers = useCustomers();
   const users = useMemo(() => readStorage('lumiere-users', []), []);
 
   const stats = useMemo(() => {
     const paid = orders.filter((order) => order.payment === 'paid');
     const revenue = paid.reduce((sum, order) => sum + order.total, 0);
-    const customers = buildCustomers(orders, users);
+    const customers = remoteCustomers.length ? remoteCustomers : buildCustomers(orders, users);
     const aov = paid.length ? Math.round(revenue / paid.length) : 0;
 
     return {
@@ -41,7 +42,7 @@ export default function Dashboard() {
       aov,
       productCount: products.length,
     };
-  }, [orders, products, users]);
+  }, [orders, products, users, remoteCustomers]);
 
   const lowStock = useMemo(
     () =>

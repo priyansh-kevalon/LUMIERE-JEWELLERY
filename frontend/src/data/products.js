@@ -1,4 +1,5 @@
 import { createStore, useStore } from './store';
+import { api, apiUpsert, apiWrite } from '../services/api';
 
 const seedCategories = [{
         key: 'GOLD',
@@ -58,11 +59,13 @@ export function saveCategory(category) {
             ? current.map((entry) => (entry.key === record.key ? { ...entry, ...record } : entry))
             : [...current, record];
     });
+    apiWrite(apiUpsert('/categories', record.key, record, { admin: true }), 'saveCategory');
     return record;
 }
 
 export function deleteCategory(key) {
     categoriesStore.set((current) => current.filter((entry) => entry.key !== key));
+    apiWrite(api.del(`/categories/${encodeURIComponent(key)}`, { admin: true }), 'deleteCategory');
 }
 
 export const filterGroups = [
@@ -531,11 +534,13 @@ export function saveProduct(product) {
             ? current.map((entry) => (entry.id === id ? { ...entry, ...record } : entry))
             : [...current, record];
     });
+    apiWrite(apiUpsert('/products', id, record, { admin: true }), 'saveProduct');
     return record;
 }
 
 export function deleteProduct(id) {
     productsStore.set((current) => current.filter((entry) => entry.id !== id));
+    apiWrite(api.del(`/products/${encodeURIComponent(id)}`, { admin: true }), 'deleteProduct');
 }
 
 export function formatINR(value) {

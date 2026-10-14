@@ -7,6 +7,7 @@
 /* ------------------------------------------------------------------ */
 
 import { readStorage } from '../data/store';
+import { api, isApiConfigured } from './api';
 
 const ADMINS_KEY = 'lumiere-admins';
 const SESSION_KEY = 'lumiere-admin-session';
@@ -70,6 +71,23 @@ export function adminSignOut() {
 }
 
 export async function adminSignIn({ email, password }) {
+    if (isApiConfigured) {
+        try {
+            const session = await api.post('/admin/auth/login', { email, password });
+            try {
+                window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+            } catch {
+                /* storage unavailable */
+            }
+            return session;
+        } catch (error) {
+            /* A real HTTP rejection means the credentials are wrong — do not
+               fall back. Only a network/unreachable error falls through to the
+               on-device demo store below. */
+            if (error.status) throw new Error('invalid-credentials');
+        }
+    }
+
     await ensureSeed();
     const normalized = (email || '').trim().toLowerCase();
     const admins = readStorage(ADMINS_KEY, []);

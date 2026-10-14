@@ -1,4 +1,5 @@
 import { createStore, useStore } from './store';
+import { api, apiUpsert, apiWrite } from '../services/api';
 
 /* ------------------------------------------------------------------ */
 /* Admin data layer                                                    */
@@ -183,6 +184,10 @@ export const couponsStore = createStore('lumiere-coupons', seedCoupons);
 export const reviewsStore = createStore('lumiere-reviews', seedReviews);
 export const settingsStore = createStore('lumiere-settings', seedSettings);
 
+/* Populated from the API once an admin signs in (see data/sync.js). Empty in
+   pure-offline mode, where the panel instead derives customers from orders. */
+export const customersStore = createStore('lumiere-customers', []);
+
 export function useOrders() {
     return useStore(ordersStore);
 }
@@ -195,11 +200,15 @@ export function useReviews() {
 export function useSettings() {
     return useStore(settingsStore);
 }
+export function useCustomers() {
+    return useStore(customersStore);
+}
 
 export function updateOrder(id, patch) {
     ordersStore.set((current) =>
         current.map((order) => (order.id === id ? { ...order, ...patch } : order)),
     );
+    apiWrite(api.patch(`/orders/${encodeURIComponent(id)}`, patch, { admin: true }), 'updateOrder');
 }
 
 export function saveCoupon(coupon) {
@@ -210,25 +219,30 @@ export function saveCoupon(coupon) {
             ? current.map((entry) => (entry.code === record.code ? { ...entry, ...record } : entry))
             : [{ used: 0, active: true, ...record }, ...current];
     });
+    apiWrite(apiUpsert('/coupons', record.code, record, { admin: true }), 'saveCoupon');
     return record;
 }
 
 export function deleteCoupon(code) {
     couponsStore.set((current) => current.filter((entry) => entry.code !== code));
+    apiWrite(api.del(`/coupons/${encodeURIComponent(code)}`, { admin: true }), 'deleteCoupon');
 }
 
 export function updateReview(id, patch) {
     reviewsStore.set((current) =>
         current.map((review) => (review.id === id ? { ...review, ...patch } : review)),
     );
+    apiWrite(api.patch(`/reviews/${encodeURIComponent(id)}`, patch, { admin: true }), 'updateReview');
 }
 
 export function deleteReview(id) {
     reviewsStore.set((current) => current.filter((review) => review.id !== id));
+    apiWrite(api.del(`/reviews/${encodeURIComponent(id)}`, { admin: true }), 'deleteReview');
 }
 
 export function updateSettings(patch) {
     settingsStore.set((current) => ({ ...current, ...patch }));
+    apiWrite(api.put('/settings', patch, { admin: true }), 'updateSettings');
 }
 
 /** Orders grouped by customer email with lifetime metrics. */

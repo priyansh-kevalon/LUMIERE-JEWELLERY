@@ -1,16 +1,20 @@
 import { useMemo, useState } from 'react';
 import { Search, Crown } from 'lucide-react';
 import { Badge, Card, EmptyState, PageHeader, TableWrap, Td, Th, TextInput } from '../ui';
-import { buildCustomers, useOrders } from '../../data/adminData';
+import { buildCustomers, useCustomers, useOrders } from '../../data/adminData';
 import { readStorage } from '../../data/store';
 import { formatINR } from '../../data/products';
 
 export default function AdminCustomers() {
   const orders = useOrders();
+  const remoteCustomers = useCustomers();
   const users = useMemo(() => readStorage('lumiere-users', []), []);
   const [query, setQuery] = useState('');
 
-  const customers = useMemo(() => buildCustomers(orders, users), [orders, users]);
+  const customers = useMemo(
+    () => (remoteCustomers.length ? remoteCustomers : buildCustomers(orders, users)),
+    [remoteCustomers, orders, users],
+  );
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();

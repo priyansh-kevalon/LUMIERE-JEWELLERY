@@ -16,6 +16,7 @@ import {
 import { ToastProvider } from './toast';
 import { cx } from './ui';
 import { getAdminSession, adminSignOut } from '../services/adminAuth';
+import { hydrateAdmin, resetAdminSync } from '../data/sync';
 import AdminLogin from './pages/AdminLogin';
 import Dashboard from './pages/Dashboard';
 import AdminProducts from './pages/AdminProducts';
@@ -222,7 +223,12 @@ function AdminShell({ session, onSignOut, segments }) {
 export default function AdminApp({ segments = [] }) {
   const [session, setSession] = useState(getAdminSession);
 
+  useEffect(() => {
+    if (session) hydrateAdmin();
+  }, [session]);
+
   const handleSignOut = () => {
+    resetAdminSync();
     adminSignOut();
     setSession(null);
   };
