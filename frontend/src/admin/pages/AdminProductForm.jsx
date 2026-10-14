@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { ArrowLeft, Trash2, Upload, Plus, Save } from 'lucide-react';
 import {
+  Badge,
   Button,
   Card,
   Field,
@@ -424,10 +425,33 @@ export default function AdminProductForm({ productId = null }) {
             </div>
           </Card>
 
-          <Card className="space-y-4">
-            <SectionTitle>Visibility</SectionTitle>
-            <Toggle checked={values.featured} onChange={(next) => set('featured', next)} label="Featured piece" />
-            <Toggle checked={values.active} onChange={(next) => set('active', next)} label="Active on storefront" />
+          <Card className="space-y-5">
+            <SectionTitle
+              action={
+                <Badge tone={values.active ? 'active' : 'inactive'}>
+                  {values.active ? 'Active' : 'Inactive'}
+                </Badge>
+              }
+            >
+              Visibility
+            </SectionTitle>
+            <Toggle
+              checked={values.active}
+              onChange={(next) => set('active', next)}
+              label="Storefront status"
+              description={
+                values.active
+                  ? 'Live and visible to shoppers in the catalogue.'
+                  : 'Hidden from the storefront catalogue.'
+              }
+              statusLabels={['Active', 'Inactive']}
+            />
+            <Toggle
+              checked={values.featured}
+              onChange={(next) => set('featured', next)}
+              label="Featured piece"
+              description="Highlighted across the home and collection pages."
+            />
           </Card>
         </div>
       </div>

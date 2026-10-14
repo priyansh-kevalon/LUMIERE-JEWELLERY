@@ -521,6 +521,16 @@ export function useProducts() {
     return useStore(productsStore);
 }
 
+/* Only products whose status is Active are surfaced to shoppers. */
+export function getStorefrontProducts() {
+    return productsStore.get().filter((product) => product.active !== false);
+}
+
+export function useStorefrontProducts() {
+    const products = useStore(productsStore);
+    return products.filter((product) => product.active !== false);
+}
+
 export function nextProductId() {
     return productsStore.get().reduce((max, product) => Math.max(max, product.id), 0) + 1;
 }

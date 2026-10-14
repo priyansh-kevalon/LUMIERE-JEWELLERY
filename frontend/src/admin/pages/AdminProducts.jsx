@@ -9,13 +9,15 @@ import {
   Modal,
   PageHeader,
   Select,
+  Switch,
   TextInput,
   TableWrap,
   Td,
   Th,
+  cx,
 } from '../ui';
 import { useToast } from '../toast';
-import { deleteProduct, formatINR, useCategories, useProducts } from '../../data/products';
+import { deleteProduct, formatINR, saveProduct, useCategories, useProducts } from '../../data/products';
 
 export default function AdminProducts() {
   const products = useProducts();
@@ -23,12 +25,18 @@ export default function AdminProducts() {
   const toast = useToast();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('ALL');
+  const [status, setStatus] = useState('ALL');
   const [pending, setPending] = useState(null);
+
+  const isActive = (product) => product.active !== false;
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
     return products
       .filter((product) => category === 'ALL' || product.category === category)
+      .filter((product) =>
+        status === 'ALL' ? true : status === 'ACTIVE' ? isActive(product) : !isActive(product),
+      )
       .filter(
         (product) =>
           !term ||
@@ -36,7 +44,9 @@ export default function AdminProducts() {
           product.type.toLowerCase().includes(term),
       )
       .sort((a, b) => b.id - a.id);
-  }, [products, query, category]);
+  }, [products, query, category, status]);
+
+  const activeCount = products.filter(isActive).length;
 
   const confirmDelete = () => {
     if (!pending) return;
@@ -45,11 +55,17 @@ export default function AdminProducts() {
     setPending(null);
   };
 
+  const toggleStatus = (product) => {
+    const next = !isActive(product);
+    saveProduct({ ...product, active: next });
+    toast(`${product.name} marked ${next ? 'Active' : 'Inactive'}`);
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Products"
-        subtitle={`${products.length} pieces in the catalogue`}
+        subtitle={`${activeCount} active · ${products.length} pieces in the catalogue`}
         actions={
           <Button onClick={() => { window.location.hash = '#/admin/products/new'; }}>
             <Plus size={15} strokeWidth={2} />
@@ -76,6 +92,11 @@ export default function AdminProducts() {
                 {entry.label}
               </option>
             ))}
+          </Select>
+          <Select value={status} onChange={(event) => setStatus(event.target.value)} className="sm:w-40">
+            <option value="ALL">All Status</option>
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
           </Select>
         </div>
       </Card>
@@ -134,9 +155,22 @@ export default function AdminProducts() {
                   <span className={product.stock <= 5 ? 'text-[#e0a08f]' : ''}>{product.stock ?? 0}</span>
                 </Td>
                 <Td>
-                  <Badge tone={product.active === false ? 'inactive' : 'active'}>
-                    {product.active === false ? 'Inactive' : 'Active'}
-                  </Badge>
+                  <div className="flex items-center gap-2.5">
+                    <Switch
+                      checked={isActive(product)}
+                      onChange={() => toggleStatus(product)}
+                      size="sm"
+                      ariaLabel={`Mark ${product.name} ${isActive(product) ? 'inactive' : 'active'}`}
+                    />
+                    <span
+                      className={cx(
+                        'text-[11px] font-medium',
+                        isActive(product) ? 'text-[#bfe0c2]' : 'text-[#8d867f]',
+                      )}
+                    >
+                      {isActive(product) ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
                 </Td>
                 <Td>
                   <div className="flex items-center justify-end gap-2">

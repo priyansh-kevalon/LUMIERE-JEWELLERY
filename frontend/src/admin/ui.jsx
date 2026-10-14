@@ -130,30 +130,63 @@ export function Select({ className = '', children, ...rest }) {
   );
 }
 
-export function Toggle({ checked, onChange, label }) {
+export function Switch({ checked, onChange, size = 'md', ariaLabel = 'Toggle', className = '' }) {
+  const dims =
+    size === 'sm'
+      ? { track: 'h-5 w-9', knob: 'h-[14px] w-[14px]', on: 'translate-x-[18px]', off: 'translate-x-[3px]' }
+      : { track: 'h-6 w-11', knob: 'h-[18px] w-[18px]', on: 'translate-x-[22px]', off: 'translate-x-[3px]' };
+
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
+      aria-label={ariaLabel}
       onClick={() => onChange(!checked)}
-      className="flex items-center gap-3"
+      className={cx(
+        'relative inline-flex shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-200',
+        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]',
+        dims.track,
+        checked ? 'border-[#C6A16A] bg-[#C6A16A]' : 'border-white/15 bg-white/10 hover:bg-white/[0.16]',
+        className,
+      )}
     >
       <span
         className={cx(
-          'relative h-5 w-9 rounded-full transition-colors duration-200',
-          checked ? 'bg-[#C6A16A]' : 'bg-white/15',
+          'pointer-events-none inline-block rounded-full bg-white shadow-sm transition-transform duration-200 ease-out',
+          dims.knob,
+          checked ? dims.on : dims.off,
         )}
-      >
-        <span
-          className={cx(
-            'absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform duration-200',
-            checked ? 'translate-x-4' : 'translate-x-0.5',
-          )}
-        />
-      </span>
-      {label ? <span className="text-[12px] text-[#c9c2bb]">{label}</span> : null}
+      />
     </button>
+  );
+}
+
+export function Toggle({ checked, onChange, label, description, statusLabels, className = '' }) {
+  return (
+    <div className={cx('flex items-center justify-between gap-4', className)}>
+      {label || description ? (
+        <span className="flex min-w-0 flex-col">
+          {label ? <span className="text-[12.5px] text-[#e7e1db]">{label}</span> : null}
+          {description ? (
+            <span className="mt-0.5 text-[11px] leading-snug text-[#6f6a64]">{description}</span>
+          ) : null}
+        </span>
+      ) : null}
+      <span className="flex shrink-0 items-center gap-2.5">
+        {statusLabels ? (
+          <span
+            className={cx(
+              'text-[10px] font-semibold uppercase tracking-[0.14em] transition-colors',
+              checked ? 'text-[#bfe0c2]' : 'text-[#8d867f]',
+            )}
+          >
+            {checked ? statusLabels[0] : statusLabels[1]}
+          </span>
+        ) : null}
+        <Switch checked={checked} onChange={onChange} ariaLabel={label || 'Toggle'} />
+      </span>
+    </div>
   );
 }
 
