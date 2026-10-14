@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
-import { Star, Check, X, Trash2, MessageSquare, Send } from 'lucide-react';
-import { Badge, Button, Card, EmptyState, IconButton, Modal, PageHeader, Select, Textarea } from '../ui';
+import { useState } from 'react';
+import { Star, Trash2, MessageSquare, Send } from 'lucide-react';
+import { Button, Card, EmptyState, IconButton, Modal, PageHeader, Textarea } from '../ui';
 import { useToast } from '../toast';
 import { deleteReview, updateReview, useReviews } from '../../data/adminData';
 
@@ -21,24 +21,9 @@ function Stars({ value }) {
 export default function AdminReviews() {
   const reviews = useReviews();
   const toast = useToast();
-  const [status, setStatus] = useState('pending');
   const [replyTo, setReplyTo] = useState(null);
   const [replyText, setReplyText] = useState('');
   const [pendingDelete, setPendingDelete] = useState(null);
-
-  const filtered = useMemo(
-    () => reviews.filter((review) => status === 'all' || review.status === status),
-    [reviews, status],
-  );
-
-  const counts = useMemo(
-    () => ({
-      pending: reviews.filter((review) => review.status === 'pending').length,
-      approved: reviews.filter((review) => review.status === 'approved').length,
-      rejected: reviews.filter((review) => review.status === 'rejected').length,
-    }),
-    [reviews],
-  );
 
   const dateLabel = (value) =>
     new Date(value).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -52,31 +37,17 @@ export default function AdminReviews() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Reviews"
-        subtitle={`${counts.pending} awaiting moderation`}
-        actions={
-          <Select value={status} onChange={(event) => setStatus(event.target.value)} className="w-44">
-            <option value="pending">Pending ({counts.pending})</option>
-            <option value="approved">Approved ({counts.approved})</option>
-            <option value="rejected">Rejected ({counts.rejected})</option>
-            <option value="all">All Reviews</option>
-          </Select>
-        }
-      />
+      <PageHeader title="Reviews" subtitle={`${reviews.length} reviews`} />
 
-      {filtered.length === 0 ? (
-        <EmptyState icon={<Star size={20} />} title="Nothing here" copy="No reviews match this filter." />
+      {reviews.length === 0 ? (
+        <EmptyState icon={<Star size={20} />} title="Nothing here" copy="No reviews yet." />
       ) : (
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-          {filtered.map((review) => (
+          {reviews.map((review) => (
             <Card key={review.id} className="flex flex-col gap-3">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <div className="flex items-center gap-2.5">
-                    <Stars value={review.rating} />
-                    <Badge tone={review.status}>{review.status}</Badge>
-                  </div>
+                  <Stars value={review.rating} />
                   <p className="mt-2 text-[14px] text-[#f2ece8]">{review.title}</p>
                   <p className="text-[10.5px] uppercase tracking-[0.12em] text-[#6f6a64]">
                     {review.author} · {review.productName} · {dateLabel(review.createdAt)}
@@ -101,31 +72,6 @@ export default function AdminReviews() {
               ) : null}
 
               <div className="mt-auto flex flex-wrap items-center gap-2 pt-1">
-                {review.status !== 'approved' ? (
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      updateReview(review.id, { status: 'approved' });
-                      toast('Review approved');
-                    }}
-                  >
-                    <Check size={13} strokeWidth={2.4} />
-                    Approve
-                  </Button>
-                ) : null}
-                {review.status !== 'rejected' ? (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => {
-                      updateReview(review.id, { status: 'rejected' });
-                      toast('Review rejected');
-                    }}
-                  >
-                    <X size={13} strokeWidth={2.4} />
-                    Reject
-                  </Button>
-                ) : null}
                 <Button
                   size="sm"
                   variant="subtle"

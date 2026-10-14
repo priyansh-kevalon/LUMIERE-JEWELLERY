@@ -1,20 +1,49 @@
 import { useState } from 'react';
-import { Save, RotateCcw, Check } from 'lucide-react';
-import { Button, Card, Field, Modal, PageHeader, SectionTitle, TextInput } from '../ui';
+import { Save, RotateCcw, Check, Plus, Trash2 } from 'lucide-react';
+import { Button, Card, Field, IconButton, Modal, PageHeader, SectionTitle, Select, TextInput } from '../ui';
 import { useToast } from '../toast';
 import { updateSettings, useSettings, ordersStore, couponsStore, reviewsStore, settingsStore } from '../../data/adminData';
 import { categoriesStore, productsStore } from '../../data/products';
 
 const ALL_PAYMENT_METHODS = ['UPI', 'Card', 'Net Banking', 'Bank Transfer', 'Cash on Delivery'];
 
+const SOCIAL_PLATFORMS = [
+  { key: 'instagram', label: 'Instagram' },
+  { key: 'facebook', label: 'Facebook' },
+  { key: 'pinterest', label: 'Pinterest' },
+  { key: 'twitter', label: 'X (Twitter)' },
+  { key: 'youtube', label: 'YouTube' },
+  { key: 'linkedin', label: 'LinkedIn' },
+  { key: 'whatsapp', label: 'WhatsApp' },
+];
+
 export default function AdminSettings() {
   const settings = useSettings();
   const toast = useToast();
   const [draft, setDraft] = useState(settings);
   const [resetOpen, setResetOpen] = useState(false);
+  const [platform, setPlatform] = useState(SOCIAL_PLATFORMS[0].key);
+  const [linkUrl, setLinkUrl] = useState('');
 
   const set = (key, value) => setDraft((current) => ({ ...current, [key]: value }));
   const setSocial = (key, value) => setDraft((current) => ({ ...current, social: { ...current.social, [key]: value } }));
+
+  const socialLabel = (key) => SOCIAL_PLATFORMS.find((entry) => entry.key === key)?.label || key;
+  const socialEntries = Object.entries(draft.social || {}).filter(([, value]) => value);
+
+  const addSocialLink = () => {
+    const value = linkUrl.trim();
+    if (!value) return;
+    setSocial(platform, value);
+    setLinkUrl('');
+  };
+
+  const removeSocialLink = (key) =>
+    setDraft((current) => {
+      const social = { ...current.social };
+      delete social[key];
+      return { ...current, social };
+    });
 
   const togglePayment = (method) => {
     setDraft((current) => {
@@ -149,17 +178,63 @@ export default function AdminSettings() {
 
         <Card className="space-y-5 xl:col-span-2">
           <SectionTitle>Social Links</SectionTitle>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Field label="Instagram">
-              <TextInput value={draft.social.instagram} onChange={(event) => setSocial('instagram', event.target.value)} />
-            </Field>
-            <Field label="Facebook">
-              <TextInput value={draft.social.facebook} onChange={(event) => setSocial('facebook', event.target.value)} />
-            </Field>
-            <Field label="Pinterest">
-              <TextInput value={draft.social.pinterest} onChange={(event) => setSocial('pinterest', event.target.value)} />
-            </Field>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <div className="sm:w-56">
+              <Field label="Platform">
+                <Select value={platform} onChange={(event) => setPlatform(event.target.value)}>
+                  {SOCIAL_PLATFORMS.map((entry) => (
+                    <option key={entry.key} value={entry.key}>
+                      {entry.label}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+            </div>
+            <div className="flex-1">
+              <Field label="Link URL">
+                <TextInput
+                  value={linkUrl}
+                  onChange={(event) => setLinkUrl(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      addSocialLink();
+                    }
+                  }}
+                  placeholder="https://…"
+                />
+              </Field>
+            </div>
+            <Button className="h-10 shrink-0" onClick={addSocialLink}>
+              <Plus size={15} strokeWidth={2} />
+              Add Link
+            </Button>
           </div>
+
+          {socialEntries.length > 0 ? (
+            <div className="space-y-2.5 border-t border-white/10 pt-5">
+              {socialEntries.map(([key, value]) => (
+                <div key={key} className="flex items-center gap-3">
+                  <span className="w-28 shrink-0 text-[11px] font-medium uppercase tracking-[0.14em] text-[#8d867f]">
+                    {socialLabel(key)}
+                  </span>
+                  <TextInput value={value} onChange={(event) => setSocial(key, event.target.value)} />
+                  <IconButton
+                    label={`Remove ${socialLabel(key)}`}
+                    className="shrink-0 border-transparent hover:border-[#e07a7a]/50 hover:text-[#e0a08f]"
+                    onClick={() => removeSocialLink(key)}
+                  >
+                    <Trash2 size={14} />
+                  </IconButton>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="border-t border-white/10 pt-5 text-[12px] text-[#6f6a64]">
+              No social links added yet — pick a platform and paste a link above.
+            </p>
+          )}
         </Card>
       </div>
 
