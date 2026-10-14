@@ -51,7 +51,7 @@ export default function ProductDetail({ productId }) {
   const products = useStorefrontProducts();
   const product = products.find((item) => item.id === productId);
 
-  const { bag, addToBag, toggleWishlist, isWishlisted } = useCart();
+  const { bag, addToBag, toggleWishlist, isWishlisted, openDrawer } = useCart();
   const [toast, setToast] = useState(null);
   const [activeImage, setActiveImage] = useState(product ? product.image : '');
   const [qty, setQty] = useState(1);
@@ -113,7 +113,7 @@ export default function ProductDetail({ productId }) {
     }
     setAdding(true);
     addToBag(product, { qty, size, metal: finish?.name });
-    showToast(`${product.name}${qty > 1 ? ` × ${qty}` : ''} added to bag`);
+    openDrawer('bag');
     window.setTimeout(() => setAdding(false), 500);
   };
 
@@ -299,7 +299,7 @@ export default function ProductDetail({ productId }) {
                   onToggleWishlist={handleToggleWishlist}
                   onAddToBag={(target) => {
                     addToBag(target, { qty: 1 });
-                    showToast(`${target.name} added to bag`);
+                    openDrawer('bag');
                   }}
                 />
               ))}

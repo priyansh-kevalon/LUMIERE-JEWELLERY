@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Heart, Minus, Plus, ShoppingBag, Trash2, X, CheckCircle2 } from 'lucide-react';
+import { Heart, Minus, Plus, ShoppingCart, Trash2, X, CheckCircle2 } from 'lucide-react';
 import SmartImage from '../common/SmartImage';
 import { useCart } from '../../context/CartContext';
 import { formatINR } from '../../data/products';
@@ -138,11 +138,6 @@ export default function ShopDrawer() {
     openDrawer('bag');
   };
 
-  const tabs = [
-    { id: 'bag', label: 'Bag', count: bagCount },
-    { id: 'wishlist', label: 'Wishlist', count: wishlistCount },
-  ];
-
   return (
     <div
       className={`fixed inset-0 z-[80] ${open ? '' : 'pointer-events-none'}`}
@@ -161,31 +156,19 @@ export default function ShopDrawer() {
       <aside
         role="dialog"
         aria-modal="true"
-        aria-label="Shopping bag and wishlist"
+        aria-label={tab === 'bag' ? 'Cart' : 'Wishlist'}
         className={`absolute right-0 top-0 flex h-full w-full flex-col border-l border-white/10 bg-[#141312] shadow-luxe transition-transform duration-500 ease-luxe sm:max-w-[26rem] ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <header className="flex items-center justify-between border-b border-white/10 px-5 pt-5">
-          <div className="flex items-center gap-6">
-            {tabs.map((entry) => {
-              const selected = entry.id === tab;
-              return (
-                <button
-                  key={entry.id}
-                  type="button"
-                  onClick={() => openDrawer(entry.id)}
-                  aria-pressed={selected}
-                  className={`relative flex items-center gap-2 pb-3 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors ${
-                    selected ? 'text-[#f2ece8]' : 'text-[#f2ece8]/50 hover:text-[#f2ece8]/80'
-                  }`}
-                >
-                  {entry.label}
-                  <span className="text-[10px] text-[#C6A16A]">{entry.count}</span>
-                  {selected && <span className="absolute inset-x-0 bottom-0 h-[1.5px] bg-[#C6A16A]" />}
-                </button>
-              );
-            })}
+          <div className="flex items-baseline gap-2.5 pb-3">
+            <h2 className="font-serif text-[16px] tracking-wide text-[#f2ece8]">
+              {tab === 'bag' ? 'Your Cart' : 'Wishlist'}
+            </h2>
+            <span className="text-[11px] tabular-nums text-[#C6A16A]">
+              {tab === 'bag' ? bagCount : wishlistCount}
+            </span>
           </div>
 
           <button
@@ -205,9 +188,9 @@ export default function ShopDrawer() {
                 <PlacedState orderId={placedOrder} onDone={dismissPlaced} />
               ) : (
                 <EmptyState
-                  icon={<ShoppingBag size={22} strokeWidth={1.4} />}
-                  title="Your bag is empty"
-                  copy="Pieces you add to your bag will appear here, ready for checkout."
+                  icon={<ShoppingCart size={22} strokeWidth={1.4} />}
+                  title="Your cart is empty"
+                  copy="Pieces you add to your cart will appear here, ready for checkout."
                   onBrowse={closeDrawer}
                 />
               )
@@ -361,7 +344,7 @@ export default function ShopDrawer() {
                           onClick={() => handleAddWishlistItem(product)}
                           className="mt-auto self-start rounded-full border border-[#C6A16A]/50 px-4 py-1.5 text-[10px] font-medium uppercase tracking-[0.16em] text-[#C6A16A] transition-colors hover:bg-[#C6A16A] hover:text-[#0D0D0D]"
                         >
-                          Add to Bag
+                          Add to Cart
                         </button>
                       </div>
                     </li>

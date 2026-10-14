@@ -9,7 +9,13 @@ export default function usePersistentState(key, initialValue) {
   const [value, setValue] = useState(() => {
     try {
       const raw = window.localStorage.getItem(key);
-      return raw != null ? JSON.parse(raw) : initialValue;
+      if (raw == null) return initialValue;
+      const parsed = JSON.parse(raw);
+      /* Guard against stale or corrupt values written by a previous version.
+         If the seed is an array, only accept an array — otherwise the cart
+         and wishlist reducers would throw and crash the whole app. */
+      if (Array.isArray(initialValue) && !Array.isArray(parsed)) return initialValue;
+      return parsed;
     } catch {
       return initialValue;
     }

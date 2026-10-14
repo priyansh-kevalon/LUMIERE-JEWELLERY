@@ -1,4 +1,4 @@
-import { Check, Heart, Loader2, Minus, Plus, ShoppingBag, Star } from 'lucide-react';
+import { Check, Heart, Loader2, Minus, Plus, ShoppingCart, Star } from 'lucide-react';
 import {
   formatINR,
   materialOf,
@@ -235,7 +235,7 @@ export default function ProductInfo({
           disabled={disabled}
           className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#303030] px-8 text-[11px] font-medium uppercase tracking-[0.16em] text-[#f2ece8] transition-colors duration-300 hover:bg-[#3a3a3a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <ShoppingBag size={16} strokeWidth={1.8} />
+          <ShoppingCart size={16} strokeWidth={1.8} />
           Add To Cart
         </button>
       </div>

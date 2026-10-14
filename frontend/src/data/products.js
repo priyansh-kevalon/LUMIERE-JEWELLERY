@@ -721,7 +721,7 @@ export function reviewCount(product) {
 const SIZED_TYPES = { Rings: ['6', '7', '8', '9', '10'] };
 
 export function sizesOf(product) {
-    if (product.sizes) return product.sizes;
+    if (product.sizes && product.sizes.length) return product.sizes;
     return SIZED_TYPES[product.type] || null;
 }
 

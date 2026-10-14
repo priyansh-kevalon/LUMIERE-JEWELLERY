@@ -94,7 +94,7 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
             onClick={addToBag}
             className="mt-3.5 w-full rounded-[5px] border border-white/15 py-2 text-[9px] font-medium uppercase tracking-[0.18em] text-[#f4eee8] transition-all duration-300 hover:border-[#C6A16A] hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]"
           >
-            Add to Bag
+            Add to Cart
           </button>
         )}
       </div>

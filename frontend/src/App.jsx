@@ -8,7 +8,9 @@ import About from './pages/About';
 import Collections from './pages/Collections';
 import Contact from './pages/Contact';
 import ProductDetail from './pages/ProductDetail';
+import InfoPage from './pages/InfoPage';
 import Auth from './pages/Auth';
+import { infoPages } from './data/infoPages';
 import AdminApp from './admin/AdminApp';
 import ScrollToTop from './components/common/ScrollToTop';
 
@@ -38,6 +40,7 @@ function readRoute() {
       category: params.get('category') || null,
       occasion: params.get('occasion') || null,
       sort: params.get('sort') || null,
+      search: params.get('q') || null,
     };
   }
   if (path === 'contact') return { name: 'contact' };
@@ -47,12 +50,14 @@ function readRoute() {
   const productMatch = path.match(/^product\/(\d+)$/);
   if (productMatch) return { name: 'product', id: Number(productMatch[1]) };
 
+  if (infoPages[path]) return { name: 'info', slug: path };
+
   return { name: 'home' };
 }
 
 /* Routes that live at the top of their own page rather than as an
    in-page scroll target. */
-const scrollsToTop = new Set(['about', 'collections', 'contact', 'product', 'login', 'register', 'admin']);
+const scrollsToTop = new Set(['about', 'collections', 'contact', 'product', 'login', 'register', 'admin', 'info']);
 
 export default function App() {
   const [route, setRoute] = useState(readRoute);
@@ -96,7 +101,9 @@ export default function App() {
           ? 'collections'
           : route.name === 'login' || route.name === 'register'
             ? 'account'
-            : 'home';
+            : route.name === 'info'
+              ? infoPages[route.slug]?.nav || 'home'
+              : 'home';
 
   const isAuthRoute = route.name === 'login' || route.name === 'register';
 
@@ -114,12 +121,14 @@ export default function App() {
             category={route.category}
             occasion={route.occasion}
             sort={route.sort}
+            search={route.search}
           />
         )}
         {route.name === 'contact' && <Contact />}
         {route.name === 'login' && <Auth mode="login" />}
         {route.name === 'register' && <Auth mode="register" />}
         {route.name === 'product' && <ProductDetail key={route.id} productId={route.id} />}
+        {route.name === 'info' && <InfoPage key={route.slug} slug={route.slug} />}
         {route.name === 'home' && <Home />}
         {!isAuthRoute && <Footer />}
         {!isAuthRoute && <ScrollToTop />}

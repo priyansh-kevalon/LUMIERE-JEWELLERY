@@ -20,6 +20,12 @@ import {
   ALL_CATEGORY,
 } from '../data/products';
 
+const searchableText = (product) =>
+  [product.name, product.category, product.categoryLabel, product.type, product.metal, product.style, product.occasion]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
 function FilterSidebar({ filters, counts, onToggle, onClear }) {
   const selectedCount = Object.values(filters).reduce((sum, list) => sum + list.length, 0);
 
@@ -311,17 +317,18 @@ function FilterDrawer({ open, onClose, filters, counts, onToggle, onClear, resul
   );
 }
 
-export default function Collections({ category = null, occasion = null, sort: sortPreset = null }) {
+export default function Collections({ category = null, occasion = null, sort: sortPreset = null, search = null }) {
   const products = useStorefrontProducts();
   const categories = useCategories();
   const [activeCategory, setActiveCategory] = useState(category || ALL_CATEGORY);
   const [filters, setFilters] = useState(() => (occasion ? { occasion: [occasion] } : {}));
   const [sort, setSort] = useState(sortPreset || 'popularity');
+  const [searchTerm, setSearchTerm] = useState(search || '');
   const [page, setPage] = useState(1);
   const [desktopSidebar, setDesktopSidebar] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [toast, setToast] = useState(null);
-  const { addToBag, toggleWishlist, isWishlisted } = useCart();
+  const { addToBag, toggleWishlist, isWishlisted, openDrawer } = useCart();
 
   const shopRef = useRef(null);
   const toastTimer = useRef(null);
@@ -330,8 +337,9 @@ export default function Collections({ category = null, occasion = null, sort: so
     setActiveCategory(category || ALL_CATEGORY);
     setFilters(occasion ? { occasion: [occasion] } : {});
     setSort(sortPreset || 'popularity');
+    setSearchTerm(search || '');
     setPage(1);
-  }, [category, occasion, sortPreset]);
+  }, [category, occasion, sortPreset, search]);
 
   useEffect(() => {
     return () => clearTimeout(toastTimer.current);
@@ -344,8 +352,10 @@ export default function Collections({ category = null, occasion = null, sort: so
   };
 
   const counts = useMemo(() => {
-    const base =
-      activeCategory === ALL_CATEGORY ? products : products.filter((p) => p.category === activeCategory);
+    const term = searchTerm.trim().toLowerCase();
+    const base = (
+      activeCategory === ALL_CATEGORY ? products : products.filter((p) => p.category === activeCategory)
+    ).filter((p) => !term || searchableText(p).includes(term));
     const result = {};
     for (const group of filterGroups) {
       result[group.key] = {};
@@ -354,11 +364,13 @@ export default function Collections({ category = null, occasion = null, sort: so
       }
     }
     return result;
-  }, [activeCategory, products]);
+  }, [activeCategory, products, searchTerm]);
 
   const filtered = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
     let list = products.filter(
       (product) =>
+        (!term || searchableText(product).includes(term)) &&
         (activeCategory === ALL_CATEGORY || product.category === activeCategory) &&
         Object.entries(filters).every(
           ([key, selected]) => selected.length === 0 || selected.includes(product[key]),
@@ -383,7 +395,7 @@ export default function Collections({ category = null, occasion = null, sort: so
     }
 
     return list;
-  }, [activeCategory, filters, sort, products]);
+  }, [activeCategory, filters, sort, products, searchTerm]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const safePage = Math.min(page, totalPages);
@@ -411,6 +423,7 @@ export default function Collections({ category = null, occasion = null, sort: so
   const clearAll = () => {
     setFilters({});
     setActiveCategory(ALL_CATEGORY);
+    setSearchTerm('');
     setPage(1);
   };
 
@@ -422,7 +435,7 @@ export default function Collections({ category = null, occasion = null, sort: so
 
   const handleAddToBag = (product) => {
     addToBag(product, { qty: 1 });
-    showToast(`${product.name} added to bag`);
+    openDrawer('bag');
   };
 
   const onFilterControl = () => {
@@ -437,7 +450,7 @@ export default function Collections({ category = null, occasion = null, sort: so
   const activeFilters = filterGroups.flatMap((group) =>
     (filters[group.key] || []).map((option) => ({ groupKey: group.key, option })),
   );
-  const hasActiveFilters = activeFilters.length > 0 || activeCategory !== ALL_CATEGORY;
+  const hasActiveFilters = activeFilters.length > 0 || activeCategory !== ALL_CATEGORY || Boolean(searchTerm.trim());
 
   return (
     <main>
@@ -521,6 +534,21 @@ export default function Collections({ category = null, occasion = null, sort: so
                   <span className="text-[10px] uppercase tracking-[0.16em] text-[#a7a19b]">
                     Active:
                   </span>
+
+                  {searchTerm.trim() && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setPage(1);
+                      }}
+                      className="group inline-flex items-center gap-2 rounded-full border border-[#C6A16A]/45 bg-[#C6A16A]/10 px-3.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.14em] text-[#C6A16A] transition-colors duration-300 hover:bg-[#C6A16A] hover:text-[#0D0D0D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]"
+                      aria-label={`Clear search for ${searchTerm.trim()}`}
+                    >
+                      “{searchTerm.trim()}”
+                      <X size={12} strokeWidth={2} aria-hidden="true" />
+                    </button>
+                  )}
 
                   {activeCategory !== ALL_CATEGORY && activeCategoryItem && (
                     <button

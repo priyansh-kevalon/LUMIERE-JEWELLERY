@@ -70,6 +70,37 @@ function ContactHero({ onTalkToConcierge }) {
   );
 }
 
+function validateField(key, values) {
+  switch (key) {
+    case 'name': {
+      const value = values.name.trim();
+      if (!value) return 'Please enter your full name.';
+      if (value.length < 2) return 'Name must be at least 2 characters.';
+      return '';
+    }
+    case 'phone': {
+      const digits = values.phone.replace(/\D/g, '');
+      if (!digits) return 'Please enter your phone number.';
+      if (digits.length !== 10) return 'Enter a valid 10-digit phone number.';
+      return '';
+    }
+    case 'email': {
+      const value = values.email.trim();
+      if (!value) return 'Please enter your email address.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Enter a valid email address.';
+      return '';
+    }
+    case 'message': {
+      const value = values.message.trim();
+      if (!value) return 'Please describe your query.';
+      if (value.length < 10) return 'Please add a little more detail (at least 10 characters).';
+      return '';
+    }
+    default:
+      return '';
+  }
+}
+
 function ContactForm() {
   const [values, setValues] = useState({
     name: '',
@@ -83,21 +114,23 @@ function ContactForm() {
   const [feedback, setFeedback] = useState('');
 
   const update = (key) => (event) => {
-    const value = event.target.value;
-    setValues((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => (prev[key] ? { ...prev, [key]: '' } : prev));
+    let value = event.target.value;
+    if (key === 'phone') value = value.replace(/\D/g, '').slice(0, 10);
+    const nextValues = { ...values, [key]: value };
+    setValues(nextValues);
+    setErrors((prev) => (prev[key] ? { ...prev, [key]: validateField(key, nextValues) } : prev));
+  };
+
+  const handleBlur = (key) => () => {
+    setErrors((prev) => ({ ...prev, [key]: validateField(key, values) }));
   };
 
   const validate = () => {
     const next = {};
-    if (!values.name.trim()) next.name = 'Please enter your full name.';
-    if (!/^\d{10}$/.test(values.phone.replace(/\s+/g, ''))) {
-      next.phone = 'Enter a valid 10-digit phone number.';
+    for (const key of ['name', 'phone', 'email', 'message']) {
+      const message = validateField(key, values);
+      if (message) next[key] = message;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
-      next.email = 'Enter a valid email address.';
-    }
-    if (!values.message.trim()) next.message = 'Please describe your query.';
     return next;
   };
 
@@ -110,6 +143,8 @@ function ContactForm() {
     if (Object.keys(nextErrors).length > 0) {
       setStatus('idle');
       setFeedback('');
+      const firstKey = ['name', 'phone', 'email', 'message'].find((key) => nextErrors[key]);
+      document.getElementById(`contact-${firstKey}`)?.focus();
       return;
     }
 
@@ -118,7 +153,7 @@ function ContactForm() {
     try {
       await submitContactMessage({
         name: values.name.trim(),
-        phone: `+91${values.phone.replace(/\s+/g, '')}`,
+        phone: `+91${values.phone.replace(/\D/g, '')}`,
         email: values.email.trim(),
         preferredContactMethod: values.method,
         message: values.message.trim(),
@@ -126,6 +161,7 @@ function ContactForm() {
       setStatus('success');
       setFeedback('Thank you. Your message has been received — our concierge will reach out shortly.');
       setValues({ name: '', phone: '', email: '', method: 'phone', message: '' });
+      setErrors({});
     } catch (error) {
       setStatus('error');
       setFeedback(
@@ -138,7 +174,9 @@ function ContactForm() {
 
   const errorText = (key) =>
     errors[key] ? (
-      <p className="mt-1.5 text-[11px] text-[#e0a08f]">{errors[key]}</p>
+      <p id={`contact-${key}-error`} role="alert" className="mt-1.5 text-[11px] text-[#e0a08f]">
+        {errors[key]}
+      </p>
     ) : null;
 
   return (
@@ -152,11 +190,16 @@ function ContactForm() {
             id="contact-name"
             type="text"
             autoComplete="name"
+            maxLength={80}
             value={values.name}
             onChange={update('name')}
+            onBlur={handleBlur('name')}
             placeholder="Enter Your Full Name"
             aria-invalid={Boolean(errors.name)}
-            className={inputClass}
+            aria-describedby={errors.name ? 'contact-name-error' : undefined}
+            className={`${inputClass} ${
+              errors.name ? 'border-[#e0a08f] focus:border-[#e0a08f] focus:ring-[#e0a08f]/40' : ''
+            }`}
           />
           {errorText('name')}
         </div>
@@ -178,10 +221,13 @@ function ContactForm() {
               type="tel"
               inputMode="numeric"
               autoComplete="tel"
+              maxLength={10}
               value={values.phone}
               onChange={update('phone')}
+              onBlur={handleBlur('phone')}
               placeholder="00000 00000"
               aria-invalid={Boolean(errors.phone)}
+              aria-describedby={errors.phone ? 'contact-phone-error' : undefined}
               className="h-full w-full bg-transparent px-4 text-[13px] text-[#f0eae5] placeholder-[#8c867f] outline-none"
             />
           </div>
@@ -196,11 +242,16 @@ function ContactForm() {
             id="contact-email"
             type="email"
             autoComplete="email"
+            maxLength={120}
             value={values.email}
             onChange={update('email')}
+            onBlur={handleBlur('email')}
             placeholder="abc@gmail.com"
             aria-invalid={Boolean(errors.email)}
-            className={inputClass}
+            aria-describedby={errors.email ? 'contact-email-error' : undefined}
+            className={`${inputClass} ${
+              errors.email ? 'border-[#e0a08f] focus:border-[#e0a08f] focus:ring-[#e0a08f]/40' : ''
+            }`}
           />
           {errorText('email')}
         </div>
@@ -241,10 +292,13 @@ function ContactForm() {
         <textarea
           id="contact-message"
           rows={3}
+          maxLength={1000}
           value={values.message}
           onChange={update('message')}
+          onBlur={handleBlur('message')}
           placeholder="Describe your query..."
           aria-invalid={Boolean(errors.message)}
+          aria-describedby={errors.message ? 'contact-message-error' : undefined}
           className={`min-h-[92px] w-full resize-y rounded-md border bg-[#343434] px-4 py-3 text-[13px] text-[#f0eae5] placeholder-[#8c867f] outline-none transition-colors duration-200 focus:ring-1 ${
             errors.message
               ? 'border-[#e0a08f] focus:border-[#e0a08f] focus:ring-[#e0a08f]/40'
