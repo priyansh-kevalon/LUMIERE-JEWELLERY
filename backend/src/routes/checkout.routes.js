@@ -206,14 +206,18 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
   }
   if (!/^\d{4,10}$/.test(address.pincode)) throw ApiError.badRequest('Enter a valid PIN code');
 
+  /* COD is offline; UPI / CARD (and the legacy generic RAZORPAY) are settled
+     through Razorpay Checkout, which routes to the chosen channel. */
+  const ONLINE_METHODS = ['UPI', 'CARD', 'RAZORPAY'];
   const paymentMethod = String(req.body?.paymentMethod || '').trim().toUpperCase();
-  if (!['COD', 'RAZORPAY'].includes(paymentMethod)) {
+  const isOnline = ONLINE_METHODS.includes(paymentMethod);
+  if (paymentMethod !== 'COD' && !isOnline) {
     throw ApiError.badRequest('Choose a valid payment method');
   }
   if (paymentMethod === 'COD' && !COD_ENABLED) {
     throw ApiError.badRequest('Cash on delivery is currently unavailable');
   }
-  if (paymentMethod === 'RAZORPAY' && !razorpayEnabled) {
+  if (isOnline && !razorpayEnabled) {
     throw ApiError.badRequest('Online payment is not configured yet');
   }
 
@@ -256,13 +260,13 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
   }
   if (!order) throw new ApiError(500, 'Could not allocate an order number');
 
-  if (paymentMethod === 'RAZORPAY') {
+  if (isOnline) {
     try {
       const rzOrder = await getRazorpay().orders.create({
         amount: Math.max(100, total * 100), /* Razorpay needs paise */
         currency: CURRENCY,
         receipt: order.id,
-        notes: { orderId: order.id },
+        notes: { orderId: order.id, method: paymentMethod },
       });
       order.razorpayOrderId = rzOrder.id;
       order.updatedAt = Date.now();
@@ -277,6 +281,7 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
           orderId: rzOrder.id,
           amount: rzOrder.amount,
           currency: CURRENCY,
+          method: paymentMethod,
           name: 'LUMIÈRE JEWELLERY',
           description: `Order ${order.id}`,
           prefill: {

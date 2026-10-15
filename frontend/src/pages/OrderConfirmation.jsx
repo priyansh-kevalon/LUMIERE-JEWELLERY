@@ -14,6 +14,8 @@ const paymentLabel = (status) => ({
 
 const methodLabel = (method) => ({
   COD: 'Cash on Delivery',
+  UPI: 'UPI',
+  CARD: 'Debit / Credit Card',
   RAZORPAY: 'Online Payment (Razorpay)',
 }[method] || method || '—');
 

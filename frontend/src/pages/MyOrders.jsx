@@ -70,7 +70,7 @@ export default function MyOrders() {
                   <div>
                     <p className="font-serif text-[17px] text-[#f0eae5]">{order.id}</p>
                     <p className="mt-1 text-[11.5px] text-[#8c867f]">
-                      {formatDate(order.createdAt)} · {(order.items || []).length} item{(order.items || []).length === 1 ? '' : 's'} · {order.paymentMethod === 'COD' ? 'Cash on Delivery' : 'Online'}
+                      {formatDate(order.createdAt)} · {(order.items || []).length} item{(order.items || []).length === 1 ? '' : 's'} · {({ COD: 'Cash on Delivery', UPI: 'UPI', CARD: 'Debit / Credit Card' }[order.paymentMethod] || 'Online')}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">

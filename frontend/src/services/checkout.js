@@ -111,6 +111,7 @@ export async function openRazorpayCheckout(options) {
       name: options.name,
       description: options.description,
       order_id: options.orderId,
+      method: options.method, /* 'upi' | 'card' — preselects the payment tab */
       prefill: options.prefill || {},
       notes: options.notes || {},
       theme: { color: '#C6A16A' },
