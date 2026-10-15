@@ -253,8 +253,8 @@ export default function Navbar({ activeId = 'home' }) {
             <NavSearch />
 
             <a
-              href="#/login"
-              aria-label="Account"
+              href="#/profile"
+              aria-label="My account"
               className="text-white/90 transition-colors duration-200 hover:text-gold"
             >
               <User size={18} strokeWidth={1.5} />

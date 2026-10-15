@@ -10,15 +10,18 @@ import Contact from './pages/Contact';
 import ProductDetail from './pages/ProductDetail';
 import InfoPage from './pages/InfoPage';
 import Auth from './pages/Auth';
+import Profile from './pages/Profile';
+import ForgotPassword from './pages/ForgotPassword';
 import { infoPages } from './data/infoPages';
 import AdminApp from './admin/AdminApp';
 import ScrollToTop from './components/common/ScrollToTop';
 
 /* Lightweight hash router — no dependency added.
    `#/about` renders the About Us page, `#/collections` renders the
-   Collections page, `#/contact` renders the Contact Us page,
-   `#/login` and `#/register` render the account page, and
-   `#/product/:id` renders a Product Detail page; every other hash renders
+   Collections page,    `#/contact` renders the Contact Us page,
+   `#/login` and `#/register` render the account page,
+   `#/profile` renders the account profile and `#/forgot-password` the reset page,
+   and `#/product/:id` renders a Product Detail page; every other hash renders
    Home and scrolls to the matching in-page section. */
 
 function readRoute() {
@@ -46,6 +49,8 @@ function readRoute() {
   if (path === 'contact') return { name: 'contact' };
   if (path === 'login') return { name: 'login' };
   if (path === 'register') return { name: 'register' };
+  if (path === 'profile') return { name: 'profile' };
+  if (path === 'forgot-password') return { name: 'forgot-password' };
 
   const productMatch = path.match(/^product\/(\d+)$/);
   if (productMatch) return { name: 'product', id: Number(productMatch[1]) };
@@ -57,7 +62,7 @@ function readRoute() {
 
 /* Routes that live at the top of their own page rather than as an
    in-page scroll target. */
-const scrollsToTop = new Set(['about', 'collections', 'contact', 'product', 'login', 'register', 'admin', 'info']);
+const scrollsToTop = new Set(['about', 'collections', 'contact', 'product', 'login', 'register', 'profile', 'forgot-password', 'admin', 'info']);
 
 export default function App() {
   const [route, setRoute] = useState(readRoute);
@@ -101,9 +106,11 @@ export default function App() {
           ? 'collections'
           : route.name === 'login' || route.name === 'register'
             ? 'account'
-            : route.name === 'info'
-              ? infoPages[route.slug]?.nav || 'home'
-              : 'home';
+            : route.name === 'profile' || route.name === 'forgot-password'
+              ? 'account'
+              : route.name === 'info'
+                ? infoPages[route.slug]?.nav || 'home'
+                : 'home';
 
   const isAuthRoute = route.name === 'login' || route.name === 'register';
 
@@ -127,6 +134,8 @@ export default function App() {
         {route.name === 'contact' && <Contact />}
         {route.name === 'login' && <Auth mode="login" />}
         {route.name === 'register' && <Auth mode="register" />}
+        {route.name === 'profile' && <Profile />}
+        {route.name === 'forgot-password' && <ForgotPassword />}
         {route.name === 'product' && <ProductDetail key={route.id} productId={route.id} />}
         {route.name === 'info' && <InfoPage key={route.slug} slug={route.slug} />}
         {route.name === 'home' && <Home />}

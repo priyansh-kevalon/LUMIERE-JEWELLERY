@@ -15,6 +15,8 @@
 const AUTH_ENDPOINT = import.meta.env.VITE_AUTH_ENDPOINT;
 const USERS_KEY = 'lumiere-users';
 const SESSION_KEY = 'lumiere-session';
+const RESET_KEY = 'lumiere-reset';
+const RESET_TTL = 15 * 60 * 1000; /* 15 minutes */
 
 /* True when no backend is wired up — used to surface a demo notice. */
 export const isLocalAuth = !AUTH_ENDPOINT;
@@ -36,6 +38,36 @@ const writeUsers = (users) => {
   } catch {
     /* storage unavailable */
   }
+};
+
+const readReset = () => {
+  try {
+    const raw = window.localStorage.getItem(RESET_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeReset = (record) => {
+  try {
+    if (record) window.localStorage.setItem(RESET_KEY, JSON.stringify(record));
+    else window.localStorage.removeItem(RESET_KEY);
+  } catch {
+    /* storage unavailable */
+  }
+};
+
+/** Six digit reset code; used only by the local demo flow. */
+const generateResetCode = () => {
+  const bytes = new Uint8Array(4);
+  if (globalThis.crypto?.getRandomValues) {
+    globalThis.crypto.getRandomValues(bytes);
+  } else {
+    for (let i = 0; i < bytes.length; i += 1) bytes[i] = Math.floor(Math.random() * 256);
+  }
+  const value = ((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3]) >>> 0;
+  return String(value % 1000000).padStart(6, '0');
 };
 
 const randomSalt = () => {
@@ -113,7 +145,13 @@ export function getSession() {
 
 export function getCurrentUser() {
   const session = getSession();
-  return session ? { name: session.name, email: session.email } : null;
+  if (!session) return null;
+  return {
+    name: session.name || '',
+    email: session.email || '',
+    phone: session.phone || '',
+    createdAt: session.createdAt ?? null,
+  };
 }
 
 export function signOut() {
@@ -191,4 +229,103 @@ export async function register({ name, email, password, phone }) {
   const publicUser = toPublicUser(record);
   persistSession({ ...publicUser, token: `local-${Date.now()}`, remember: true });
   return publicUser;
+}
+
+/* ------------------------------ profile --------------------------- */
+
+/**
+ * Update the signed-in user's editable details (name / phone). The email is
+ * the account key and stays read-only. Persisted to the local store and the
+ * active session so the change is visible everywhere immediately.
+ */
+export async function updateProfile({ name, phone }) {
+  const session = getSession();
+  if (!session?.email) throw new Error('not-authenticated');
+
+  const trimmedName = (name || '').trim();
+  const trimmedPhone = (phone || '').trim();
+
+  if (AUTH_ENDPOINT) {
+    const response = await fetch(`${AUTH_ENDPOINT}/me`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(session.token ? { Authorization: `Bearer ${session.token}` } : {}),
+      },
+      body: JSON.stringify({ name: trimmedName, phone: trimmedPhone }),
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const error = new Error(body?.message || `profile-update-failed:${response.status}`);
+      error.status = response.status;
+      throw error;
+    }
+    const user = toPublicUser({ ...body.user, name: trimmedName, phone: trimmedPhone });
+    persistSession({ ...user, token: session.token, remember: session.remember });
+    return user;
+  }
+
+  const users = readUsers();
+  const index = users.findIndex((entry) => entry.email === session.email);
+  if (index === -1) throw new Error('not-authenticated');
+
+  users[index] = { ...users[index], name: trimmedName || users[index].name, phone: trimmedPhone };
+  writeUsers(users);
+
+  const publicUser = toPublicUser(users[index]);
+  persistSession({ ...publicUser, token: session.token, remember: session.remember });
+  return publicUser;
+}
+
+/* --------------------------- password reset ----------------------- */
+
+/**
+ * Password reset.
+ *
+ * With a backend wired up (`VITE_AUTH_ENDPOINT`) this posts to the reset
+ * endpoint. Otherwise it runs a fully local demo flow: a short-lived code is
+ * generated and stored on the device, then returned so the UI can show it
+ * (there is no email service in demo mode).
+ */
+export async function requestPasswordReset({ email }) {
+  const normalized = (email || '').trim().toLowerCase();
+
+  if (AUTH_ENDPOINT) {
+    return postAuth('/forgot-password', { email: normalized });
+  }
+
+  const user = readUsers().find((entry) => entry.email === normalized);
+  if (!user) throw new Error('email-not-found');
+
+  const code = generateResetCode();
+  writeReset({ email: normalized, code, expiresAt: Date.now() + RESET_TTL });
+  return { email: normalized, code, expiresInMinutes: Math.round(RESET_TTL / 60000) };
+}
+
+export async function resetPassword({ email, code, password }) {
+  const normalized = (email || '').trim().toLowerCase();
+
+  if (AUTH_ENDPOINT) {
+    return postAuth('/reset-password', { email: normalized, code, password });
+  }
+
+  const record = readReset();
+  if (!record || record.email !== normalized) throw new Error('invalid-code');
+  if (!record.expiresAt || record.expiresAt < Date.now()) {
+    writeReset(null);
+    throw new Error('expired-code');
+  }
+  if (String(code || '').trim() !== String(record.code)) throw new Error('invalid-code');
+
+  const users = readUsers();
+  const index = users.findIndex((entry) => entry.email === normalized);
+  if (index === -1) throw new Error('email-not-found');
+
+  const salt = randomSalt();
+  const hashed = await hashPassword(password, salt);
+  users[index] = { ...users[index], salt, password: hashed };
+  writeUsers(users);
+  writeReset(null);
+
+  return { email: normalized };
 }
