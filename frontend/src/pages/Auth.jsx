@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Eye, EyeOff, ArrowRight, Check, AlertCircle, Loader2, ShieldCheck } from 'lucide-react';
+import { contactInfo } from '../data/contact';
 import { signIn, register, signOut, getCurrentUser, isLocalAuth } from '../services/auth';
 
 const inputClass =
@@ -173,7 +174,7 @@ function LoginForm({ onAuthenticated }) {
             Remember me
           </label>
           <a
-            href="#/forgot-password"
+            href={`mailto:${contactInfo.email}?subject=Password%20assistance`}
             className="text-[12px] text-[#b99662] transition-colors hover:text-[#d8b47e]"
           >
             Forgot password?

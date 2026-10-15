@@ -8,6 +8,8 @@ export const User = model('User', new Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   phone: { type: String, default: '' },
   password: { type: String, required: true },
+  resetCode: { type: String },
+  resetCodeExpires: { type: Number },
   createdAt: { type: Number, default: () => Date.now() },
 }, { timestamps: false, versionKey: false }).set('toJSON', toJSONOpts));
 
