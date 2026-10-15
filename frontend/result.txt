@@ -1,0 +1,14 @@
+=== URL: http://localhost:4173/
+root childElementCount: 1
+body innerText length: 2215
+contains "Lumi": true
+body text sample: "LUMIÈRE\nJEWELLERY\nHOME\nCOLLECTIONS\nABOUT US\nCONTACT US\nCRAFTED TO CAPTIVATE\nTimeless Beauty,\nMade to Be Yours\n\nDiscover exquisite jewellery crafted to celebrate your most beautiful moments and become "
+--- console errors (3) ---
+  Failed to load resource: net::ERR_CONNECTION_REFUSED
+  Failed to load resource: net::ERR_CONNECTION_REFUSED
+  Failed to load resource: net::ERR_CONNECTION_REFUSED
+--- page errors (0) ---
+--- failed requests (3) ---
+  GET http://localhost:4000/api/products :: net::ERR_CONNECTION_REFUSED
+  GET http://localhost:4000/api/categories :: net::ERR_CONNECTION_REFUSED
+  GET http://localhost:4000/api/settings :: net::ERR_CONNECTION_REFUSED

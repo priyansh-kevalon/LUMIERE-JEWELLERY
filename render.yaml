@@ -1,0 +1,35 @@
+# ─────────────────────────────────────────────────────────────────────────
+# Render Blueprint — LUMIÈRE JEWELLERY
+#
+# This file encodes the CORRECT deployment settings for the frontend so the
+# site is published from Vite's build output (frontend/dist) instead of the
+# raw source folder. Publishing the source folder serves `index.html` that
+# points at `/src/main.jsx`, which browsers cannot execute → white screen.
+#
+# Using this file is optional:
+#   • If your service was created manually, just copy these values into the
+#     Render dashboard (Root Directory / Build Command / Publish Directory).
+#   • Or adopt the Blueprint: Render → New → Blueprint → pick this repo.
+#
+# NOTE: the app uses HASH routing (`/#/collections`, `/#/admin`, …), so it
+# does NOT need a catch-all SPA rewrite. A `/*` → `/index.html` rewrite is
+# unnecessary here and can mask missing assets, so it is intentionally omitted.
+#
+# The backend already exists as a separate service. Add its deployed frontend
+# origin to that service's CORS_ORIGIN env var in the Render dashboard:
+#   CORS_ORIGIN=http://localhost:5173,https://front-end-q8f5.onrender.com
+# ─────────────────────────────────────────────────────────────────────────
+
+services:
+  - type: web
+    name: lumiere-jewellery-frontend
+    runtime: static
+    # Build runs from the repo root, then inside the frontend workspace.
+    buildCommand: cd frontend && npm ci && npm run build
+    # Vite writes its production bundle here (frontend/vite.config.js → outDir: 'dist').
+    staticPublishPath: frontend/dist
+    envVars:
+      # Build-time only: Vite bakes this into the bundle. Must include `/api`
+      # because the backend mounts every route under `/api`.
+      - key: VITE_API_URL
+        value: https://lumiere-backend-3bgr.onrender.com/api

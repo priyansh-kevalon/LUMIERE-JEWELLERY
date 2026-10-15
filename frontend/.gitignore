@@ -1,6 +1,8 @@
 node_modules
 dist
 dist-ssr
+dist2
+*.log
 .DS_Store
 *.local
 .vite

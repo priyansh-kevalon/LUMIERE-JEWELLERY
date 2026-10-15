@@ -1,13 +1,12 @@
-const CHECKOUT_ENDPOINT = import.meta.env.VITE_CHECKOUT_ENDPOINT;
+import { CHECKOUT_ENDPOINT } from './api';
 
 /**
  * Checkout integration point.
  *
- * The storefront has no payment backend wired up yet, so `startCheckout`
- * refuses to pretend a purchase completed. Configure `VITE_CHECKOUT_ENDPOINT`
- * to point at a cart/checkout service that accepts the cart payload and,
- * optionally, returns a `{ url }` to redirect the browser to (hosted payment
- * page, order confirmation, etc.).
+ * The storefront sends the cart payload to the backend checkout endpoint,
+ * which creates the order and optionally returns a `{ url }` to redirect the
+ * browser to (hosted payment page, order confirmation, etc.). The endpoint is
+ * derived from `VITE_API_URL` (see `services/api.js`).
  */
 export async function startCheckout(items) {
   if (!CHECKOUT_ENDPOINT) {

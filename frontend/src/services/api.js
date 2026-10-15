@@ -10,6 +10,27 @@ const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 
 export const isApiConfigured = Boolean(API_URL);
 
+/*
+ * All backend URLs derive from the single `VITE_API_URL` base (which already
+ * includes the `/api` prefix). The per-feature variables below are optional
+ * overrides kept for backwards compatibility — set them only if an endpoint
+ * lives somewhere other than `{VITE_API_URL}/<feature>`. This means production
+ * only needs one variable, and there is no `/api/api` duplication.
+ */
+const stripTrailingSlash = (value) => String(value || '').replace(/\/+$/, '');
+
+const resolveEndpoint = (override, suffix) => {
+  const direct = stripTrailingSlash(override);
+  if (direct) return direct;
+  return API_URL ? `${API_URL}${suffix}` : '';
+};
+
+export const API_BASE_URL = API_URL;
+export const AUTH_ENDPOINT = resolveEndpoint(import.meta.env.VITE_AUTH_ENDPOINT, '/auth');
+export const CONTACT_ENDPOINT = resolveEndpoint(import.meta.env.VITE_CONTACT_ENDPOINT, '/contact');
+export const NEWSLETTER_ENDPOINT = resolveEndpoint(import.meta.env.VITE_NEWSLETTER_ENDPOINT, '/newsletter');
+export const CHECKOUT_ENDPOINT = resolveEndpoint(import.meta.env.VITE_CHECKOUT_ENDPOINT, '/checkout');
+
 const ADMIN_SESSION_KEY = 'lumiere-admin-session';
 
 function adminToken() {

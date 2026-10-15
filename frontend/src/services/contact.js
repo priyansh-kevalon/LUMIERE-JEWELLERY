@@ -1,5 +1,4 @@
-const CONTACT_ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT;
-const NEWSLETTER_ENDPOINT = import.meta.env.VITE_NEWSLETTER_ENDPOINT;
+import { CONTACT_ENDPOINT, NEWSLETTER_ENDPOINT } from './api';
 
 async function postJSON(url, payload) {
   const response = await fetch(url, {

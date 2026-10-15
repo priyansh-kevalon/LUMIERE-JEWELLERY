@@ -12,7 +12,8 @@
 /* the plain text), and it exists purely to demonstrate the flows.      */
 /* ------------------------------------------------------------------ */
 
-const AUTH_ENDPOINT = import.meta.env.VITE_AUTH_ENDPOINT;
+import { AUTH_ENDPOINT } from './api';
+
 const USERS_KEY = 'lumiere-users';
 const SESSION_KEY = 'lumiere-session';
 const RESET_KEY = 'lumiere-reset';
