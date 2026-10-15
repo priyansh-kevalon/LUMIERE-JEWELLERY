@@ -7,8 +7,7 @@ import ProductAccordions from '../components/product/ProductAccordions';
 import ProductStory from '../components/product/ProductStory';
 import ReviewsSection from '../components/product/ReviewsSection';
 import BenefitsBar from '../components/common/BenefitsBar';
-import { useCart, mergeBagLines } from '../context/CartContext';
-import { startCheckout } from '../services/checkout';
+import { useCart } from '../context/CartContext';
 import {
   useStorefrontProducts,
   discountPercent,
@@ -51,7 +50,7 @@ export default function ProductDetail({ productId }) {
   const products = useStorefrontProducts();
   const product = products.find((item) => item.id === productId);
 
-  const { bag, addToBag, toggleWishlist, isWishlisted, openDrawer } = useCart();
+  const { addToBag, toggleWishlist, isWishlisted, openDrawer } = useCart();
   const [toast, setToast] = useState(null);
   const [activeImage, setActiveImage] = useState(product ? product.image : '');
   const [qty, setQty] = useState(1);
@@ -117,29 +116,15 @@ export default function ProductDetail({ productId }) {
     window.setTimeout(() => setAdding(false), 500);
   };
 
-  const handleBuyNow = async () => {
+  const handleBuyNow = () => {
     if (needsSize || adding) {
       if (needsSize) showToast('Please select a ring size first.');
       return;
     }
     setAdding(true);
-    const line = addToBag(product, { qty, size, metal: finish?.name });
-    const cartForCheckout = mergeBagLines(bag, line);
-
-    try {
-      /* Integration point — forwards the cart when a checkout endpoint is
-         configured, and otherwise reports honestly that it is not connected. */
-      await startCheckout(cartForCheckout);
-      showToast('Proceeding to secure checkout…');
-    } catch (error) {
-      showToast(
-        error.message === 'checkout-not-configured'
-          ? 'Checkout is not connected yet — your item has been saved to your bag.'
-          : 'We could not start checkout right now — your item is saved in your bag.',
-      );
-    } finally {
-      window.setTimeout(() => setAdding(false), 400);
-    }
+    addToBag(product, { qty, size, metal: finish?.name });
+    window.location.hash = '#/checkout';
+    window.setTimeout(() => setAdding(false), 400);
   };
 
   const goBack = () => {

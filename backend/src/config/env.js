@@ -26,8 +26,20 @@ export const JWT_SECRET = pick(process.env.JWT_SECRET, 'lumiere-dev-secret-chang
 export const JWT_EXPIRES_IN = pick(process.env.JWT_EXPIRES_IN, '7d');
 export const CORS_ORIGIN = pick(
   process.env.CORS_ORIGIN,
-  'http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174',
+  'http://localhost:5173,http://localhost:5174,http://localhost:4000',
 );
+
+/* ------------------------------- payments ----------------------------- */
+/* Razorpay credentials. The key id is public and may be shared with the
+   storefront; the secret is only ever used on the server and must never be
+   exposed to the browser or committed. Empty values simply disable the online
+   payment option — checkout keeps working with Cash on Delivery. */
+export const RAZORPAY_KEY_ID = pick(process.env.RAZORPAY_KEY_ID, '');
+export const RAZORPAY_KEY_SECRET = pick(process.env.RAZORPAY_KEY_SECRET, '');
+export const RAZORPAY_WEBHOOK_SECRET = pick(process.env.RAZORPAY_WEBHOOK_SECRET, '');
+export const CURRENCY = pick(process.env.CURRENCY, 'INR');
+export const COD_ENABLED = pick(process.env.COD_ENABLED, 'true').toLowerCase() !== 'false';
+
 export const NODE_ENV = pick(process.env.NODE_ENV, 'development');
 
 /** Mask credentials so the connection target can be logged safely. */

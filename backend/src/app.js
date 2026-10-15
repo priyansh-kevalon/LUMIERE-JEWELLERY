@@ -10,7 +10,12 @@ export function createApp() {
 
   const allowed = CORS_ORIGIN.split(',').map((origin) => origin.trim()).filter(Boolean);
   app.use(cors({ origin: allowed, credentials: true }));
-  app.use(express.json({ limit: '5mb' }));
+  /* Keep the raw request body around so the Razorpay webhook can verify the
+     signature against the exact bytes Razorpay signed. */
+  app.use(express.json({
+    limit: '5mb',
+    verify: (req, res, buf) => { req.rawBody = buf; },
+  }));
 
   app.use('/api', routes);
 

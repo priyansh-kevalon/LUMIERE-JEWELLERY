@@ -442,6 +442,12 @@ function AccountPanel({ user, onSignOut }) {
           Continue Shopping
           <ArrowRight size={14} strokeWidth={1.8} />
         </a>
+        <a
+          href="#/orders"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-white/15 px-6 text-[11px] font-medium uppercase tracking-[0.2em] text-[#c9c2bb] transition-colors duration-300 hover:border-[#b99662] hover:text-[#b99662]"
+        >
+          My Orders
+        </a>
         <button
           type="button"
           onClick={onSignOut}
@@ -454,13 +460,18 @@ function AccountPanel({ user, onSignOut }) {
   );
 }
 
-export default function Auth({ mode: initialMode = 'login' }) {
+export default function Auth({ mode: initialMode = 'login', redirect = null }) {
   const [mode, setMode] = useState(initialMode);
   const [user, setUser] = useState(getCurrentUser);
 
   useEffect(() => {
     setMode(initialMode);
   }, [initialMode]);
+
+  /* Continue to the intended destination (e.g. checkout) once signed in. */
+  useEffect(() => {
+    if (user && redirect) window.location.hash = `#/${redirect}`;
+  }, [user, redirect]);
 
   const switchMode = (next) => {
     if (next === mode) return;

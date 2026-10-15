@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Heart, Minus, Plus, ShoppingCart, Trash2, X, CheckCircle2 } from 'lucide-react';
+import { useEffect } from 'react';
+import { Heart, Minus, Plus, ShoppingCart, Trash2, X } from 'lucide-react';
 import SmartImage from '../common/SmartImage';
 import { useCart } from '../../context/CartContext';
 import { formatINR } from '../../data/products';
-import { startCheckout } from '../../services/checkout';
 
 function QtyStepper({ value, onDec, onInc }) {
   return (
@@ -48,28 +47,6 @@ function EmptyState({ icon, title, copy, onBrowse }) {
   );
 }
 
-function PlacedState({ orderId, onDone }) {
-  return (
-    <div className="flex flex-1 flex-col items-center justify-center px-8 py-20 text-center">
-      <span className="flex h-14 w-14 items-center justify-center rounded-full border border-[#C6A16A]/60 text-[#C6A16A]">
-        <CheckCircle2 size={24} strokeWidth={1.4} />
-      </span>
-      <p className="mt-5 font-serif text-[19px] text-[#f2ece8]">Thank you</p>
-      <p className="mt-2 max-w-[16rem] text-[12px] font-light leading-relaxed text-[#9d968f]">
-        {orderId ? `Your order ${orderId} has been placed. ` : 'Your order has been placed. '}
-        You&apos;ll receive a confirmation by email shortly.
-      </p>
-      <button
-        type="button"
-        onClick={onDone}
-        className="mt-6 rounded-full border border-[#C6A16A]/50 px-6 py-2.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[#C6A16A] transition-colors hover:bg-[#C6A16A] hover:text-[#0D0D0D]"
-      >
-        Continue Shopping
-      </button>
-    </div>
-  );
-}
-
 export default function ShopDrawer() {
   const {
     bag,
@@ -81,14 +58,11 @@ export default function ShopDrawer() {
     setBagQty,
     addToBag,
     removeFromWishlist,
-    clearBag,
     drawer,
     openDrawer,
     closeDrawer,
   } = useCart();
 
-  const [checkout, setCheckout] = useState(null);
-  const [placedOrder, setPlacedOrder] = useState(null);
   const open = drawer !== null;
   const tab = drawer || 'bag';
 
@@ -106,31 +80,9 @@ export default function ShopDrawer() {
     };
   }, [open, closeDrawer]);
 
-  useEffect(() => {
-    if (tab !== 'bag') setCheckout(null);
-  }, [tab]);
-
-  const handleCheckout = async () => {
-    if (bag.length === 0) return;
-    setCheckout('loading');
-    try {
-      const result = await startCheckout(bag);
-      if (result && typeof result.url === 'string' && result.url) {
-        setCheckout('redirecting');
-        return;
-      }
-      setPlacedOrder(result?.orderId || null);
-      setCheckout('placed');
-      clearBag();
-    } catch (error) {
-      setCheckout(error.message === 'checkout-not-configured' ? 'not-configured' : 'error');
-    }
-  };
-
-  const dismissPlaced = () => {
-    setPlacedOrder(null);
-    setCheckout(null);
+  const handleCheckout = () => {
     closeDrawer();
+    window.location.hash = '#/checkout';
   };
 
   const handleAddWishlistItem = (product) => {
@@ -184,16 +136,12 @@ export default function ShopDrawer() {
         {tab === 'bag' && (
           <>
             {bag.length === 0 ? (
-              placedOrder !== null || checkout === 'placed' ? (
-                <PlacedState orderId={placedOrder} onDone={dismissPlaced} />
-              ) : (
-                <EmptyState
-                  icon={<ShoppingCart size={22} strokeWidth={1.4} />}
-                  title="Your cart is empty"
-                  copy="Pieces you add to your cart will appear here, ready for checkout."
-                  onBrowse={closeDrawer}
-                />
-              )
+              <EmptyState
+                icon={<ShoppingCart size={22} strokeWidth={1.4} />}
+                title="Your cart is empty"
+                copy="Pieces you add to your cart will appear here, ready for checkout."
+                onBrowse={closeDrawer}
+              />
             ) : (
               <div className="flex-1 overflow-y-auto px-5 py-5">
                 <ul className="flex flex-col gap-5">
@@ -263,24 +211,12 @@ export default function ShopDrawer() {
                   Shipping &amp; taxes calculated at checkout.
                 </p>
 
-                {checkout === 'not-configured' && (
-                  <p className="mt-3 rounded-[8px] border border-[#C6A16A]/30 bg-[#C6A16A]/10 px-3 py-2 text-[11px] leading-relaxed text-[#e2c694]">
-                    Checkout is not connected yet — your items stay saved in your bag.
-                  </p>
-                )}
-                {checkout === 'error' && (
-                  <p className="mt-3 rounded-[8px] border border-[#e07a7a]/30 bg-[#e07a7a]/10 px-3 py-2 text-[11px] leading-relaxed text-[#f0b4b4]">
-                    We could not start checkout right now. Please try again.
-                  </p>
-                )}
-
                 <button
                   type="button"
                   onClick={handleCheckout}
-                  disabled={checkout === 'loading' || checkout === 'redirecting'}
                   className="mt-4 w-full rounded-full bg-[#C6A16A] py-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0D0D0D] transition-colors hover:bg-[#d8b47e] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {checkout === 'loading' ? 'Starting…' : 'Checkout'}
+                  Checkout
                 </button>
                 <button
                   type="button"
