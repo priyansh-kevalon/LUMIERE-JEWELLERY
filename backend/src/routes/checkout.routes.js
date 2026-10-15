@@ -17,7 +17,25 @@ function nextOrderId(orders) {
 
 /* POST /api/checkout — create an order from the cart. */
 router.post('/', asyncHandler(async (req, res) => {
-  const { items, customer = {}, address = {}, paymentMethod = '' } = req.body || {};
+  const body = req.body || {};
+  const { items } = body;
+
+  /* Never persist a null/undefined customer or address — the admin panel
+     dereferences `order.customer.name`, which would otherwise crash it. */
+  const rawCustomer = body.customer && typeof body.customer === 'object' ? body.customer : {};
+  const customer = {
+    name: rawCustomer.name || '',
+    email: rawCustomer.email || '',
+    phone: rawCustomer.phone || '',
+  };
+  const rawAddress = body.address && typeof body.address === 'object' ? body.address : {};
+  const address = {
+    line1: rawAddress.line1 || '',
+    city: rawAddress.city || '',
+    state: rawAddress.state || '',
+    pincode: rawAddress.pincode || '',
+  };
+  const paymentMethod = body.paymentMethod || '';
   if (!Array.isArray(items) || items.length === 0) throw ApiError.badRequest('items are required');
 
   const setting = await Setting.findOne({ key: 'main' }).lean();

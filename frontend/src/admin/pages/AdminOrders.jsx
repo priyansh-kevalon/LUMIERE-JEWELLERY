@@ -27,8 +27,8 @@ export default function AdminOrders() {
         (order) =>
           !term ||
           order.id.toLowerCase().includes(term) ||
-          order.customer.name.toLowerCase().includes(term) ||
-          order.customer.email.toLowerCase().includes(term),
+          (order.customer?.name || '').toLowerCase().includes(term) ||
+          (order.customer?.email || '').toLowerCase().includes(term),
       )
       .sort((a, b) => b.createdAt - a.createdAt);
   }, [orders, query, status]);
@@ -85,10 +85,10 @@ export default function AdminOrders() {
                   <span className="mt-0.5 block text-[10.5px] text-[#6f6a64]">{dateLabel(order.createdAt)}</span>
                 </Td>
                 <Td>
-                  <span className="text-[#e8e2db]">{order.customer.name}</span>
-                  <span className="mt-0.5 block text-[10.5px] text-[#6f6a64]">{order.customer.email}</span>
+                  <span className="text-[#e8e2db]">{order.customer?.name || 'Guest'}</span>
+                  <span className="mt-0.5 block text-[10.5px] text-[#6f6a64]">{order.customer?.email}</span>
                 </Td>
-                <Td className="tabular-nums">{order.items.reduce((sum, item) => sum + item.qty, 0)}</Td>
+                <Td className="tabular-nums">{(order.items || []).reduce((sum, item) => sum + item.qty, 0)}</Td>
                 <Td>
                   <Badge tone={order.payment}>{order.payment}</Badge>
                 </Td>

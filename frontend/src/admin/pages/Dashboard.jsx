@@ -75,7 +75,7 @@ export default function Dashboard() {
   const topProducts = useMemo(() => {
     const tally = new Map();
     for (const order of orders) {
-      for (const item of order.items) {
+      for (const item of order.items || []) {
         const entry = tally.get(item.id) || { id: item.id, name: item.name, image: item.image, qty: 0, revenue: 0 };
         entry.qty += item.qty;
         entry.revenue += item.qty * item.price;
@@ -191,7 +191,7 @@ export default function Dashboard() {
                       </a>
                       <span className="mt-0.5 block text-[10.5px] text-[#6f6a64]">{dateLabel(order.createdAt)}</span>
                     </Td>
-                    <Td>{order.customer.name}</Td>
+                    <Td>{order.customer?.name || 'Guest'}</Td>
                     <Td>
                       <Badge tone={order.status}>{order.status}</Badge>
                     </Td>

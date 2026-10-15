@@ -83,7 +83,7 @@ export default function AdminOrderDetail({ orderId }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {order.items.map((item) => (
+                  {(order.items || []).map((item) => (
                     <tr key={`${item.id}-${item.size ?? ''}`}>
                       <Td>
                         <div className="flex items-center gap-3">
@@ -187,18 +187,18 @@ export default function AdminOrderDetail({ orderId }) {
           <Card className="space-y-4">
             <SectionTitle>Customer</SectionTitle>
             <div>
-              <p className="text-[14px] text-[#f2ece8]">{order.customer.name}</p>
-              <p className="text-[12px] text-[#9d968f]">{order.customer.email}</p>
-              <p className="text-[12px] text-[#9d968f]">{order.customer.phone}</p>
+              <p className="text-[14px] text-[#f2ece8]">{order.customer?.name || 'Guest'}</p>
+              <p className="text-[12px] text-[#9d968f]">{order.customer?.email}</p>
+              <p className="text-[12px] text-[#9d968f]">{order.customer?.phone}</p>
             </div>
             <div className="border-t border-white/10 pt-4">
               <p className="mb-1.5 text-[10px] font-medium uppercase tracking-[0.16em] text-[#8d867f]">
                 Shipping Address
               </p>
               <p className="text-[12.5px] leading-relaxed text-[#c9c2bb]">
-                {order.address.line1}
+                {order.address?.line1 || '—'}
                 <br />
-                {order.address.city}, {order.address.state} {order.address.pincode}
+                {[order.address?.city, order.address?.state, order.address?.pincode].filter(Boolean).join(', ') || '—'}
               </p>
             </div>
           </Card>
@@ -207,7 +207,7 @@ export default function AdminOrderDetail({ orderId }) {
             <SectionTitle
               action={
                 <Badge tone={order.payment}>
-                  {order.payment.charAt(0).toUpperCase() + order.payment.slice(1)}
+                  {((order.payment || 'pending').charAt(0)).toUpperCase() + (order.payment || 'pending').slice(1)}
                 </Badge>
               }
             >
