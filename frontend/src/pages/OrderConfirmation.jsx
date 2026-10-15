@@ -26,27 +26,30 @@ const formatDate = (value) => {
 };
 
 export default function OrderConfirmation({ orderId }) {
-  const user = getCurrentUser();
+  /* `getCurrentUser()` returns a fresh object on every call, so keep only a
+     stable primitive (the email) to use as an effect dependency — otherwise
+     the effect would re-run on every render and reset the state to 'loading'. */
+  const userEmail = getCurrentUser()?.email || null;
   const [state, setState] = useState('loading'); /* loading | ready | notfound | error */
   const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    if (!user) {
+    if (!userEmail) {
       window.location.hash = `#/login?redirect=${encodeURIComponent(`order/${orderId}`)}`;
     }
-  }, [user, orderId]);
+  }, [userEmail, orderId]);
 
   useEffect(() => {
-    if (!user || !orderId) return undefined;
+    if (!userEmail || !orderId) return undefined;
     let active = true;
     setState('loading');
     getOrder(orderId)
       .then((data) => { if (active) { setOrder(data); setState('ready'); } })
       .catch((error) => { if (active) setState(error?.status === 404 ? 'notfound' : 'error'); });
     return () => { active = false; };
-  }, [user, orderId]);
+  }, [userEmail, orderId]);
 
-  if (!user) return null;
+  if (!userEmail) return null;
 
   if (state === 'loading') {
     return (
@@ -114,6 +117,9 @@ export default function OrderConfirmation({ orderId }) {
             </span>
             <p className="mt-4 text-[10.5px] uppercase tracking-[0.16em] text-[#8c867f]">Payment</p>
             <p className="mt-1.5 text-[13px] text-[#f0eae5]">{methodLabel(order.paymentMethod)} · <span className={order.payment === 'paid' ? 'text-[#8fbf9a]' : 'text-[#e0c99a]'}>{paymentLabel(order.payment)}</span></p>
+            {order.demoPayment ? (
+              <p className="mt-1.5 text-[11px] text-[#8c867f]">Simulated payment (demo mode)</p>
+            ) : null}
             {order.tracking ? (
               <p className="mt-3 text-[12px] text-[#9d968f]">Tracking: <span className="text-[#f0eae5]">{order.tracking}</span></p>
             ) : null}

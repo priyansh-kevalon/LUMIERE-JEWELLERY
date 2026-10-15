@@ -20,24 +20,24 @@ const formatDate = (value) => {
 };
 
 export default function MyOrders() {
-  const user = getCurrentUser();
+  const userEmail = getCurrentUser()?.email || null;
   const [state, setState] = useState('loading');
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    if (!user) window.location.hash = '#/login?redirect=orders';
-  }, [user]);
+    if (!userEmail) window.location.hash = '#/login?redirect=orders';
+  }, [userEmail]);
 
   useEffect(() => {
-    if (!user) return undefined;
+    if (!userEmail) return undefined;
     let active = true;
     getMyOrders()
       .then((data) => { if (active) { setOrders(Array.isArray(data) ? data : []); setState('ready'); } })
       .catch(() => { if (active) setState('error'); });
     return () => { active = false; };
-  }, [user]);
+  }, [userEmail]);
 
-  if (!user) return null;
+  if (!userEmail) return null;
 
   return (
     <main className="min-h-dvh bg-[#0d0d0d] pb-20 pt-28 sm:pt-32">

@@ -4,6 +4,7 @@ import SmartImage from '../components/common/SmartImage';
 import { useCart } from '../context/CartContext';
 import { formatINR } from '../data/products';
 import { getCurrentUser } from '../services/auth';
+import { API_BASE_URL } from '../services/api';
 import {
   getCheckoutConfig,
   createOrder,
@@ -72,6 +73,7 @@ export default function Checkout() {
   const [errors, setErrors] = useState({});
 
   const [paymentMethod, setPaymentMethod] = useState('COD');
+  const [paymentDetails, setPaymentDetails] = useState({ upiId: '', cardName: '', cardNumber: '', cardExpiry: '', cardCvv: '' });
   const [coupon, setCoupon] = useState('');
   const [couponState, setCouponState] = useState({ loading: false, valid: false, discount: 0, message: '' });
 
@@ -83,8 +85,8 @@ export default function Checkout() {
 
   /* Redirect to login (and back) when not authenticated. */
   useEffect(() => {
-    if (!user) window.location.hash = '#/login?redirect=checkout';
-  }, [user]);
+    if (!user?.email) window.location.hash = '#/login?redirect=checkout';
+  }, [user?.email]);
 
   /* Nothing to buy — send them shopping. */
   useEffect(() => {
@@ -100,22 +102,21 @@ export default function Checkout() {
     return () => { active = false; };
   }, []);
 
-  /* Keep the selection on an option the backend actually offers. */
-  useEffect(() => {
-    if (!configReady) return;
-    const available = [];
-    if (config.codEnabled) available.push('COD');
-    if (config.razorpayEnabled) available.push('UPI', 'CARD');
-    if (available.length && !available.includes(paymentMethod)) {
-      setPaymentMethod(available[0]);
-    }
-  }, [configReady, config.codEnabled, config.razorpayEnabled, paymentMethod]);
-
   const set = (key) => (event) => {
     const value = event?.target ? event.target.value : event;
     setForm((current) => ({ ...current, [key]: value }));
     setErrors((current) => ({ ...current, [key]: '' }));
   };
+
+  const setPaymentField = (key) => (event) => {
+    const value = event?.target ? event.target.value : event;
+    setPaymentDetails((current) => ({ ...current, [key]: value }));
+    setErrors((current) => ({ ...current, [key]: '' }));
+  };
+
+  /* When no gateway is configured the online methods collect details inline
+     and are settled by the demo simulator. */
+  const onlineDemo = !config.razorpayEnabled;
 
   const totals = useMemo(() => {
     const discount = couponState.valid ? Math.min(couponState.discount, subtotal) : 0;
@@ -159,6 +160,16 @@ export default function Checkout() {
     if (!form.city.trim()) next.city = 'City is required';
     if (!form.state.trim()) next.state = 'State is required';
     if (!/^\d{6}$/.test(form.pincode.trim())) next.pincode = 'Enter a valid 6-digit PIN code';
+    if (onlineDemo && paymentMethod === 'UPI') {
+      if (!/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(paymentDetails.upiId.trim())) next.upiId = 'Enter a valid UPI ID (e.g. name@bank)';
+    }
+    if (onlineDemo && paymentMethod === 'CARD') {
+      const digits = paymentDetails.cardNumber.replace(/\D/g, '');
+      if (!/^\d{13,19}$/.test(digits)) next.cardNumber = 'Enter a valid card number';
+      if (!paymentDetails.cardName.trim()) next.cardName = 'Enter the name on the card';
+      if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(paymentDetails.cardExpiry.trim())) next.cardExpiry = 'Use MM/YY';
+      if (!/^\d{3,4}$/.test(paymentDetails.cardCvv.trim())) next.cardCvv = 'Enter a valid CVV';
+    }
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -196,17 +207,17 @@ export default function Checkout() {
       if (paymentMethod === 'COD') {
         const result = await createOrder(payload);
         orderId = result.orderId;
+      } else if (razorpayRef.current) {
+        /* Reuse an already-created online order on retry to avoid duplicates. */
+        ({ orderId, razorpay } = razorpayRef.current);
       } else {
-        /* Reuse an already-created Razorpay order on retry to avoid duplicates. */
-        if (razorpayRef.current) {
-          ({ orderId, razorpay } = razorpayRef.current);
-        } else {
-          const result = await createOrder(payload);
-          orderId = result.orderId;
-          razorpay = result.razorpay;
-          razorpayRef.current = { orderId, razorpay };
-        }
+        const result = await createOrder(payload);
+        orderId = result.orderId;
+        razorpay = result.razorpay || null;
+        if (razorpay) razorpayRef.current = { orderId, razorpay };
+      }
 
+      if (razorpay) {
         setStatus('verifying');
         const response = await openRazorpayCheckout({
           keyId: razorpay.keyId,
@@ -239,6 +250,12 @@ export default function Checkout() {
         setMessage(error.message || 'The payment failed. Please try again.');
       } else if (error.message === 'checkout-not-configured') {
         setMessage('Checkout is not connected yet. Please try again later.');
+      } else if (error instanceof TypeError || /failed to fetch|networkerror|load failed|network request failed/i.test(error.message || '')) {
+        setMessage(
+          import.meta.env.DEV && API_BASE_URL
+            ? `Could not reach the LUMIÈRE API at ${API_BASE_URL}. Make sure the backend is running, then try again.`
+            : 'We could not reach the server. Please check your connection and try again.',
+        );
       } else {
         setMessage(error.message || 'We could not place your order. Please try again.');
       }
@@ -248,7 +265,6 @@ export default function Checkout() {
   if (!user) return null;
 
   const busy = status !== 'idle';
-  const noPaymentOption = !config.codEnabled && !config.razorpayEnabled;
 
   return (
     <main className="min-h-dvh bg-[#0d0d0d] pb-20 pt-28 sm:pt-32">
@@ -326,41 +342,61 @@ export default function Checkout() {
             </Section>
 
             <Section step="3" title="Payment Method">
-              {noPaymentOption ? (
-                <p className="rounded-md border border-[#e0a08f]/40 bg-[#e0a08f]/10 px-4 py-3 text-[12.5px] text-[#f0c4b8]">
-                  Payments are not configured. Please try again later or contact us for assistance.
-                </p>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  {config.codEnabled && (
-                    <label className={`flex cursor-pointer items-start gap-3 rounded-md border px-4 py-3.5 transition-colors ${paymentMethod === 'COD' ? 'border-[#C6A16A] bg-[#C6A16A]/5' : 'border-[#333] hover:border-white/25'}`}>
-                      <input type="radio" name="payment" className="mt-1 accent-[#C6A16A]" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')} />
-                      <span>
-                        <span className="flex items-center gap-2 text-[13.5px] text-[#f0eae5]"><Truck size={15} className="text-[#C6A16A]" /> Cash on Delivery</span>
-                        <span className="mt-1 block text-[11.5px] font-light text-[#8c867f]">Pay in cash when your order is delivered.</span>
-                      </span>
-                    </label>
-                  )}
-                  {config.razorpayEnabled && (
-                    <>
-                      <label className={`flex cursor-pointer items-start gap-3 rounded-md border px-4 py-3.5 transition-colors ${paymentMethod === 'UPI' ? 'border-[#C6A16A] bg-[#C6A16A]/5' : 'border-[#333] hover:border-white/25'}`}>
-                        <input type="radio" name="payment" className="mt-1 accent-[#C6A16A]" checked={paymentMethod === 'UPI'} onChange={() => setPaymentMethod('UPI')} />
-                        <span>
-                          <span className="flex items-center gap-2 text-[13.5px] text-[#f0eae5]"><Smartphone size={15} className="text-[#C6A16A]" /> UPI</span>
-                          <span className="mt-1 block text-[11.5px] font-light text-[#8c867f]">Pay instantly with any UPI app — GPay, PhonePe, Paytm and more.</span>
-                        </span>
-                      </label>
-                      <label className={`flex cursor-pointer items-start gap-3 rounded-md border px-4 py-3.5 transition-colors ${paymentMethod === 'CARD' ? 'border-[#C6A16A] bg-[#C6A16A]/5' : 'border-[#333] hover:border-white/25'}`}>
-                        <input type="radio" name="payment" className="mt-1 accent-[#C6A16A]" checked={paymentMethod === 'CARD'} onChange={() => setPaymentMethod('CARD')} />
-                        <span>
-                          <span className="flex items-center gap-2 text-[13.5px] text-[#f0eae5]"><CreditCard size={15} className="text-[#C6A16A]" /> Debit / Credit Card</span>
-                          <span className="mt-1 block text-[11.5px] font-light text-[#8c867f]">Visa, Mastercard, RuPay and Amex. Secured by Razorpay.</span>
-                        </span>
-                      </label>
-                    </>
-                  )}
-                </div>
-              )}
+              <div className="flex flex-col gap-3">
+                <label className={`flex cursor-pointer items-start gap-3 rounded-md border px-4 py-3.5 transition-colors ${paymentMethod === 'COD' ? 'border-[#C6A16A] bg-[#C6A16A]/5' : 'border-[#333] hover:border-white/25'}`}>
+                  <input type="radio" name="payment" className="mt-1 accent-[#C6A16A]" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')} />
+                  <span>
+                    <span className="flex items-center gap-2 text-[13.5px] text-[#f0eae5]"><Truck size={15} className="text-[#C6A16A]" /> Cash on Delivery</span>
+                    <span className="mt-1 block text-[11.5px] font-light text-[#8c867f]">Pay in cash when your order is delivered.</span>
+                  </span>
+                </label>
+                <label className={`flex cursor-pointer items-start gap-3 rounded-md border px-4 py-3.5 transition-colors ${paymentMethod === 'UPI' ? 'border-[#C6A16A] bg-[#C6A16A]/5' : 'border-[#333] hover:border-white/25'}`}>
+                  <input type="radio" name="payment" className="mt-1 accent-[#C6A16A]" checked={paymentMethod === 'UPI'} onChange={() => setPaymentMethod('UPI')} />
+                  <span>
+                    <span className="flex items-center gap-2 text-[13.5px] text-[#f0eae5]"><Smartphone size={15} className="text-[#C6A16A]" /> UPI</span>
+                    <span className="mt-1 block text-[11.5px] font-light text-[#8c867f]">Pay instantly with any UPI app — GPay, PhonePe, Paytm and more.</span>
+                  </span>
+                </label>
+                {paymentMethod === 'UPI' && onlineDemo && (
+                  <div className="rounded-md border border-[#333] bg-[#1b1b1b]/60 p-4">
+                    <Field label="UPI ID" htmlFor="co-upi" error={errors.upiId}>
+                      <input id="co-upi" className={`${inputCls} ${errors.upiId ? 'border-[#e0a08f]' : 'border-[#333]'}`} value={paymentDetails.upiId} onChange={setPaymentField('upiId')} placeholder="yourname@bank" autoComplete="off" />
+                    </Field>
+                  </div>
+                )}
+                <label className={`flex cursor-pointer items-start gap-3 rounded-md border px-4 py-3.5 transition-colors ${paymentMethod === 'CARD' ? 'border-[#C6A16A] bg-[#C6A16A]/5' : 'border-[#333] hover:border-white/25'}`}>
+                  <input type="radio" name="payment" className="mt-1 accent-[#C6A16A]" checked={paymentMethod === 'CARD'} onChange={() => setPaymentMethod('CARD')} />
+                  <span>
+                    <span className="flex items-center gap-2 text-[13.5px] text-[#f0eae5]"><CreditCard size={15} className="text-[#C6A16A]" /> Debit / Credit Card</span>
+                    <span className="mt-1 block text-[11.5px] font-light text-[#8c867f]">Visa, Mastercard, RuPay and Amex. Secured by Razorpay.</span>
+                  </span>
+                </label>
+                {paymentMethod === 'CARD' && onlineDemo && (
+                  <div className="grid gap-4 rounded-md border border-[#333] bg-[#1b1b1b]/60 p-4 sm:grid-cols-2">
+                    <div className="sm:col-span-2">
+                      <Field label="Card Number" htmlFor="co-card-number" error={errors.cardNumber}>
+                        <input id="co-card-number" inputMode="numeric" className={`${inputCls} ${errors.cardNumber ? 'border-[#e0a08f]' : 'border-[#333]'}`} value={paymentDetails.cardNumber} onChange={setPaymentField('cardNumber')} placeholder="1234 5678 9012 3456" autoComplete="off" />
+                      </Field>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <Field label="Name on Card" htmlFor="co-card-name" error={errors.cardName}>
+                        <input id="co-card-name" className={`${inputCls} ${errors.cardName ? 'border-[#e0a08f]' : 'border-[#333]'}`} value={paymentDetails.cardName} onChange={setPaymentField('cardName')} placeholder="Name as printed on card" autoComplete="off" />
+                      </Field>
+                    </div>
+                    <Field label="Expiry (MM/YY)" htmlFor="co-card-expiry" error={errors.cardExpiry}>
+                      <input id="co-card-expiry" inputMode="numeric" maxLength={5} className={`${inputCls} ${errors.cardExpiry ? 'border-[#e0a08f]' : 'border-[#333]'}`} value={paymentDetails.cardExpiry} onChange={setPaymentField('cardExpiry')} placeholder="MM/YY" autoComplete="off" />
+                    </Field>
+                    <Field label="CVV" htmlFor="co-card-cvv" error={errors.cardCvv}>
+                      <input id="co-card-cvv" type="password" inputMode="numeric" maxLength={4} className={`${inputCls} ${errors.cardCvv ? 'border-[#e0a08f]' : 'border-[#333]'}`} value={paymentDetails.cardCvv} onChange={setPaymentField('cardCvv')} placeholder="•••" autoComplete="off" />
+                    </Field>
+                  </div>
+                )}
+                {paymentMethod !== 'COD' && onlineDemo && (
+                  <p className="rounded-md border border-[#C6A16A]/30 bg-[#C6A16A]/5 px-4 py-2.5 text-[11px] leading-relaxed text-[#d8c2a0]">
+                    Demo mode — no real payment is processed. These details stay in your browser and are never stored or sent to our servers.
+                  </p>
+                )}
+              </div>
             </Section>
           </div>
 
@@ -432,7 +468,7 @@ export default function Checkout() {
               <button
                 type="button"
                 onClick={placeOrder}
-                disabled={busy || noPaymentOption || !configReady}
+                disabled={busy || !configReady}
                 className="mt-5 w-full rounded-full bg-[#C6A16A] py-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0D0D0D] transition-colors hover:bg-[#d8b47e] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {status === 'submitting' ? 'Placing order…' : status === 'verifying' ? 'Verifying payment…' : paymentMethod === 'COD' ? 'Place Order (COD)' : paymentMethod === 'UPI' ? `Pay via UPI · ${formatINR(totals.total)}` : `Pay by Card · ${formatINR(totals.total)}`}

@@ -49,6 +49,7 @@ async function resolveCart(rawItems) {
   if (!Array.isArray(rawItems) || rawItems.length === 0) {
     throw ApiError.badRequest('Your cart is empty');
   }
+  if (rawItems.length > 50) throw ApiError.badRequest('Too many items in the cart');
 
   const wanted = new Map(); /* "id|size|metal" -> { id, qty, size, metal } */
   for (const raw of rawItems) {
@@ -58,8 +59,8 @@ async function resolveCart(rawItems) {
     if (!Number.isInteger(qty) || qty <= 0) throw ApiError.badRequest('Invalid quantity in cart');
     if (qty > 50) throw ApiError.badRequest('Quantity exceeds the per-order limit');
 
-    const size = raw.size != null ? String(raw.size) : null;
-    const metal = raw.metal != null ? String(raw.metal) : null;
+    const size = raw.size != null ? String(raw.size).slice(0, 40) : null;
+    const metal = raw.metal != null ? String(raw.metal).slice(0, 40) : null;
     const key = `${id}|${size ?? ''}|${metal ?? ''}`;
     const entry = wanted.get(key) || { id, qty: 0, size, metal };
     entry.qty += qty;
@@ -138,23 +139,44 @@ function nextOrderId(orders) {
   return `LM-${max + 1}`;
 }
 
-/** Reduce stock exactly once per order, even across payment retries. */
+/** Reduce stock exactly once per order, even across payment retries or
+    concurrent verify/webhook callbacks, and consume the coupon once. */
 async function applyStockOnce(order) {
   if (order.stockReduced) return order;
+
+  /* Atomically claim the reservation so two concurrent callbacks can never
+     both decrement stock. */
+  const claimed = await Order.findOneAndUpdate(
+    { _id: order._id, stockReduced: { $ne: true } },
+    { $set: { stockReduced: true, updatedAt: Date.now() } },
+    { new: false },
+  );
+  if (!claimed) {
+    order.stockReduced = true;
+    return order;
+  }
+
   const qtyById = new Map();
   for (const item of order.items) {
     qtyById.set(item.id, (qtyById.get(item.id) || 0) + Number(item.qty || 0));
   }
-  for (const [id, qty] of qtyById) {
+
+  await Promise.all([...qtyById].map(async ([id, qty]) => {
     const product = await Product.findOne({ id }).select('availability').lean();
     const madeToOrder = String(product?.availability || '').toLowerCase() === 'made to order';
     if (!madeToOrder) {
-      await Product.updateOne({ id }, { $inc: { stock: -qty } });
+      /* Guard against overselling under concurrency: only decrement if enough
+         stock is still available. */
+      await Product.updateOne({ id, stock: { $gte: qty } }, { $inc: { stock: -qty } });
     }
+  }));
+
+  if (order.couponCode) {
+    await Coupon.updateOne({ code: order.couponCode }, { $inc: { used: 1 } });
   }
+
   order.stockReduced = true;
   order.updatedAt = Date.now();
-  await order.save();
   return order;
 }
 
@@ -217,9 +239,8 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
   if (paymentMethod === 'COD' && !COD_ENABLED) {
     throw ApiError.badRequest('Cash on delivery is currently unavailable');
   }
-  if (isOnline && !razorpayEnabled) {
-    throw ApiError.badRequest('Online payment is not configured yet');
-  }
+  /* When no gateway keys are configured, online methods fall back to the demo
+     simulator so the checkout can be exercised end to end. */
 
   const subtotal = lines.reduce((sum, line) => sum + line.price * line.qty, 0);
   const { gstRate, freeShippingThreshold, shippingFee } = await loadPricing();
@@ -260,7 +281,7 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
   }
   if (!order) throw new ApiError(500, 'Could not allocate an order number');
 
-  if (isOnline) {
+  if (isOnline && razorpayEnabled) {
     try {
       const rzOrder = await getRazorpay().orders.create({
         amount: Math.max(100, total * 100), /* Razorpay needs paise */
@@ -298,9 +319,26 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
     }
   }
 
-  /* Cash on delivery — reserve stock now that the order is placed. */
+  /* Simulated online payment (demo mode — no gateway configured). The card /
+     UPI details entered by the customer are never sent to or stored by the
+     backend; only the resulting "paid" state is recorded. */
+  if (isOnline) {
+    order.demoPayment = true;
+    order.payment = 'paid';
+    order.status = 'confirmed';
+    order.updatedAt = Date.now();
+    await order.save();
+  }
+
+  /* Cash on delivery / demo payment — reserve stock now that the order is placed. */
   await applyStockOnce(order);
-  res.status(201).json({ order: order.toJSON(), orderId: order.id, total: order.total, razorpay: null });
+  res.status(201).json({
+    order: order.toJSON(),
+    orderId: order.id,
+    total: order.total,
+    razorpay: null,
+    simulated: isOnline,
+  });
 }));
 
 /* POST /api/checkout/coupon — preview a coupon against an estimated subtotal.
@@ -326,7 +364,7 @@ router.post('/razorpay/verify', requireAuth, asyncHandler(async (req, res) => {
 
   const order = await Order.findOne({ id: String(orderId) });
   if (!order) throw ApiError.notFound('Order not found');
-  if (order.user && String(order.user) !== String(req.user.sub)) {
+  if (!order.user || String(order.user) !== String(req.user.sub)) {
     throw ApiError.notFound('Order not found');
   }
   if (order.razorpayOrderId && order.razorpayOrderId !== razorpayOrderId) {

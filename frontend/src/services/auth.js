@@ -1,8 +1,8 @@
 /* ------------------------------------------------------------------ */
 /* Account service                                                     */
 /*                                                                     */
-/* When VITE_AUTH_ENDPOINT is set, requests are forwarded to that       */
-/* backend (expected to answer with { user, token }). When it is not    */
+/* When VITE_API_URL is set, requests are forwarded to that backend         */
+/* (expected to answer with { user, token }). When it is not set, the site  */
 /* set, the site falls back to a front-end-only account store kept in   */
 /* the browser so the register / login flows stay fully interactive     */
 /* without a server.                                                    */
@@ -283,7 +283,7 @@ export async function updateProfile({ name, phone }) {
 /**
  * Password reset.
  *
- * With a backend wired up (`VITE_AUTH_ENDPOINT`) this posts to the reset
+ * With a backend wired up (`VITE_API_URL`) this posts to the reset
  * endpoint. Otherwise it runs a fully local demo flow: a short-lived code is
  * generated and stored on the device, then returned so the UI can show it
  * (there is no email service in demo mode).

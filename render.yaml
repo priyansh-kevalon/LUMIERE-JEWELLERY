@@ -18,6 +18,11 @@
 # The backend already exists as a separate service. Add its deployed frontend
 # origin to that service's CORS_ORIGIN env var in the Render dashboard:
 #   CORS_ORIGIN=http://localhost:5173,https://front-end-q8f5.onrender.com
+#
+# IMPORTANT: do NOT set per-feature endpoint vars (VITE_AUTH_ENDPOINT,
+# VITE_CHECKOUT_ENDPOINT, …) on the frontend service. Only VITE_API_URL is
+# needed; a stale localhost override gets baked into the bundle and makes the
+# site call `http://localhost:4000` → "Failed to fetch".
 # ─────────────────────────────────────────────────────────────────────────
 
 services:

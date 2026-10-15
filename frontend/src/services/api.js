@@ -11,25 +11,20 @@ const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 export const isApiConfigured = Boolean(API_URL);
 
 /*
- * All backend URLs derive from the single `VITE_API_URL` base (which already
- * includes the `/api` prefix). The per-feature variables below are optional
- * overrides kept for backwards compatibility — set them only if an endpoint
- * lives somewhere other than `{VITE_API_URL}/<feature>`. This means production
- * only needs one variable, and there is no `/api/api` duplication.
+ * Every endpoint derives from the single `VITE_API_URL` base (which already
+ * includes the `/api` prefix). Per-feature overrides are intentionally NOT
+ * supported: environment-specific values like `VITE_CHECKOUT_ENDPOINT` get
+ * baked into the production bundle, and a stray localhost override made the
+ * deployed site call `http://localhost:4000` → "Failed to fetch". One variable
+ * also removes any `/api/api` duplication.
  */
-const stripTrailingSlash = (value) => String(value || '').replace(/\/+$/, '');
-
-const resolveEndpoint = (override, suffix) => {
-  const direct = stripTrailingSlash(override);
-  if (direct) return direct;
-  return API_URL ? `${API_URL}${suffix}` : '';
-};
+const endpoint = (suffix) => (API_URL ? `${API_URL}${suffix}` : '');
 
 export const API_BASE_URL = API_URL;
-export const AUTH_ENDPOINT = resolveEndpoint(import.meta.env.VITE_AUTH_ENDPOINT, '/auth');
-export const CONTACT_ENDPOINT = resolveEndpoint(import.meta.env.VITE_CONTACT_ENDPOINT, '/contact');
-export const NEWSLETTER_ENDPOINT = resolveEndpoint(import.meta.env.VITE_NEWSLETTER_ENDPOINT, '/newsletter');
-export const CHECKOUT_ENDPOINT = resolveEndpoint(import.meta.env.VITE_CHECKOUT_ENDPOINT, '/checkout');
+export const AUTH_ENDPOINT = endpoint('/auth');
+export const CONTACT_ENDPOINT = endpoint('/contact');
+export const NEWSLETTER_ENDPOINT = endpoint('/newsletter');
+export const CHECKOUT_ENDPOINT = endpoint('/checkout');
 
 const ADMIN_SESSION_KEY = 'lumiere-admin-session';
 

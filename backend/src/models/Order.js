@@ -44,6 +44,9 @@ export const Order = model('Order', new Schema({
   /* Payment lifecycle: pending | paid | failed | refunded */
   payment: { type: String, default: 'pending' },
   paymentMethod: String,
+  /* True when an online payment was completed via the demo simulator instead
+     of a real Razorpay transaction (i.e. no gateway keys configured). */
+  demoPayment: { type: Boolean, default: false },
   /* Razorpay references. The secret is never stored here. */
   razorpayOrderId: String,
   razorpayPaymentId: String,
