@@ -75,7 +75,6 @@ export default function MobileMenu({ open, onClose }) {
                 <span className="text-ivory transition-colors duration-300 group-hover:text-gold">
                   {link.label}
                 </span>
-                <span className="text-[10px] text-gold/50">0{i + 1}</span>
               </a>
             ))}
           </nav>
@@ -91,18 +90,11 @@ export default function MobileMenu({ open, onClose }) {
 
           <div className="mt-4 flex items-center gap-3">
             <a
-              href="#contact"
+              href="#/contact"
               onClick={onClose}
               className="flex-1 rounded-full border border-gold py-3.5 text-center text-[10px] tracking-luxe text-gold transition hover:bg-gold hover:text-ink"
             >
               BOOK A CONSULTATION
-            </a>
-            <a
-              href="#collections"
-              onClick={onClose}
-              className="flex-1 rounded-full border border-white/20 py-3.5 text-center text-[10px] tracking-luxe text-ivory transition hover:border-gold hover:text-gold"
-            >
-              SHOP NOW
             </a>
           </div>
         </div>
