@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { footerColumns } from '../../data/navigation';
+import { subscribeToNewsletter } from '../../services/contact';
 
 /* Official brand glyphs (Font Awesome Free, "brands" set). Each is drawn in
    `currentColor` so it renders white on the brand-coloured button below. */
@@ -48,13 +49,29 @@ function PinterestIcon({ size = 16 }) {
 
 export default function Footer() {
   const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [thanks, setThanks] = useState(false);
+  const timerRef = useRef(null);
 
-  const onSubscribe = (e) => {
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  const onSubscribe = async (e) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    setSubscribed(true);
-    setEmail('');
+    const value = email.trim();
+    if (!value || submitting) return;
+
+    setSubmitting(true);
+    try {
+      await subscribeToNewsletter(value);
+    } catch {
+      /* Offline or API not configured — still acknowledge the visitor. */
+    } finally {
+      setSubmitting(false);
+      setEmail('');
+      setThanks(true);
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => setThanks(false), 2500);
+    }
   };
 
   return (
@@ -147,14 +164,12 @@ export default function Footer() {
                 />
                 <button
                   type="submit"
-                  className="shrink-0 rounded-full bg-[#353535] hover:bg-[#454545] px-6 py-2.5 text-xs font-medium tracking-wider uppercase text-white transition-colors"
+                  disabled={submitting}
+                  className="shrink-0 rounded-full bg-[#353535] hover:bg-[#454545] px-6 py-2.5 text-xs font-medium tracking-wider uppercase text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  SUBSCRIBE
+                  {submitting ? 'SENDING…' : 'SUBSCRIBE'}
                 </button>
               </form>
-              {subscribed && (
-                <p className="mt-2 text-xs text-gold">Thank you for subscribing!</p>
-              )}
             </div>
           </div>
 
@@ -189,6 +204,17 @@ export default function Footer() {
           </p>
         </div>
       </div>
+
+      {/* Subscribe acknowledgement — auto-dismisses after ~2.5s */}
+      {thanks && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-6 left-1/2 z-[70] w-[92vw] max-w-sm -translate-x-1/2 animate-fade-in rounded-full border border-gold/40 bg-[#1c1a18]/95 px-5 py-3 text-center text-[11px] font-light tracking-wide text-[#f2ece8] shadow-luxe backdrop-blur-md"
+        >
+          Thank you for subscribing!
+        </div>
+      )}
     </footer>
   );
 }

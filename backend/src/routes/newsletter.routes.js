@@ -1,9 +1,16 @@
 import { Router } from 'express';
 import { NewsletterSubscriber } from '../models/Contact.js';
+import { requireAdmin } from '../middleware/auth.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 
 const router = Router();
+
+/* GET /api/newsletter — admin. All newsletter subscribers, newest first. */
+router.get('/', requireAdmin, asyncHandler(async (req, res) => {
+  const subscribers = await NewsletterSubscriber.find({}).sort({ createdAt: -1 }).lean();
+  res.json(subscribers);
+}));
 
 /* POST /api/newsletter — subscribe an email. */
 router.post('/', asyncHandler(async (req, res) => {

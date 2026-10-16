@@ -8,7 +8,7 @@
 
 import { api, isApiConfigured } from '../services/api';
 import { categoriesStore, productsStore } from './products';
-import { couponsStore, customersStore, ordersStore, reviewsStore, settingsStore } from './adminData';
+import { couponsStore, customersStore, ordersStore, reviewsStore, settingsStore, subscribersStore } from './adminData';
 
 let publicPromise = null;
 let adminPromise = null;
@@ -48,12 +48,14 @@ export function hydrateAdmin() {
             api.get('/coupons', { admin: true }),
             api.get('/reviews', { admin: true }),
             api.get('/customers', { admin: true }),
+            api.get('/newsletter', { admin: true }),
         ])
-            .then(([orders, coupons, reviews, customers]) => {
+            .then(([orders, coupons, reviews, customers, subscribers]) => {
                 if (Array.isArray(orders)) ordersStore.set(orders);
                 if (Array.isArray(coupons)) couponsStore.set(coupons);
                 if (Array.isArray(reviews)) reviewsStore.set(reviews);
                 if (Array.isArray(customers)) customersStore.set(customers);
+                if (Array.isArray(subscribers)) subscribersStore.set(subscribers);
                 return true;
             })
             .catch((error) => {

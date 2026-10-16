@@ -188,6 +188,9 @@ export const settingsStore = createStore('lumiere-settings', seedSettings);
    pure-offline mode, where the panel instead derives customers from orders. */
 export const customersStore = createStore('lumiere-customers', []);
 
+/* Newsletter subscribers — pulled from the API on admin sign-in. */
+export const subscribersStore = createStore('lumiere-subscribers', []);
+
 export function useOrders() {
     return useStore(ordersStore);
 }
@@ -202,6 +205,9 @@ export function useSettings() {
 }
 export function useCustomers() {
     return useStore(customersStore);
+}
+export function useSubscribers() {
+    return useStore(subscribersStore);
 }
 
 export function updateOrder(id, patch) {

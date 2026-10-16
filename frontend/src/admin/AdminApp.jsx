@@ -7,6 +7,7 @@ import {
   Users,
   TicketPercent,
   Star,
+  Mail,
   Settings as SettingsIcon,
   UserRound,
   LogOut,
@@ -28,6 +29,7 @@ import AdminOrderDetail from './pages/AdminOrderDetail';
 import AdminCustomers from './pages/AdminCustomers';
 import AdminCoupons from './pages/AdminCoupons';
 import AdminReviews from './pages/AdminReviews';
+import AdminSubscribers from './pages/AdminSubscribers';
 import AdminSettings from './pages/AdminSettings';
 import AdminProfile from './pages/AdminProfile';
 
@@ -39,6 +41,7 @@ const NAV = [
   { id: 'customers', label: 'Customers', icon: Users, path: '/admin/customers' },
   { id: 'coupons', label: 'Coupons', icon: TicketPercent, path: '/admin/coupons' },
   { id: 'reviews', label: 'Reviews', icon: Star, path: '/admin/reviews' },
+  { id: 'subscribers', label: 'Subscribers', icon: Mail, path: '/admin/subscribers' },
   { id: 'settings', label: 'Settings', icon: SettingsIcon, path: '/admin/settings' },
   { id: 'profile', label: 'Profile', icon: UserRound, path: '/admin/profile' },
 ];
@@ -72,6 +75,8 @@ function resolvePage(segments, context = {}) {
       return { id: 'coupons', node: <AdminCoupons /> };
     case 'reviews':
       return { id: 'reviews', node: <AdminReviews /> };
+    case 'subscribers':
+      return { id: 'subscribers', node: <AdminSubscribers /> };
     case 'settings':
       return { id: 'settings', node: <AdminSettings /> };
     case 'profile':
