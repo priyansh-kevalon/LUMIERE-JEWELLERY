@@ -339,7 +339,7 @@ export default function Navbar({ activeId = 'home' }) {
         )}
       </header>
 
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} activeId={activeId} />
     </>
   );
 }

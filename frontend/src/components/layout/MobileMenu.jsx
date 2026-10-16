@@ -4,7 +4,7 @@ import { navLinks } from '../../data/navigation';
 
 const ease = 'transition-all duration-500 ease-luxe';
 
-export default function MobileMenu({ open, onClose }) {
+export default function MobileMenu({ open, onClose, activeId = 'home' }) {
   /* Lock scroll while the panel owns the viewport. */
   useEffect(() => {
     if (!open) return undefined;
@@ -62,21 +62,29 @@ export default function MobileMenu({ open, onClose }) {
           </div>
 
           <nav className="flex flex-col pt-4">
-            {navLinks.map((link, i) => (
-              <a
-                key={link.id}
-                href={link.href}
-                onClick={onClose}
-                style={{ transitionDelay: open ? `${120 + i * 60}ms` : '0ms' }}
-                className={`group flex items-baseline justify-between border-b border-white/5 py-5 text-[13px] tracking-wideluxe transition-all duration-500 ease-luxe ${
-                  open ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
-                }`}
-              >
-                <span className="text-ivory transition-colors duration-300 group-hover:text-gold">
-                  {link.label}
-                </span>
-              </a>
-            ))}
+            {navLinks.map((link, i) => {
+              const isActive = link.id === activeId;
+              return (
+                <a
+                  key={link.id}
+                  href={link.href}
+                  onClick={onClose}
+                  aria-current={isActive ? 'page' : undefined}
+                  style={{ transitionDelay: open ? `${120 + i * 60}ms` : '0ms' }}
+                  className={`group flex items-baseline justify-between border-b border-white/5 py-5 pl-3 text-[13px] tracking-wideluxe transition-all duration-500 ease-luxe ${
+                    isActive ? 'border-l-2 border-l-gold text-gold' : 'border-l-2 border-l-transparent'
+                  } ${open ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'}`}
+                >
+                  <span
+                    className={`transition-colors duration-300 ${
+                      isActive ? 'text-gold' : 'text-ivory group-hover:text-gold'
+                    }`}
+                  >
+                    {link.label}
+                  </span>
+                </a>
+              );
+            })}
           </nav>
 
           <a
