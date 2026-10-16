@@ -79,12 +79,29 @@ function Quotes({ items }) {
           key={quote.name}
           className="flex flex-col rounded-[10px] border border-white/10 bg-white/[0.02] p-6"
         >
-          <blockquote className="text-[13.5px] font-light leading-relaxed text-[#e9e3dd]">
+          <div className="flex items-center gap-3">
+            {quote.photo ? (
+              <img
+                src={quote.photo}
+                alt={quote.name}
+                loading="lazy"
+                className="h-11 w-11 shrink-0 rounded-full object-cover ring-1 ring-[#C6A16A]/40"
+              />
+            ) : (
+              <span
+                aria-hidden="true"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#C6A16A]/15 font-serif text-[16px] text-[#C6A16A] ring-1 ring-[#C6A16A]/40"
+              >
+                {quote.name.charAt(0)}
+              </span>
+            )}
+            <figcaption className="text-[10.5px] uppercase tracking-[0.2em] text-[#C6A16A]">
+              {quote.name}
+            </figcaption>
+          </div>
+          <blockquote className="mt-4 text-[13.5px] font-light leading-relaxed text-[#e9e3dd]">
             &ldquo;{quote.text}&rdquo;
           </blockquote>
-          <figcaption className="mt-4 text-[10.5px] uppercase tracking-[0.2em] text-[#C6A16A]">
-            {quote.name}
-          </figcaption>
         </figure>
       ))}
     </div>

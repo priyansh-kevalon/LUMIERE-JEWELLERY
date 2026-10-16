@@ -183,7 +183,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Line & Copyright */}
-        <div className="mt-10 sm:mt-12 border-t border-white/10 pt-6 flex justify-end">
+        <div className="mt-10 sm:mt-12 border-t border-white/10 pt-6 flex justify-center sm:justify-end">
           <p className="text-[11px] tracking-wider text-white/60">
             &copy; 2026 LUMIÈRE JEWELLERY
           </p>

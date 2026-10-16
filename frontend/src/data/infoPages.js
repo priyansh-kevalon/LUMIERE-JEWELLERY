@@ -361,14 +361,17 @@ export const infoPages = {
           {
             text: 'The craftsmanship is extraordinary. My engagement ring is even more beautiful in person than I imagined.',
             name: 'Ananya & Rohan',
+            photo: 'https://randomuser.me/api/portraits/women/44.jpg',
           },
           {
             text: 'From consultation to delivery, the team made our anniversary gift effortless and truly special.',
             name: 'Priya S.',
+            photo: 'https://randomuser.me/api/portraits/women/68.jpg',
           },
           {
             text: 'Every detail feels considered. This is jewellery meant to be passed down.',
             name: 'Meera K.',
+            photo: 'https://randomuser.me/api/portraits/women/79.jpg',
           },
         ],
       },
