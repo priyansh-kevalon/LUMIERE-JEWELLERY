@@ -110,4 +110,20 @@ router.patch('/me', requireAuth, asyncHandler(async (req, res) => {
   res.json({ user: publicUser(user) });
 }));
 
+/* POST /api/auth/change-password -> { ok } (signed-in user, no email code) */
+router.post('/change-password', requireAuth, asyncHandler(async (req, res) => {
+  const { password } = req.body || {};
+  if (!password || String(password).length < 8) {
+    throw ApiError.badRequest('Password must be at least 8 characters');
+  }
+
+  const user = await User.findById(req.user.sub);
+  if (!user) throw ApiError.notFound('User not found');
+
+  user.password = await bcrypt.hash(String(password), 10);
+  await user.save();
+
+  res.json({ ok: true });
+}));
+
 export default router;

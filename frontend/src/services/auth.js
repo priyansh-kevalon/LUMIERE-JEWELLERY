@@ -278,6 +278,46 @@ export async function updateProfile({ name, phone }) {
   return publicUser;
 }
 
+/**
+ * Change the signed-in user's password directly (no email code needed, since
+ * the user already holds a valid session). Mirrors the backend
+ * `POST /api/auth/change-password` endpoint, with a local fallback.
+ */
+export async function changePassword({ password }) {
+  const session = getSession();
+  if (!session?.email) throw new Error('not-authenticated');
+  if (!password || password.length < 8) throw new Error('Password must be at least 8 characters');
+
+  if (AUTH_ENDPOINT) {
+    const response = await fetch(`${AUTH_ENDPOINT}/change-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(session.token ? { Authorization: `Bearer ${session.token}` } : {}),
+      },
+      body: JSON.stringify({ password }),
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const error = new Error(body?.message || `change-password-failed:${response.status}`);
+      error.status = response.status;
+      throw error;
+    }
+    return body;
+  }
+
+  const users = readUsers();
+  const index = users.findIndex((entry) => entry.email === session.email);
+  if (index === -1) throw new Error('not-authenticated');
+
+  const salt = randomSalt();
+  const hashed = await hashPassword(password, salt);
+  users[index] = { ...users[index], salt, password: hashed };
+  writeUsers(users);
+
+  return { ok: true, email: session.email };
+}
+
 /* --------------------------- password reset ----------------------- */
 
 /**

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Eye, EyeOff, ArrowRight, Check, AlertCircle, Loader2, ShieldCheck } from 'lucide-react';
-import { contactInfo } from '../data/contact';
-import { signIn, register, signOut, getCurrentUser, isLocalAuth } from '../services/auth';
+import { Eye, EyeOff, ArrowRight, Check, AlertCircle, Loader2, ShieldCheck, X, Mail, KeyRound } from 'lucide-react';
+import { signIn, register, signOut, getCurrentUser, isLocalAuth, requestPasswordReset, resetPassword } from '../services/auth';
 
 const inputClass =
   'h-10 w-full rounded-md border border-[#3a3a3a] bg-[#242424] px-4 text-[13px] text-[#f0eae5] placeholder-[#7c766f] outline-none transition-colors duration-200 focus:border-[#b99662] focus:ring-1 focus:ring-[#b99662]/40';
@@ -51,6 +50,243 @@ function PasswordField({ id, label, value, onChange, placeholder, error, autoCom
   );
 }
 
+function ForgotPasswordModal({ open, onClose, initialEmail = '' }) {
+  const [step, setStep] = useState('email');
+  const [email, setEmail] = useState(initialEmail);
+  const [code, setCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [demo, setDemo] = useState('');
+  const [status, setStatus] = useState('idle');
+  const [msg, setMsg] = useState('');
+
+  useEffect(() => {
+    if (!open) return;
+    setStep('email');
+    setEmail(initialEmail || '');
+    setCode('');
+    setPassword('');
+    setConfirm('');
+    setDemo('');
+    setStatus('idle');
+    setMsg('');
+  }, [open, initialEmail]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  const sendCode = async (event) => {
+    event.preventDefault();
+    if (status === 'submitting') return;
+    if (!EMAIL_RE.test(email.trim())) {
+      setStatus('error');
+      setMsg('Enter a valid email address.');
+      return;
+    }
+    setStatus('submitting');
+    setMsg('');
+    try {
+      const res = await requestPasswordReset({ email });
+      setDemo(res?.code || '');
+      setStep('reset');
+      setStatus('idle');
+    } catch (err) {
+      setStatus('error');
+      setMsg(
+        err?.message === 'email-not-found'
+          ? 'No account found for that email address.'
+          : err?.message || 'Could not send the reset code. Please try again.',
+      );
+    }
+  };
+
+  const reset = async (event) => {
+    event.preventDefault();
+    if (status === 'submitting') return;
+    if (!code.trim()) {
+      setStatus('error');
+      setMsg('Enter the reset code we sent you.');
+      return;
+    }
+    if (password.length < 8) {
+      setStatus('error');
+      setMsg('Use at least 8 characters.');
+      return;
+    }
+    if (password !== confirm) {
+      setStatus('error');
+      setMsg('Passwords do not match.');
+      return;
+    }
+    setStatus('submitting');
+    setMsg('');
+    try {
+      await resetPassword({ email, code, password });
+      setStatus('idle');
+      setStep('done');
+    } catch (err) {
+      setStatus('error');
+      setMsg(err?.message || 'Could not reset your password. Please try again.');
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[80] flex items-center justify-center overflow-y-auto bg-black/70 px-4 py-6 backdrop-blur-sm"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Reset your password"
+        className="animate-fade-up w-full max-w-[420px] rounded-lg border border-white/10 bg-[#141312] shadow-[0_30px_80px_rgba(0,0,0,0.55)]"
+      >
+        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+          <h2 className="flex items-center gap-2 font-serif text-[17px] font-normal text-[#f0eae5]">
+            <KeyRound size={16} strokeWidth={1.6} className="text-[#b99662]" />
+            {step === 'done' ? 'Password Reset' : 'Reset Your Password'}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-[#8c867f] transition-colors hover:bg-white/5 hover:text-[#f0eae5]"
+          >
+            <X size={16} strokeWidth={1.8} />
+          </button>
+        </div>
+
+        <div className="px-5 py-5">
+          {step === 'email' && (
+            <form onSubmit={sendCode} noValidate className="flex flex-col gap-3">
+              <p className="text-[12.5px] font-light leading-relaxed text-[#a7a19b]">
+                Enter the email linked to your account and we'll send a reset code.
+              </p>
+              <Field id="forgot-email" label="Email Address">
+                <input
+                  id="forgot-email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="abc@gmail.com"
+                  className={inputClass}
+                />
+              </Field>
+              <Feedback status={status} message={msg} />
+              <button
+                type="submit"
+                disabled={status === 'submitting'}
+                className="mt-1 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#f0eae5] text-[11px] font-medium uppercase tracking-[0.2em] text-[#171515] transition-colors duration-300 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {status === 'submitting' ? (
+                  <Loader2 size={15} className="animate-spin" />
+                ) : (
+                  <Mail size={15} strokeWidth={1.7} />
+                )}
+                Send Reset Code
+              </button>
+            </form>
+          )}
+
+          {step === 'reset' && (
+            <form onSubmit={reset} noValidate className="flex flex-col gap-3">
+              <div className="flex items-start gap-2 rounded-md border border-[#b99662]/40 bg-[#b99662]/10 px-3 py-2.5 text-[11.5px] leading-relaxed text-[#d8b47e]">
+                <Mail size={14} strokeWidth={1.7} className="mt-0.5 shrink-0" />
+                <span>
+                  A reset code has been sent to{' '}
+                  <span className="text-[#f0eae5]">{email}</span>. Check your inbox and spam
+                  folder.
+                </span>
+              </div>
+              {demo && (
+                <div className="rounded-md border border-[#b99662]/40 bg-[#b99662]/10 px-3 py-2 text-[11px] text-[#d8b47e]">
+                  Demo code:{' '}
+                  <span className="font-mono tracking-[0.2em] text-[#f0eae5]">{demo}</span>
+                </div>
+              )}
+              <Field id="forgot-code" label="Reset Code">
+                <input
+                  id="forgot-code"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  value={code}
+                  onChange={(event) => setCode(event.target.value)}
+                  placeholder="6-digit code"
+                  className={inputClass}
+                />
+              </Field>
+              <PasswordField
+                id="forgot-password"
+                label="New Password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="At least 8 characters"
+                autoComplete="new-password"
+              />
+              <PasswordField
+                id="forgot-confirm"
+                label="Confirm Password"
+                value={confirm}
+                onChange={(event) => setConfirm(event.target.value)}
+                placeholder="Re-enter new password"
+                autoComplete="new-password"
+              />
+              <Feedback status={status} message={msg} />
+              <button
+                type="submit"
+                disabled={status === 'submitting'}
+                className="mt-1 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#f0eae5] text-[11px] font-medium uppercase tracking-[0.2em] text-[#171515] transition-colors duration-300 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {status === 'submitting' ? (
+                  <Loader2 size={15} className="animate-spin" />
+                ) : (
+                  <Check size={15} strokeWidth={2} />
+                )}
+                Reset Password
+              </button>
+            </form>
+          )}
+
+          {step === 'done' && (
+            <div className="flex flex-col items-center gap-3 py-2 text-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[#9fc6a2]/40 bg-[#9fc6a2]/10 text-[#9fc6a2]">
+                <Check size={20} strokeWidth={2} />
+              </span>
+              <p className="text-[13px] text-[#f0eae5]">Password reset successfully</p>
+              <p className="text-[12px] font-light leading-relaxed text-[#a7a19b]">
+                You can now sign in with your new password.
+              </p>
+              <button
+                type="button"
+                onClick={onClose}
+                className="mt-2 h-11 w-full rounded-md bg-[#f0eae5] text-[11px] font-medium uppercase tracking-[0.2em] text-[#171515] transition-colors duration-300 hover:bg-white"
+              >
+                Back to Sign In
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Feedback({ status, message }) {
   if (!message) return null;
   const success = status === 'success';
@@ -93,7 +329,7 @@ function SubmitButton({ status, label }) {
   );
 }
 
-function LoginForm({ onAuthenticated }) {
+function LoginForm({ onAuthenticated, onForgotPassword }) {
   const [values, setValues] = useState({ email: '', password: '', remember: true });
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle');
@@ -173,12 +409,13 @@ function LoginForm({ onAuthenticated }) {
             />
             Remember me
           </label>
-          <a
-            href={`mailto:${contactInfo.email}?subject=Password%20assistance`}
-            className="text-[12px] text-[#b99662] transition-colors hover:text-[#d8b47e]"
-          >
-            Forgot password?
-          </a>
+            <button
+              type="button"
+              onClick={() => onForgotPassword?.(values.email)}
+              className="text-[12px] text-[#b99662] transition-colors hover:text-[#d8b47e]"
+            >
+              Forgot password?
+            </button>
         </div>
 
         <SubmitButton status={status} label="Sign In" />
@@ -463,6 +700,7 @@ function AccountPanel({ user, onSignOut }) {
 export default function Auth({ mode: initialMode = 'login', redirect = null }) {
   const [mode, setMode] = useState(initialMode);
   const [user, setUser] = useState(getCurrentUser);
+  const [forgot, setForgot] = useState(null);
 
   useEffect(() => {
     setMode(initialMode);
@@ -584,7 +822,10 @@ export default function Auth({ mode: initialMode = 'login', redirect = null }) {
                   {mode === 'register' ? (
                     <RegisterForm onAuthenticated={setUser} />
                   ) : (
-                    <LoginForm onAuthenticated={setUser} />
+                    <LoginForm
+                      onAuthenticated={setUser}
+                      onForgotPassword={(email) => setForgot({ email })}
+                    />
                   )}
                 </div>
 
@@ -610,6 +851,12 @@ export default function Auth({ mode: initialMode = 'login', redirect = null }) {
           </div>
         </div>
       </div>
+
+      <ForgotPasswordModal
+        open={Boolean(forgot)}
+        initialEmail={forgot?.email || ''}
+        onClose={() => setForgot(null)}
+      />
     </main>
   );
 }

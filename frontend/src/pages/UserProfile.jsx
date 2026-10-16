@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getCurrentUser, signOut, updateProfile, requestPasswordReset, resetPassword } from '../services/auth';
+import { getCurrentUser, signOut, updateProfile, changePassword } from '../services/auth';
 import { useCart } from '../context/CartContext';
 import { ArrowRight, User, Mail, Phone, Calendar, Heart, ShoppingCart, ShieldCheck, Check, Eye, EyeOff } from 'lucide-react';
 
@@ -23,7 +23,7 @@ export default function UserProfile() {
           <div className="mt-8 grid gap-6 md:grid-cols-2">
             <DetailsCard user={user} setUser={setUser} />
             <StatsCard wishlistCount={wishlistCount} bagCount={bagCount} openDrawer={openDrawer} />
-            <SecurityCard user={user} />
+            <SecurityCard />
             <ActionsCard />
           </div>
         </div>
@@ -148,66 +148,41 @@ function StatsCard({ wishlistCount, bagCount, openDrawer }) {
   );
 }
 
-function SecurityCard({ user }) {
-  const [step, setStep] = useState('request');
-  const [email, setEmail] = useState(user.email);
-  const [code, setCode] = useState('');
+function SecurityCard() {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [status, setStatus] = useState('idle');
   const [msg, setMsg] = useState('');
-  const [demo, setDemo] = useState('');
+  const [done, setDone] = useState(false);
 
-  const request = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (status === 'submitting') return;
-    setStatus('submitting'); setMsg('');
+    setMsg('');
+    if (password.length < 8) { setStatus('error'); setMsg('Use at least 8 characters'); return; }
+    if (password !== confirm) { setStatus('error'); setMsg('Passwords do not match'); return; }
+    setStatus('submitting');
     try {
-      const res = await requestPasswordReset({ email });
-      setDemo(res?.code || '');
-      setStep('reset'); setStatus('idle');
+      await changePassword({ password });
+      setStatus('idle'); setPassword(''); setConfirm(''); setDone(true);
     } catch (err) {
-      setStatus('error'); setMsg(err?.message || 'Failed');
-    }
-  };
-
-  const reset = async (e) => {
-    e.preventDefault();
-    if (status === 'submitting') return;
-    if (password.length < 8) { setMsg('Use at least 8 characters'); return; }
-    if (password !== confirm) { setMsg('Passwords do not match'); return; }
-    setStatus('submitting'); setMsg('');
-    try {
-      await resetPassword({ email, code, password });
-      setStep('done'); setStatus('idle');
-    } catch (err) {
-      setStatus('error'); setMsg(err?.message || 'Failed');
+      setStatus('error'); setMsg(err?.message || 'Failed to update password');
     }
   };
 
   return (
     <div className="rounded-md border border-white/10 bg-[#141312] p-5">
-      <h2 className="font-serif text-[18px] text-[#f0eae5] flex items-center gap-2"><ShieldCheck size={16} className="text-[#b99662]" />Reset / Set Password</h2>
-      <p className="mt-1 text-[12px] text-[#a7a19b]">Reset your password using the email linked to your account.</p>
-      {step === 'request' && (
-        <form onSubmit={request} className="mt-4 flex flex-col gap-3">
-          <Input label="Email" value={email} onChange={setEmail} type="email" />
-          {msg && <p className="text-[11px] text-[#e0a08f]">{msg}</p>}
-          <button type="submit" disabled={status === 'submitting'} className="h-10 rounded-md bg-[#f0eae5] text-[11px] uppercase tracking-[0.2em] text-[#171515] hover:bg-white disabled:opacity-60">Send Code</button>
-        </form>
-      )}
-      {step === 'reset' && (
-        <form onSubmit={reset} className="mt-4 flex flex-col gap-3">
-          {demo && <div className="rounded-md border border-[#b99662]/40 bg-[#b99662]/10 px-3 py-2 text-[11px] text-[#d8b47e]">Demo code: <span className="font-mono tracking-widest text-[#f0eae5]">{demo}</span></div>}
-          <Input label="Reset Code" value={code} onChange={setCode} />
+      <h2 className="font-serif text-[18px] text-[#f0eae5] flex items-center gap-2"><ShieldCheck size={16} className="text-[#b99662]" />Change Password</h2>
+      <p className="mt-1 text-[12px] text-[#a7a19b]">Set a new password for your account.</p>
+      {done ? (
+        <div className="mt-4 flex items-center gap-2 text-[13px] text-[#9fc6a2]"><Check size={16} />Password changed successfully</div>
+      ) : (
+        <form onSubmit={submit} className="mt-4 flex flex-col gap-3">
           <PasswordInput label="New Password" value={password} onChange={setPassword} placeholder="At least 8 characters" />
           <PasswordInput label="Confirm Password" value={confirm} onChange={setConfirm} placeholder="Re-enter new password" />
           {msg && <p className="text-[11px] text-[#e0a08f]">{msg}</p>}
-          <button type="submit" disabled={status === 'submitting'} className="h-10 rounded-md bg-[#f0eae5] text-[11px] uppercase tracking-[0.2em] text-[#171515] hover:bg-white disabled:opacity-60">Reset Password</button>
+          <button type="submit" disabled={status === 'submitting'} className="h-10 rounded-md bg-[#f0eae5] text-[11px] uppercase tracking-[0.2em] text-[#171515] hover:bg-white disabled:opacity-60">{status === 'submitting' ? 'Updating…' : 'Update Password'}</button>
         </form>
-      )}
-      {step === 'done' && (
-        <div className="mt-4 flex items-center gap-2 text-[13px] text-[#9fc6a2]"><Check size={16} />Password reset successfully</div>
       )}
     </div>
   );
