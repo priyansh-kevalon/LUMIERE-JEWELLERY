@@ -53,7 +53,7 @@ function Section({ step, title, children }) {
 }
 
 export default function Checkout() {
-  const { bag, subtotal, clearBag } = useCart();
+  const { bag, subtotal, clearBag, coupon: couponCode, setCoupon } = useCart();
   const user = getCurrentUser();
 
   const [config, setConfig] = useState(DEFAULT_CONFIG);
@@ -74,8 +74,7 @@ export default function Checkout() {
 
   const [paymentMethod, setPaymentMethod] = useState('COD');
   const [paymentDetails, setPaymentDetails] = useState({ upiId: '', cardName: '', cardNumber: '', cardExpiry: '', cardCvv: '' });
-  const [coupon, setCoupon] = useState('');
-  const [couponState, setCouponState] = useState({ loading: false, valid: false, discount: 0, message: '' });
+  const [couponInfo, setCouponInfo] = useState({ loading: false, valid: false, discount: 0, message: '' });
 
   const [status, setStatus] = useState('idle'); /* idle | submitting | verifying */
   const [message, setMessage] = useState('');
@@ -118,38 +117,46 @@ export default function Checkout() {
      and are settled by the demo simulator. */
   const onlineDemo = !config.razorpayEnabled;
 
+  /* Re-validate the coupon chosen in the cart drawer against the live backend. */
+  useEffect(() => {
+    const code = (couponCode || '').trim();
+    if (!code) {
+      setCouponInfo({ loading: false, valid: false, discount: 0, message: '' });
+      return undefined;
+    }
+    let active = true;
+    setCouponInfo((current) => ({ ...current, loading: true }));
+    previewCoupon(code, subtotal)
+      .then((result) => {
+        if (!active) return;
+        setCouponInfo({
+          loading: false,
+          valid: Boolean(result.valid),
+          discount: Number(result.discount || 0),
+          message: result.valid ? '' : result.message || 'This coupon is not valid',
+        });
+      })
+      .catch(() => {
+        if (!active) return;
+        setCouponInfo({ loading: false, valid: false, discount: 0, message: 'Could not verify this coupon.' });
+      });
+    return () => {
+      active = false;
+    };
+  }, [couponCode, subtotal]);
+
   const totals = useMemo(() => {
-    const discount = couponState.valid ? Math.min(couponState.discount, subtotal) : 0;
+    const discount = couponInfo.valid ? Math.min(couponInfo.discount, subtotal) : 0;
     const taxable = Math.max(0, subtotal - discount);
     const tax = Math.round(taxable * (Number(config.gstRate) / 100));
     const shipping = subtotal >= Number(config.freeShippingThreshold) ? 0 : Number(config.shippingFee);
     return { discount, tax, shipping, total: taxable + tax + shipping };
-  }, [subtotal, couponState, config]);
+  }, [subtotal, couponInfo, config]);
 
   const cartItems = useMemo(
     () => bag.map((line) => ({ id: line.id, qty: line.qty, size: line.size ?? null, metal: line.metal ?? null })),
     [bag],
   );
-
-  const applyCoupon = async () => {
-    const code = coupon.trim();
-    if (!code) {
-      setCouponState({ loading: false, valid: false, discount: 0, message: 'Enter a coupon code' });
-      return;
-    }
-    setCouponState({ loading: true, valid: false, discount: 0, message: '' });
-    try {
-      const result = await previewCoupon(code, subtotal);
-      setCouponState({
-        loading: false,
-        valid: Boolean(result.valid),
-        discount: Number(result.discount || 0),
-        message: result.valid ? 'Coupon applied' : result.message || 'This coupon is not valid',
-      });
-    } catch {
-      setCouponState({ loading: false, valid: false, discount: 0, message: 'Could not check this coupon' });
-    }
-  };
 
   const validate = () => {
     const next = {};
@@ -184,7 +191,7 @@ export default function Checkout() {
 
     setMessage('');
     setStatus('submitting');
-    const couponCode = couponState.valid ? coupon.trim() : undefined;
+    const appliedCouponCode = couponInfo.valid ? (couponCode || '').trim() || undefined : undefined;
     const payload = {
       items: cartItems,
       customer: { name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim() },
@@ -197,7 +204,7 @@ export default function Checkout() {
         country: form.country.trim() || 'India',
       },
       paymentMethod,
-      couponCode,
+      couponCode: appliedCouponCode,
     };
 
     try {
@@ -241,6 +248,7 @@ export default function Checkout() {
 
       doneRef.current = true;
       clearBag();
+      setCoupon(null);
       window.location.hash = `#/order/${encodeURIComponent(orderId)}`;
     } catch (error) {
       setStatus('idle');
@@ -425,20 +433,32 @@ export default function Checkout() {
                 ))}
               </ul>
 
-              <div className="mt-5 border-t border-white/10 pt-4">
-                <label htmlFor="co-coupon" className="mb-1.5 flex items-center gap-1.5 text-[10.5px] uppercase tracking-[0.16em] text-[#a9a29b]">
-                  <Tag size={12} className="text-[#C6A16A]" /> Coupon Code
-                </label>
-                <div className="flex gap-2">
-                  <input id="co-coupon" className={inputCls} value={coupon} onChange={(e) => setCoupon(e.target.value.toUpperCase())} placeholder="Enter code" />
-                  <button type="button" onClick={applyCoupon} disabled={couponState.loading} className="shrink-0 rounded-md border border-[#C6A16A]/50 px-4 text-[11px] uppercase tracking-[0.14em] text-[#C6A16A] transition-colors hover:bg-[#C6A16A] hover:text-[#0D0D0D] disabled:opacity-60">
-                    {couponState.loading ? '…' : 'Apply'}
-                  </button>
+              {couponCode ? (
+                <div className="mt-5 border-t border-white/10 pt-4">
+                  <div className="flex items-center justify-between gap-3 rounded-md border border-[#C6A16A]/40 bg-[#C6A16A]/5 px-3.5 py-3">
+                    <span className="flex min-w-0 items-center gap-2 text-[12px] text-[#f0eae5]">
+                      <Tag size={12} className="shrink-0 text-[#C6A16A]" />
+                      <span className="truncate font-mono tracking-[0.08em]">{couponCode}</span>
+                    </span>
+                    <span className="flex shrink-0 items-center gap-3">
+                      {couponInfo.loading ? (
+                        <span className="text-[10px] uppercase tracking-[0.14em] text-[#a9a29b]">Checking…</span>
+                      ) : couponInfo.valid ? (
+                        <span className="text-[10px] uppercase tracking-[0.14em] text-[#8fbf9a]">Applied</span>
+                      ) : (
+                        <span className="text-[10px] text-[#e0a08f]">{couponInfo.message}</span>
+                      )}
+                      <button type="button" onClick={() => setCoupon(null)} className="text-[10px] uppercase tracking-[0.14em] text-[#a9a29b] transition-colors hover:text-[#e0a08f] hover:underline">
+                        Remove
+                      </button>
+                    </span>
+                  </div>
                 </div>
-                {couponState.message ? (
-                  <p className={`mt-1.5 text-[11px] ${couponState.valid ? 'text-[#8fbf9a]' : 'text-[#e0a08f]'}`}>{couponState.message}</p>
-                ) : null}
-              </div>
+              ) : (
+                <p className="mt-5 border-t border-white/10 pt-4 text-[10.5px] font-light text-[#7c766f]">
+                  Have a coupon? Add it from the bag drawer before checkout.
+                </p>
+              )}
 
               <dl className="mt-5 flex flex-col gap-2.5 border-t border-white/10 pt-4 text-[12.5px]">
                 <div className="flex items-center justify-between text-[#a9a29b]">
@@ -447,7 +467,7 @@ export default function Checkout() {
                 </div>
                 {totals.discount > 0 && (
                   <div className="flex items-center justify-between text-[#8fbf9a]">
-                    <dt>Discount</dt>
+                    <dt>Discount{couponCode ? ` (${couponCode})` : ''}</dt>
                     <dd className="tabular-nums">− {formatINR(totals.discount)}</dd>
                   </div>
                 )}

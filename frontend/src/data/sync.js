@@ -13,18 +13,20 @@ import { couponsStore, customersStore, ordersStore, reviewsStore, settingsStore,
 let publicPromise = null;
 let adminPromise = null;
 
-/** Load public catalogue, categories and settings into local stores. */
+/** Load public catalogue, categories, coupons and settings into local stores. */
 export function hydratePublic() {
     if (!isApiConfigured) return Promise.resolve(false);
     if (!publicPromise) {
         publicPromise = Promise.all([
             api.get('/products'),
             api.get('/categories'),
+            api.get('/coupons'),
             api.get('/settings'),
         ])
-            .then(([products, categories, settings]) => {
+            .then(([products, categories, coupons, settings]) => {
                 if (Array.isArray(products) && products.length) productsStore.set(products);
                 if (Array.isArray(categories) && categories.length) categoriesStore.set(categories);
+                if (Array.isArray(coupons) && coupons.length) couponsStore.set(coupons);
                 if (settings && typeof settings === 'object' && settings.storeName) {
                     settingsStore.set(settings);
                 }

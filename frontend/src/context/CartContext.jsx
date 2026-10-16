@@ -28,6 +28,7 @@ export function mergeBagLines(current, line) {
 export function CartProvider({ children }) {
   const [bag, setBag] = usePersistentState('lumiere-bag', []);
   const [wishlist, setWishlist] = usePersistentState('lumiere-wishlist', []);
+  const [coupon, setCoupon] = usePersistentState('lumiere-coupon', null);
   const [drawer, setDrawer] = useState(null);
   const catalogue = useStore(productsStore);
 
@@ -104,6 +105,8 @@ export function CartProvider({ children }) {
       isWishlisted,
       toggleWishlist,
       removeFromWishlist,
+      coupon,
+      setCoupon,
       drawer,
       openDrawer,
       closeDrawer,
@@ -120,6 +123,8 @@ export function CartProvider({ children }) {
     isWishlisted,
     toggleWishlist,
     removeFromWishlist,
+    coupon,
+    setCoupon,
     drawer,
     openDrawer,
     closeDrawer,

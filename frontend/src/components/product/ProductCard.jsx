@@ -1,14 +1,37 @@
-import { Heart } from 'lucide-react';
+import { Heart, Minus, Plus } from 'lucide-react';
 import SmartImage from '../common/SmartImage';
 import { formatINR, discountPercent } from '../../data/products';
+import { useCart } from '../../context/CartContext';
 
 function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAddToBag = true }) {
   const off = discountPercent(product);
   const href = `#/product/${product.id}`;
+  const { bag, setBagQty } = useCart();
+
+  const productLines = bag.filter((line) => line.id === product.id);
+  const cartLine =
+    productLines.find(
+      (line) => (line.size ?? null) === null && (line.metal ?? null) === null,
+    ) ||
+    productLines[0] ||
+    null;
+  const qty = productLines.reduce((sum, line) => sum + line.qty, 0);
 
   const addToBag = (event) => {
     event.preventDefault();
     onAddToBag(product);
+  };
+
+  const decrement = (event) => {
+    event.preventDefault();
+    if (!cartLine) return;
+    setBagQty(cartLine, cartLine.qty - 1);
+  };
+
+  const increment = (event) => {
+    event.preventDefault();
+    if (!cartLine) return;
+    setBagQty(cartLine, cartLine.qty + 1);
   };
 
   const toggleWishlist = (event) => {
@@ -91,13 +114,40 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
 
         {showAddToBag && (
           <div className="mt-auto pt-3.5">
-            <button
-              type="button"
-              onClick={addToBag}
-              className="w-full rounded-[5px] border border-white/15 py-2 text-[9px] font-medium uppercase tracking-[0.18em] text-[#f4eee8] transition-all duration-300 hover:border-[#C6A16A] hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]"
-            >
-              Add to Cart
-            </button>
+            {qty > 0 ? (
+              <div className="flex w-full items-stretch overflow-hidden rounded-[5px] border border-[#C6A16A]/50">
+                <button
+                  type="button"
+                  onClick={decrement}
+                  aria-label={`Decrease quantity of ${product.name}`}
+                  className="flex w-10 items-center justify-center py-2 text-[#f4eee8] transition-colors duration-300 hover:bg-white/[0.06] hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#C6A16A]"
+                >
+                  <Minus size={14} strokeWidth={1.8} />
+                </button>
+                <span
+                  aria-live="polite"
+                  className="flex flex-1 items-center justify-center text-[12px] tabular-nums text-[#f4eee8]"
+                >
+                  {qty}
+                </span>
+                <button
+                  type="button"
+                  onClick={increment}
+                  aria-label={`Increase quantity of ${product.name}`}
+                  className="flex w-10 items-center justify-center py-2 text-[#f4eee8] transition-colors duration-300 hover:bg-white/[0.06] hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#C6A16A]"
+                >
+                  <Plus size={14} strokeWidth={1.8} />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={addToBag}
+                className="w-full rounded-[5px] border border-white/15 py-2 text-[9px] font-medium uppercase tracking-[0.18em] text-[#f4eee8] transition-all duration-300 hover:border-[#C6A16A] hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]"
+              >
+                Add to Cart
+              </button>
+            )}
           </div>
         )}
       </div>

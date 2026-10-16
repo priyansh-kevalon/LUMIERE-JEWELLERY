@@ -281,6 +281,7 @@ export default function Navbar({ activeId = 'home' }) {
               className="relative text-white/90 transition-colors duration-200 hover:text-gold"
             >
               <ShoppingCart size={18} strokeWidth={1.5} />
+              <CountBadge count={bagCount} />
             </button>
 
             {/* Mobile Menu Button */}
