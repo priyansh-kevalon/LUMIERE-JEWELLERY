@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Search, User, ShoppingCart, Heart, Menu } from 'lucide-react';
+import { Search, User, ShoppingCart, Heart, Menu, X } from 'lucide-react';
 import MobileMenu from './MobileMenu';
 import { navLinks } from '../../data/navigation';
 import { useStorefrontProducts, formatINR } from '../../data/products';
@@ -20,12 +20,71 @@ const searchableText = (product) =>
     .join(' ')
     .toLowerCase();
 
-function NavSearch() {
-  const products = useStorefrontProducts();
-  const [open, setOpen] = useState(false);
+function SearchResults({ className, results, active, setActive, query, onSelect, onViewAll }) {
+  return (
+    <div className={className}>
+      {results.length > 0 ? (
+        <ul className="max-h-[60vh] overflow-y-auto py-1.5">
+          {results.map((product, index) => (
+            <li key={product.id}>
+              <button
+                type="button"
+                role="option"
+                aria-selected={index === active}
+                onMouseEnter={() => setActive(index)}
+                onClick={() => onSelect(product.id)}
+                className={`flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors ${
+                  index === active ? 'bg-white/[0.06]' : ''
+                }`}
+              >
+                <span className="h-12 w-12 shrink-0 overflow-hidden rounded-md border border-white/10 bg-[#1c1a18]">
+                  <img
+                    src={product.image}
+                    alt={product.alt || product.name}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[13px] text-[#f4eee8]">{product.name}</span>
+                  <span className="block truncate text-[10px] uppercase tracking-[0.14em] text-[#8d867f]">
+                    {product.category} · {product.type}
+                  </span>
+                </span>
+                <span className="shrink-0 text-[12px] text-[#C6A16A]">{formatINR(product.price)}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="px-4 py-6 text-center">
+          <p className="text-[13px] text-[#f4eee8]">No products found</p>
+          <p className="mt-1 text-[11px] text-[#8d867f]">Try a different search term.</p>
+        </div>
+      )}
+
+      {results.length > 0 && (
+        <button
+          type="button"
+          onClick={onViewAll}
+          className="block w-full border-t border-white/10 px-4 py-3 text-center text-[10px] font-medium uppercase tracking-[0.16em] text-[#C6A16A] transition-colors hover:bg-white/[0.04]"
+        >
+          View all results for “{query.trim()}”
+        </button>
+      )}
+    </div>
+  );
+}
+
+export default function Navbar({ activeId = 'home' }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(-1);
-  const rootRef = useRef(null);
+  const headerRef = useRef(null);
+  const products = useStorefrontProducts();
+  const { bagCount, wishlistCount, openDrawer } = useCart();
 
   const results = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -38,12 +97,12 @@ function NavSearch() {
   }, [query]);
 
   useEffect(() => {
-    if (!open) return undefined;
+    if (!searchOpen) return undefined;
     const onPointerDown = (event) => {
-      if (rootRef.current && !rootRef.current.contains(event.target)) setOpen(false);
+      if (headerRef.current && !headerRef.current.contains(event.target)) setSearchOpen(false);
     };
     const onKey = (event) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') setSearchOpen(false);
     };
     document.addEventListener('mousedown', onPointerDown);
     document.addEventListener('keydown', onKey);
@@ -51,10 +110,17 @@ function NavSearch() {
       document.removeEventListener('mousedown', onPointerDown);
       document.removeEventListener('keydown', onKey);
     };
-  }, [open]);
+  }, [searchOpen]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 30);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const close = () => {
-    setOpen(false);
+    setSearchOpen(false);
     setQuery('');
     setActive(-1);
   };
@@ -72,7 +138,7 @@ function NavSearch() {
     window.location.hash = `#/collections?q=${encodeURIComponent(term)}`;
   };
 
-  const onKeyDown = (event) => {
+  const onSearchKeyDown = (event) => {
     if (!results.length) return;
     if (event.key === 'ArrowDown') {
       event.preventDefault();
@@ -86,121 +152,18 @@ function NavSearch() {
     }
   };
 
-  const showPanel = open && query.trim().length > 0;
+  const submitSearch = (event) => {
+    event.preventDefault();
+    if (active >= 0 && results[active]) goToProduct(results[active].id);
+    else goToResults();
+  };
 
-  return (
-    <div ref={rootRef} className="relative flex items-center">
-      {open && (
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (active >= 0 && results[active]) goToProduct(results[active].id);
-            else goToResults();
-          }}
-          className="mr-2 flex items-center border-b border-white/40 pb-0.5"
-        >
-          <input
-            type="search"
-            autoFocus
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            onKeyDown={onKeyDown}
-            placeholder="Search jewellery..."
-            aria-label="Search products"
-            role="combobox"
-            aria-expanded={showPanel}
-            aria-controls="nav-search-results"
-            aria-autocomplete="list"
-            className="w-36 bg-transparent text-xs text-white placeholder-white/40 outline-none sm:w-48"
-          />
-        </form>
-      )}
-
-      <button
-        type="button"
-        onClick={() => (open ? close() : setOpen(true))}
-        aria-label="Search"
-        className="text-white/90 transition-colors duration-200 hover:text-gold"
-      >
-        <Search size={18} strokeWidth={1.5} />
-      </button>
-
-      {showPanel && (
-        <div
-          id="nav-search-results"
-          role="listbox"
-          className="fixed left-1/2 top-[76px] z-[60] w-[92vw] max-w-[360px] -translate-x-1/2 overflow-hidden rounded-xl border border-white/10 bg-[#141312]/98 shadow-luxe backdrop-blur-md sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-4 sm:w-[360px] sm:max-w-none sm:translate-x-0"
-        >
-          {results.length > 0 ? (
-            <ul className="max-h-[60vh] overflow-y-auto py-1.5">
-              {results.map((product, index) => (
-                <li key={product.id}>
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={index === active}
-                    onMouseEnter={() => setActive(index)}
-                    onClick={() => goToProduct(product.id)}
-                    className={`flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors ${
-                      index === active ? 'bg-white/[0.06]' : ''
-                    }`}
-                  >
-                    <span className="h-12 w-12 shrink-0 overflow-hidden rounded-md border border-white/10 bg-[#1c1a18]">
-                      <img
-                        src={product.image}
-                        alt={product.alt || product.name}
-                        loading="lazy"
-                        className="h-full w-full object-cover"
-                      />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] text-[#f4eee8]">{product.name}</span>
-                      <span className="block truncate text-[10px] uppercase tracking-[0.14em] text-[#8d867f]">
-                        {product.category} · {product.type}
-                      </span>
-                    </span>
-                    <span className="shrink-0 text-[12px] text-[#C6A16A]">{formatINR(product.price)}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="px-4 py-6 text-center">
-              <p className="text-[13px] text-[#f4eee8]">No products found</p>
-              <p className="mt-1 text-[11px] text-[#8d867f]">Try a different search term.</p>
-            </div>
-          )}
-
-          {results.length > 0 && (
-            <button
-              type="button"
-              onClick={goToResults}
-              className="block w-full border-t border-white/10 px-4 py-3 text-center text-[10px] font-medium uppercase tracking-[0.16em] text-[#C6A16A] transition-colors hover:bg-white/[0.04]"
-            >
-              View all results for “{query.trim()}”
-            </button>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function Navbar({ activeId = 'home' }) {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { bagCount, wishlistCount, openDrawer } = useCart();
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  const showPanel = searchOpen && query.trim().length > 0;
 
   return (
     <>
       <header
+        ref={headerRef}
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
           scrolled
             ? 'bg-[#0D0D0D]/90 py-3.5 backdrop-blur-md border-b border-white/[0.08]'
@@ -248,9 +211,50 @@ export default function Navbar({ activeId = 'home' }) {
           </nav>
 
           {/* ---------- Actions ---------- */}
-          <div className="flex items-center gap-4 sm:gap-6">
-            {/* Search */}
-            <NavSearch />
+          <div className="flex items-center gap-4 sm:gap-5">
+            {/* Desktop inline search field */}
+            {searchOpen && (
+              <form
+                onSubmit={submitSearch}
+                className="mr-1 hidden items-center border-b border-white/40 pb-0.5 sm:flex"
+              >
+                <input
+                  type="search"
+                  autoFocus
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  onKeyDown={onSearchKeyDown}
+                  placeholder="Search jewellery..."
+                  aria-label="Search jewellery"
+                  className="w-40 bg-transparent text-[13px] text-white placeholder-white/50 focus:outline-none xl:w-52"
+                />
+              </form>
+            )}
+
+            <div className="relative flex items-center">
+              <button
+                type="button"
+                onClick={() => (searchOpen ? close() : setSearchOpen(true))}
+                aria-label={searchOpen ? 'Close search' : 'Search'}
+                aria-expanded={searchOpen}
+                className="text-white/90 transition-colors duration-200 hover:text-gold"
+              >
+                <Search size={18} strokeWidth={1.5} />
+              </button>
+
+              {/* Desktop results panel */}
+              {showPanel && (
+                <SearchResults
+                  results={results}
+                  active={active}
+                  setActive={setActive}
+                  query={query}
+                  onSelect={goToProduct}
+                  onViewAll={goToResults}
+                  className="absolute right-0 top-full mt-4 hidden w-[360px] overflow-hidden rounded-lg border border-white/10 bg-[#141312]/98 shadow-luxe backdrop-blur-md sm:block"
+                />
+              )}
+            </div>
 
             <a
               href="#/profile"
@@ -290,6 +294,49 @@ export default function Navbar({ activeId = 'home' }) {
             </button>
           </div>
         </div>
+
+        {/* ---------- Mobile search bar (drops below the navbar) ---------- */}
+        {searchOpen && (
+          <div className="mx-auto mt-3 w-full max-w-[88rem] px-6 sm:hidden">
+            <form
+              onSubmit={submitSearch}
+              className="flex items-center gap-2.5 rounded-lg border border-white/15 bg-[#171514]/95 px-3.5 py-2.5 backdrop-blur-md"
+            >
+              <Search size={16} strokeWidth={1.7} className="shrink-0 text-[#C6A16A]" />
+              <input
+                type="search"
+                inputMode="search"
+                autoFocus
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                onKeyDown={onSearchKeyDown}
+                placeholder="Search jewellery..."
+                aria-label="Search jewellery"
+                className="h-6 w-full min-w-0 bg-transparent text-[13px] text-[#f0eae5] placeholder-[#7c766f] outline-none"
+              />
+              <button
+                type="button"
+                onClick={close}
+                aria-label="Close search"
+                className="shrink-0 text-[#8c867f] transition-colors hover:text-[#f0eae5]"
+              >
+                <X size={16} strokeWidth={1.8} />
+              </button>
+            </form>
+
+            {showPanel && (
+              <SearchResults
+                results={results}
+                active={active}
+                setActive={setActive}
+                query={query}
+                onSelect={goToProduct}
+                onViewAll={goToResults}
+                className="animate-fade-up mt-2 overflow-hidden rounded-lg border border-white/10 bg-[#141312]/98 shadow-luxe backdrop-blur-md"
+              />
+            )}
+          </div>
+        )}
       </header>
 
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
