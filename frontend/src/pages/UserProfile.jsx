@@ -4,7 +4,7 @@ import { getMyOrders } from '../services/checkout';
 import { useCart } from '../context/CartContext';
 import SmartImage from '../components/common/SmartImage';
 import { formatINR } from '../data/products';
-import { ArrowRight, User, Mail, Phone, Calendar, Heart, ShoppingCart, ShieldCheck, Check, Eye, EyeOff, Package } from 'lucide-react';
+import { ArrowLeft, ArrowRight, User, Mail, Phone, Calendar, Heart, ShoppingCart, ShieldCheck, Check, Eye, EyeOff, Package } from 'lucide-react';
 
 const inputCls = 'h-10 w-full rounded-md border border-[#3a3a3a] bg-[#242424] px-3 text-[13px] text-[#f0eae5] placeholder-[#7c766f] outline-none focus:border-[#b99662]';
 
@@ -22,12 +22,14 @@ export default function UserProfile() {
     <main className="min-h-dvh bg-[#0d0d0d] pb-20 pt-24 sm:pt-32">
       <div className="mx-auto w-full max-w-[88rem] px-4 sm:px-8 lg:px-14">
         <div className="mx-auto max-w-[920px]">
+          <a href="#/collections" className="group mb-6 inline-flex items-center gap-1.5 text-[11px] font-light uppercase tracking-[0.18em] text-[#8c867f] transition-colors duration-200 hover:text-[#b99662]">
+            <ArrowLeft size={13} className="transition-transform duration-200 group-hover:-translate-x-0.5" /> Continue Shopping
+          </a>
           <Header user={user} onSignOut={() => { signOut(); setUser(null); }} />
           <div className="mt-8 grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
             <DetailsCard user={user} setUser={setUser} />
-            <ActivityCard wishlistCount={wishlistCount} bagCount={bagCount} openDrawer={openDrawer} />
             <SecurityCard />
-            <ActionsCard />
+            <ActivityCard wishlistCount={wishlistCount} bagCount={bagCount} openDrawer={openDrawer} />
           </div>
         </div>
       </div>
@@ -291,14 +293,6 @@ function OrderDetails() {
           ))}
         </ul>
       )}
-    </div>
-  );
-}
-
-function ActionsCard() {
-  return (
-    <div className="rounded-md border border-white/10 bg-[#141312] p-4 sm:p-5 flex flex-col gap-3">
-      <a href="#/collections" className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#f0eae5] text-[11px] uppercase tracking-[0.2em] text-[#171515] hover:bg-white">Continue Shopping <ArrowRight size={14} /></a>
     </div>
   );
 }
