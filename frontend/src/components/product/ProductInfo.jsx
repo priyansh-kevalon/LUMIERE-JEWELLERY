@@ -48,8 +48,6 @@ export default function ProductInfo({
   onSelectSize,
   qty,
   onQtyChange,
-  wishlisted,
-  onToggleWishlist,
   onAddToCart,
   onBuyNow,
   adding,

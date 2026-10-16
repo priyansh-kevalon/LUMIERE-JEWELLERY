@@ -17,7 +17,7 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
   };
 
   return (
-    <article className="group">
+    <article className="group flex h-full flex-col">
       <div className="relative aspect-square overflow-hidden rounded-[9px] bg-[#454545]">
         <a
           href={href}
@@ -33,7 +33,7 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
         </a>
 
         {(off != null || product.badge) && (
-          <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-[#C6A16A] px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#0D0D0D]">
+          <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-[#0D0D0D]/85 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#E7C98A] ring-1 ring-[#C6A16A]/70 shadow-[0_2px_8px_rgba(0,0,0,0.45)] backdrop-blur-sm">
             {off != null ? `${off}% OFF` : product.badge}
           </span>
         )}
@@ -55,27 +55,28 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
         </button>
       </div>
 
-      <div className="mt-4">
-        <h3 className="text-[13px] font-light leading-snug text-[#f4eee8]">
+      <div className="mt-4 flex flex-1 flex-col">
+        <h3 className="line-clamp-2 min-h-[2.75em] text-[13px] font-light leading-snug text-[#f4eee8]">
           <a href={href} className="transition-colors duration-300 hover:text-[#C6A16A]">
             {product.name}
           </a>
         </h3>
 
-        {product.variants && (
-          <div className="mt-1.5 flex items-center gap-1.5" aria-hidden="true">
-            {product.variants.map((color) => (
+        <div className="mt-1.5 flex min-h-[0.75rem] items-center gap-1.5" aria-hidden="true">
+          {product.variants &&
+            product.variants.map((color) => (
               <span
                 key={color}
                 className="h-3 w-3 rounded-full border border-white/25"
                 style={{ backgroundColor: color }}
               />
             ))}
+          {product.variants && (
             <span className="ml-1 text-[9px] uppercase tracking-[0.14em] text-[#7c7670]">
               {product.variants.length} shades
             </span>
-          </div>
-        )}
+          )}
+        </div>
 
         <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className="text-[14px] tracking-wide text-[#f4eee8]">
@@ -89,13 +90,15 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
         </div>
 
         {showAddToBag && (
-          <button
-            type="button"
-            onClick={addToBag}
-            className="mt-3.5 w-full rounded-[5px] border border-white/15 py-2 text-[9px] font-medium uppercase tracking-[0.18em] text-[#f4eee8] transition-all duration-300 hover:border-[#C6A16A] hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]"
-          >
-            Add to Cart
-          </button>
+          <div className="mt-auto pt-3.5">
+            <button
+              type="button"
+              onClick={addToBag}
+              className="w-full rounded-[5px] border border-white/15 py-2 text-[9px] font-medium uppercase tracking-[0.18em] text-[#f4eee8] transition-all duration-300 hover:border-[#C6A16A] hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]"
+            >
+              Add to Cart
+            </button>
+          </div>
         )}
       </div>
     </article>

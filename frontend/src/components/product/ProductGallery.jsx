@@ -112,7 +112,7 @@ export default function ProductGallery({
             />
 
             {(off != null || product.badge) && (
-              <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-[#C6A16A] px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#0D0D0D]">
+              <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-[#0D0D0D]/85 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#E7C98A] ring-1 ring-[#C6A16A]/70 shadow-[0_2px_8px_rgba(0,0,0,0.45)] backdrop-blur-sm">
                 {off != null ? `${off}% OFF` : product.badge}
               </span>
             )}
