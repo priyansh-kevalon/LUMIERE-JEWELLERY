@@ -1,4 +1,4 @@
-import { Check, Heart, Loader2, Minus, Plus, ShoppingCart, Star } from 'lucide-react';
+import { Check, Loader2, Minus, Plus, ShoppingCart, Star } from 'lucide-react';
 import {
   formatINR,
   materialOf,
@@ -218,14 +218,18 @@ export default function ProductInfo({
       </div>
 
       {/* Purchase actions */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:gap-3">
         <button
           type="button"
           onClick={onBuyNow}
           disabled={disabled}
-          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#eee5db] px-8 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#171513] transition-colors duration-300 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex h-16 flex-1 items-center justify-center gap-2.5 rounded-full bg-[#eee5db] px-8 text-[15px] font-semibold uppercase tracking-[0.18em] text-[#171513] transition-colors duration-300 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:gap-2 sm:text-[11px]"
         >
-          {adding ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} strokeWidth={2} />}
+          {adding ? (
+            <Loader2 size={20} className="h-5 w-5 animate-spin sm:h-4 sm:w-4" />
+          ) : (
+            <Check size={20} strokeWidth={2} className="h-5 w-5 sm:h-4 sm:w-4" />
+          )}
           Buy Now
         </button>
 
@@ -233,26 +237,12 @@ export default function ProductInfo({
           type="button"
           onClick={onAddToCart}
           disabled={disabled}
-          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#303030] px-8 text-[11px] font-medium uppercase tracking-[0.16em] text-[#f2ece8] transition-colors duration-300 hover:bg-[#3a3a3a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex h-16 flex-1 items-center justify-center gap-2.5 rounded-full bg-[#303030] px-8 text-[15px] font-medium uppercase tracking-[0.16em] text-[#f2ece8] transition-colors duration-300 hover:bg-[#3a3a3a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:gap-2 sm:text-[11px]"
         >
-          <ShoppingCart size={16} strokeWidth={1.8} />
+          <ShoppingCart size={20} strokeWidth={1.8} className="h-5 w-5 sm:h-4 sm:w-4" />
           Add To Cart
         </button>
       </div>
-
-      <button
-        type="button"
-        onClick={onToggleWishlist}
-        aria-pressed={wishlisted}
-        className="mt-4 inline-flex items-center gap-2 text-[11px] font-light text-[#bcb4ad] transition-colors hover:text-[#C6A16A]"
-      >
-        <Heart
-          size={15}
-          strokeWidth={1.7}
-          className={wishlisted ? 'fill-[#C6A16A] text-[#C6A16A]' : ''}
-        />
-        {wishlisted ? 'Saved to wishlist' : 'Add to wishlist'}
-      </button>
     </div>
   );
 }
