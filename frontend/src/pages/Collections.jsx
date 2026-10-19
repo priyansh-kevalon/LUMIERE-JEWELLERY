@@ -19,6 +19,7 @@ import {
   PER_PAGE,
   ALL_CATEGORY,
 } from '../data/products';
+import FinalCTA from '../components/home/FinalCTA';
 
 const searchableText = (product) =>
   [product.name, product.category, product.categoryLabel, product.type, product.metal, product.style, product.occasion]
@@ -621,6 +622,8 @@ export default function Collections({ category = null, occasion = null, sort: so
       </section>
 
       <BenefitsBar />
+
+      <FinalCTA collectionsHref="#/collections" storyHref="#/about" />
 
       <FilterDrawer
         open={drawerOpen}

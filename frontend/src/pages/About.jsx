@@ -1,4 +1,5 @@
 import SmartImage from '../components/common/SmartImage';
+import FinalCTA from '../components/home/FinalCTA';
 
 /* ------------------------------------------------------------------ */
 /* Imagery                                                            */
@@ -364,6 +365,7 @@ export default function About() {
       <StoryInGold />
       <CertifiedSection />
       <CraftsmanshipSection />
+      <FinalCTA collectionsHref="#/collections" storyHref="#/about" />
     </main>
   );
 }

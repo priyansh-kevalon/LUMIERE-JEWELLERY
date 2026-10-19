@@ -48,7 +48,7 @@ export default function HeroSection() {
           </p>
 
           <div className="mt-9 animate-fade-up lg:mt-12">
-            <Button as="a" href="#collections" tone="transparent" size="lg">
+            <Button as="a" href="#/collections" tone="transparent" size="lg">
               Explore Collection
               <ArrowRight
                 size={15}

@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 
-export default function FinalCTA() {
+export default function FinalCTA({ collectionsHref = '#collections', storyHref = '#story' } = {}) {
   return (
     <section id="cta" className="scroll-mt-20 bg-[#0D0D0D] py-12 sm:py-14 lg:py-16">
       <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-14">
@@ -27,7 +27,7 @@ export default function FinalCTA() {
 
             <div className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-4">
               <a
-                href="#collections"
+                href={collectionsHref}
                 className="inline-flex items-center gap-2.5 rounded-full border border-black px-7 py-3 text-xs font-medium tracking-wider uppercase text-black transition-all duration-300 hover:bg-black hover:text-white"
               >
                 <span>Explore Collection</span>
@@ -35,7 +35,7 @@ export default function FinalCTA() {
               </a>
 
               <a
-                href="#story"
+                href={storyHref}
                 className="inline-flex items-center gap-2.5 rounded-full bg-[#151515] px-7 py-3 text-xs font-medium tracking-wider uppercase text-white transition-all duration-300 hover:bg-black"
               >
                 <span>Discover Our Story</span>

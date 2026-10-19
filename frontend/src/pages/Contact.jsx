@@ -11,6 +11,7 @@ import {
   Send,
 } from 'lucide-react';
 import SmartImage from '../components/common/SmartImage';
+import FinalCTA from '../components/home/FinalCTA';
 import { contactInfo, contactMethods, whatsappLink, mapLink } from '../data/contact';
 import { submitContactMessage } from '../services/contact';
 
@@ -434,6 +435,8 @@ export default function Contact() {
           <ContactCards />
         </div>
       </section>
+
+      <FinalCTA collectionsHref="#/collections" storyHref="#/about" />
     </main>
   );
 }
