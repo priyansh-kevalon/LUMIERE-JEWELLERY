@@ -7,6 +7,7 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
   const off = discountPercent(product);
   const href = `#/product/${product.id}`;
   const { bag, setBagQty } = useCart();
+  const variants = Array.isArray(product.variants) ? product.variants : [];
 
   const productLines = bag.filter((line) => line.id === product.id);
   const cartLine =
@@ -85,21 +86,20 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
           </a>
         </h3>
 
-        <div className="mt-1.5 flex min-h-[0.75rem] items-center gap-1.5" aria-hidden="true">
-          {product.variants &&
-            product.variants.map((color) => (
+        {variants.length > 0 && (
+          <div className="mt-1.5 flex flex-wrap items-center gap-1.5" aria-hidden="true">
+            {variants.map((color) => (
               <span
                 key={color}
                 className="h-3 w-3 rounded-full border border-white/25"
                 style={{ backgroundColor: color }}
               />
             ))}
-          {product.variants && (
             <span className="ml-1 text-[9px] uppercase tracking-[0.14em] text-[#7c7670]">
-              {product.variants.length} shades
+              {variants.length} {variants.length === 1 ? 'shade' : 'shades'}
             </span>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className="text-[14px] tracking-wide text-[#f4eee8]">
