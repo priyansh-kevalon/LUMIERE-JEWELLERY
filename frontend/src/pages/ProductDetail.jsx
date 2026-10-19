@@ -19,6 +19,7 @@ import {
   materialOf,
   sizesOf,
   finishesOf,
+  isOutOfStock,
   sampleReviewSummary,
 } from '../data/products';
 
@@ -79,6 +80,7 @@ export default function ProductDetail({ productId }) {
   const sizes = sizesOf(product);
   const wishlisted = isWishlisted(product.id);
   const needsSize = Boolean(sizes) && !size;
+  const soldOut = isOutOfStock(product);
 
   /* Related pieces, de-duplicated by image so the row never repeats a shot. */
   const related = (() => {
@@ -106,6 +108,10 @@ export default function ProductDetail({ productId }) {
   };
 
   const handleAddToCart = () => {
+    if (soldOut) {
+      showToast(`${product.name} is out of stock.`);
+      return;
+    }
     if (needsSize || adding) {
       if (needsSize) showToast('Please select a ring size first.');
       return;
@@ -117,6 +123,10 @@ export default function ProductDetail({ productId }) {
   };
 
   const handleBuyNow = () => {
+    if (soldOut) {
+      showToast('This piece is currently out of stock.');
+      return;
+    }
     if (needsSize || adding) {
       if (needsSize) showToast('Please select a ring size first.');
       return;

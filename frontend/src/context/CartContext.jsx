@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import usePersistentState from '../hooks/usePersistentState';
-import { getProductById, productsStore } from '../data/products';
+import { getProductById, productsStore, isOutOfStock } from '../data/products';
 import { useStore } from '../data/store';
 
 /**
@@ -34,6 +34,8 @@ export function CartProvider({ children }) {
 
   const addToBag = useCallback(
     (product, options = {}) => {
+      const source = getProductById(product.id) || product;
+      if (isOutOfStock(source)) return null;
       const line = {
         id: product.id,
         name: product.name,

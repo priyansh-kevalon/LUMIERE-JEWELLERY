@@ -645,6 +645,15 @@ export function getProductById(id) {
     return getProducts().find((product) => product.id === id) || null;
 }
 
+/* Made-to-order pieces are always available; everything else is sold out once
+   its stock reaches zero. Missing stock is treated as available so legacy
+   records never disappear from sale unexpectedly. */
+export function isOutOfStock(product) {
+    if (!product || product.stock == null) return false;
+    if (String(product.availability || '').toLowerCase() === 'made to order') return false;
+    return Number(product.stock) <= 0;
+}
+
 export function getGallery(product) {
     const pool = [product.image, ...(galleryPools[product.type] || [])];
     const unique = [];
@@ -701,7 +710,7 @@ export function productSpecs(product) {
         ['Style', product.style],
         product.diamondShape ? ['Diamond Shape', product.diamondShape] : null,
         product.diamondType ? ['Diamond Type', `${product.diamondType} Diamonds`] : null,
-        ['Availability', product.availability],
+        ['Availability', isOutOfStock(product) ? 'Out of Stock' : product.availability],
         ['Certification', 'BIS Hallmarked · IGI Certified'],
         ['Product Code', `LUM-${String(product.id).padStart(3, '0')}`],
     ];

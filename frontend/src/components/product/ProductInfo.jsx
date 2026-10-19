@@ -6,6 +6,7 @@ import {
   sizesOf,
   weightOf,
   finishesOf,
+  isOutOfStock,
 } from '../../data/products';
 
 function Stars({ rating, size = 14 }) {
@@ -67,8 +68,9 @@ export default function ProductInfo({
   const sizes = sizesOf(product);
   const finishes = finishesOf(product);
   const weight = weightOf(product);
+  const soldOut = isOutOfStock(product);
   const needsSize = Boolean(sizes) && !selectedSize;
-  const disabled = needsSize || adding;
+  const disabled = needsSize || adding || soldOut;
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
 
   const metalLabel = finishes.map((finish) => finish.name).filter(Boolean).join(' / ') || materialOf(product);
@@ -248,7 +250,7 @@ export default function ProductInfo({
           <button
             type="button"
             onClick={() => onQtyChange(Math.max(1, qty - 1))}
-            disabled={qty <= 1}
+            disabled={qty <= 1 || soldOut}
             aria-label="Decrease quantity"
             className="flex h-11 w-11 items-center justify-center text-[#f2ece8] transition-colors hover:text-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -260,7 +262,7 @@ export default function ProductInfo({
           <button
             type="button"
             onClick={() => onQtyChange(Math.min(9, qty + 1))}
-            disabled={qty >= 9}
+            disabled={qty >= 9 || soldOut}
             aria-label="Increase quantity"
             className="flex h-11 w-11 items-center justify-center text-[#f2ece8] transition-colors hover:text-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -270,14 +272,29 @@ export default function ProductInfo({
 
         <span
           className={`text-[11px] uppercase tracking-[0.14em] ${
-            product.availability === 'In Stock' ? 'text-[#9fc6a2]' : 'text-[#C6A16A]'
+            soldOut
+              ? 'text-[#e0a08f]'
+              : product.availability === 'In Stock'
+                ? 'text-[#9fc6a2]'
+                : 'text-[#C6A16A]'
           }`}
         >
-          {product.availability}
+          {soldOut ? 'Out of Stock' : product.availability}
         </span>
       </div>
 
       {/* Purchase actions */}
+      {soldOut ? (
+        <div className="mt-6">
+          <button
+            type="button"
+            disabled
+            className="inline-flex h-12 w-full cursor-not-allowed items-center justify-center rounded-full bg-[#303030] text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8f8a84] opacity-70"
+          >
+            Out of Stock
+          </button>
+        </div>
+      ) : (
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:gap-3">
         <button
           type="button"
@@ -303,6 +320,7 @@ export default function ProductInfo({
           Add To Cart
         </button>
       </div>
+      )}
     </div>
   );
 }

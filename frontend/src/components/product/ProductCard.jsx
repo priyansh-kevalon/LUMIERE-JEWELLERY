@@ -1,6 +1,6 @@
 import { Heart, Minus, Plus } from 'lucide-react';
 import SmartImage from '../common/SmartImage';
-import { formatINR, discountPercent } from '../../data/products';
+import { formatINR, discountPercent, isOutOfStock } from '../../data/products';
 import { useCart } from '../../context/CartContext';
 
 function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAddToBag = true }) {
@@ -8,6 +8,7 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
   const href = `#/product/${product.id}`;
   const { bag, setBagQty } = useCart();
   const variants = Array.isArray(product.variants) ? product.variants : [];
+  const soldOut = isOutOfStock(product);
 
   const productLines = bag.filter((line) => line.id === product.id);
   const cartLine =
@@ -59,6 +60,12 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
         {(off != null || product.badge) && (
           <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-[#0D0D0D]/85 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#E7C98A] ring-1 ring-[#C6A16A]/70 shadow-[0_2px_8px_rgba(0,0,0,0.45)] backdrop-blur-sm">
             {off != null ? `${off}% OFF` : product.badge}
+          </span>
+        )}
+
+        {soldOut && (
+          <span className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-[#0D0D0D]/85 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#e0a08f] ring-1 ring-[#e0a08f]/50 backdrop-blur-sm">
+            Out of Stock
           </span>
         )}
 
@@ -114,7 +121,15 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
 
         {showAddToBag && (
           <div className="mt-auto pt-3.5">
-            {qty > 0 ? (
+            {soldOut ? (
+              <button
+                type="button"
+                disabled
+                className="w-full cursor-not-allowed rounded-[5px] border border-white/10 bg-white/[0.03] py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8f8a84]"
+              >
+                Out of Stock
+              </button>
+            ) : qty > 0 ? (
               <div className="flex w-full items-stretch overflow-hidden rounded-[5px] border border-[#C6A16A]/50">
                 <button
                   type="button"
