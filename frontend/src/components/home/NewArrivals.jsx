@@ -86,7 +86,7 @@ export default function NewArrivals() {
             </p>
 
             <a
-              href="#collections"
+              href="#/collections"
               className="group mt-9 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.04] px-7 py-3 text-[10px] font-medium uppercase tracking-[0.16em] text-ivory transition-all duration-300 ease-luxe hover:border-gold/40 hover:bg-white/[0.08] hover:text-gold"
             >
               <span>Explore Collection</span>

@@ -50,7 +50,7 @@ export default function BrandStory() {
 
             <div className="mt-6">
               <a
-                href="#collections"
+                href="#/about"
                 className="group inline-flex items-center gap-2 rounded-full border border-[#111111] px-6 py-2 text-[10px] font-medium uppercase tracking-[0.16em] text-[#111111] transition-all duration-300 hover:bg-[#111111] hover:text-white"
               >
                 KNOW MORE
