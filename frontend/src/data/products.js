@@ -733,23 +733,16 @@ export function weightOf(product) {
     return product.weight || null;
 }
 
-/* Metal finishes shown as swatches. Prefers an explicit `finishes` list and
-   otherwise derives a sensible pair from the product's metal. */
-const finishesByMetal = {
-    Gold: [
-        { name: 'Yellow Gold', color: '#C6A16A' },
-        { name: 'Rose Gold', color: '#C98A6B' },
-    ],
-    Silver: [
-        { name: 'Silver', color: '#C9CBCF' },
-        { name: 'White Gold', color: '#E3E1DC' },
-    ],
-};
-
+/* Shade/metal options shown as swatches on the product detail page. Only
+   products that actually define options expose them — an explicit `finishes`
+   list (named swatches) takes precedence, otherwise shade `variants` are used.
+   Products with neither option show nothing. */
 export function finishesOf(product) {
-    if (product.finishes && product.finishes.length) return product.finishes;
-    const group = product.metal && product.metal.includes('Gold') ? 'Gold' : 'Silver';
-    return finishesByMetal[group] || null;
+    if (Array.isArray(product.finishes) && product.finishes.length) return product.finishes;
+    if (Array.isArray(product.variants) && product.variants.length) {
+        return product.variants.map((color) => ({ name: '', color }));
+    }
+    return [];
 }
 
 export function categoryLabelOf(product) {

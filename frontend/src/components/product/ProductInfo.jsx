@@ -58,7 +58,7 @@ export default function ProductInfo({
   const needsSize = Boolean(sizes) && !selectedSize;
   const disabled = needsSize || adding;
 
-  const metalLabel = finishes ? finishes.map((finish) => finish.name).join(' / ') : materialOf(product);
+  const metalLabel = finishes.map((finish) => finish.name).filter(Boolean).join(' / ') || materialOf(product);
   const sizeLabel = sizes ? sizes.join(', ') : null;
 
   return (
@@ -107,24 +107,28 @@ export default function ProductInfo({
         <InfoRow label="Size" value={sizeLabel} />
       </dl>
 
-      {/* Metal selection */}
-      {finishes && finishes.length > 0 && (
+      {/* Metal / shade selection */}
+      {finishes.length > 0 && (
         <div className="mt-7">
-          <div className="flex items-baseline justify-between">
+          <div className="flex items-baseline justify-between gap-3">
             <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[#f2ece8]">
               Metal
             </p>
-            <span className="text-[11px] text-[#bcb4ad]">{selectedFinish?.name}</span>
+            <span className="text-[11px] text-[#bcb4ad]">
+              {selectedFinish?.name ? `${selectedFinish.name} · ` : ''}
+              {finishes.length} {finishes.length === 1 ? 'shade' : 'shades'}
+            </span>
           </div>
-          <div className="mt-3 flex items-center gap-4">
+          <div className="mt-3 flex flex-wrap items-center gap-4">
             {finishes.map((finish) => {
-              const selected = selectedFinish?.name === finish.name;
+              const selected =
+                selectedFinish?.color === finish.color && selectedFinish?.name === finish.name;
               return (
                 <button
-                  key={finish.name}
+                  key={finish.name || finish.color}
                   type="button"
                   onClick={() => onSelectFinish(finish)}
-                  aria-label={`Select metal ${finish.name}`}
+                  aria-label={finish.name ? `Select ${finish.name}` : 'Select shade'}
                   aria-pressed={selected}
                   className={`flex items-center gap-2 rounded-full border py-1 pl-1 pr-3.5 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] ${
                     selected ? 'border-[#C6A16A]' : 'border-white/15 hover:border-white/40'
@@ -134,7 +138,9 @@ export default function ProductInfo({
                     className="h-6 w-6 rounded-full border border-white/25"
                     style={{ backgroundColor: finish.color }}
                   />
-                  <span className="text-[11px] font-light text-[#e6e0d8]">{finish.name}</span>
+                  {finish.name && (
+                    <span className="text-[11px] font-light text-[#e6e0d8]">{finish.name}</span>
+                  )}
                 </button>
               );
             })}

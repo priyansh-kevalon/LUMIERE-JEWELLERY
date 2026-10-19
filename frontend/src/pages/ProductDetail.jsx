@@ -111,7 +111,7 @@ export default function ProductDetail({ productId }) {
       return;
     }
     setAdding(true);
-    addToBag(product, { qty, size, metal: finish?.name });
+    addToBag(product, { qty, size, metal: finish?.name || null });
     openDrawer('bag');
     window.setTimeout(() => setAdding(false), 500);
   };
@@ -122,7 +122,7 @@ export default function ProductDetail({ productId }) {
       return;
     }
     setAdding(true);
-    addToBag(product, { qty, size, metal: finish?.name });
+    addToBag(product, { qty, size, metal: finish?.name || null });
     window.location.hash = '#/checkout';
     window.setTimeout(() => setAdding(false), 400);
   };
