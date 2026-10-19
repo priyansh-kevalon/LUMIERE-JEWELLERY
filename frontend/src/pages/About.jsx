@@ -232,122 +232,112 @@ function CertifiedSection() {
 /* ------------------------------------------------------------------ */
 /* 5. The Art Behind Every Creation                                    */
 /* ------------------------------------------------------------------ */
-const craftSteps = {
-  consultation: {
+const craftSteps = [
+  {
     no: '01',
     title: 'Consultation',
     text: 'Every piece begins by listening — to the occasion, the wearer and the story yet to be told.',
+    src: img.craftConsult,
+    alt: 'Jewellery consultant discussing a design with a customer',
+    position: 'center',
   },
-  experience: {
+  {
     no: '02',
     title: 'Experience',
     text: 'Years of knowledge, passed quietly from one pair of skilled hands to the next.',
+    src: img.craftArtisan,
+    alt: 'Experienced jewellery craftsman at work',
+    position: 'center 30%',
   },
-  precision: {
+  {
     no: '03',
     title: 'Precision',
     text: 'Each stone is measured, set and shaped by hand until every detail is exact.',
+    src: img.craftSetting,
+    alt: 'Close-up of hands setting a diamond into a ring',
+    position: 'center',
   },
-  patience: {
+  {
     no: '04',
     title: 'Patience',
     text: 'Fine jewellery cannot be rushed. Time is the truest material of the craft.',
+    src: img.craftPatience,
+    alt: 'Vertical detail of traditional jewellery craftsmanship',
+    position: 'center 30%',
   },
-  finishing: {
+  {
     no: '05',
     title: 'Finishing',
     text: 'The final polish draws out the light, and the design comes to life.',
+    src: img.craftFinishing,
+    alt: 'Hands carefully assembling an ornate necklace',
+    position: 'center',
   },
-};
+];
 
-function CraftCaption({ no, title, text, className = '' }) {
-  return (
-    <figcaption className={className}>
-      <div className="flex items-baseline gap-2.5">
-        <span className="font-serif text-[15px] leading-none text-[#b9965b]">{no}</span>
-        <span className="text-[11px] font-semibold uppercase tracking-[2px] text-[#171513]">
-          {title}
-        </span>
-      </div>
-      <p className="mt-2 max-w-[46ch] text-[11px] font-light leading-[1.6] text-[#5c554d] sm:text-[12px]">
-        {text}
-      </p>
-    </figcaption>
-  );
-}
+const craftSpans = [
+  'sm:col-span-2 lg:row-span-2',
+  'sm:col-span-2',
+  '',
+  '',
+  'sm:col-span-2 lg:col-span-4',
+];
 
-/* Five-step composition. Aspect ratios are chosen from the source images so
-   columns sharing a row resolve to matching heights without hard crops. */
+/* A bento mosaic. Five craft steps tile a four-column grid — an oversized
+   consultation frame, stacked portraits and a full-width finishing banner — so
+   the whole story reads in a single, image-led band with overlaid captions. */
 function CraftsmanshipSection() {
   return (
-    <section className="bg-[#eee5db] py-12 sm:py-14 lg:py-16">
+    <section className="bg-[#f6f1ea] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto w-full max-w-[80rem] px-6 sm:px-8 lg:px-10">
-        {/* Section header */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end lg:gap-8">
+        {/* Header */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end lg:gap-10">
           <div className="lg:col-span-7">
-            <p className="text-[11px] font-medium uppercase tracking-[3px] text-[#b9965b]">
+            <p className="inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.3em] text-[#b9965b]">
+              <span aria-hidden="true" className="h-px w-8 bg-[#c9b48c]" />
               Our Craft
             </p>
-            <h2 className="mt-3 font-serif text-[22px] font-normal leading-tight tracking-tight text-[#171513] sm:text-[24px] lg:text-[26px]">
+            <h2 className="mt-5 font-serif text-[28px] font-normal leading-[1.15] tracking-tight text-[#171513] sm:text-[34px]">
               The Art Behind Every Creation
             </h2>
           </div>
-         
+          <p className="max-w-[46ch] text-[13px] font-light leading-[1.85] text-[#6b6359] sm:text-[14px] lg:col-span-5">
+            From the first conversation to the final polish, every LUMIÈRE piece is shaped by hand
+            — by people who have spent a lifetime learning the craft.
+          </p>
         </div>
 
-        {/* Five craft steps — 1 col (mobile) · 2 col (tablet) · 12 col (desktop) */}
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:mt-10 lg:grid-cols-5 lg:gap-x-6 lg:gap-y-8">
-          <figure className="sm:col-span-2 lg:col-span-1">
-            <SmartImage
-              src={img.craftConsult}
-              alt="Jewellery consultant discussing a design with a customer"
-              className="aspect-[16/10] w-full rounded-sm lg:aspect-[4/5]"
-              imgClassName="block"
-            />
-            <CraftCaption {...craftSteps.consultation} className="mt-4" />
-          </figure>
-
-          <figure>
-            <SmartImage
-              src={img.craftArtisan}
-              alt="Experienced jewellery craftsman at work"
-              className="aspect-[4/5] w-full rounded-sm lg:aspect-[4/5]"
-              objectPosition="center 30%"
-              imgClassName="block"
-            />
-            <CraftCaption {...craftSteps.experience} className="mt-4" />
-          </figure>
-
-          <figure>
-            <SmartImage
-              src={img.craftSetting}
-              alt="Close-up of hands setting a diamond into a ring"
-              className="aspect-[4/5] w-full rounded-sm lg:aspect-[4/5]"
-              imgClassName="block"
-            />
-            <CraftCaption {...craftSteps.precision} className="mt-4" />
-          </figure>
-
-          <figure>
-            <SmartImage
-              src={img.craftPatience}
-              alt="Vertical detail of traditional jewellery craftsmanship"
-              className="aspect-[4/5] w-full rounded-sm lg:aspect-[4/5]"
-              objectPosition="center 30%"
-              imgClassName="block"
-            />
-            <CraftCaption {...craftSteps.patience} className="mt-4" />
-          </figure>
-
-          <figure>
-            <SmartImage
-              src={img.craftFinishing}
-              alt="Hands carefully assembling an ornate necklace"
-              className="aspect-[16/10] w-full rounded-sm sm:aspect-[4/5] lg:aspect-[4/5]"
-              imgClassName="block"
-            />
-            <CraftCaption {...craftSteps.finishing} className="mt-4" />
-          </figure>
+        {/* Mosaic */}
+        <div className="mt-10 grid auto-rows-[220px] grid-cols-1 gap-3 sm:auto-rows-[205px] sm:grid-cols-2 lg:mt-12 lg:auto-rows-[215px] lg:grid-cols-4">
+          {craftSteps.map((step, index) => (
+            <figure
+              key={step.no}
+              className={`group relative overflow-hidden rounded-2xl ${craftSpans[index]}`}
+            >
+              <SmartImage
+                src={step.src}
+                alt={step.alt}
+                className="absolute inset-0 h-full w-full"
+                objectPosition={step.position}
+                imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"
+              />
+              <figcaption className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+                <span className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/70">
+                  {step.no}
+                </span>
+                <h3 className="mt-1 font-serif text-[18px] font-normal leading-snug text-white sm:text-[19px]">
+                  {step.title}
+                </h3>
+                <p className="mt-1.5 hidden text-[12px] font-light leading-snug text-white/75 sm:block">
+                  {step.text}
+                </p>
+              </figcaption>
+            </figure>
+          ))}
         </div>
       </div>
     </section>
