@@ -1,4 +1,5 @@
-import { Check, Loader2, Minus, Plus, ShoppingCart, Star } from 'lucide-react';
+import { useState } from 'react';
+import { Check, ChevronDown, Loader2, Minus, Plus, ShoppingCart, Star } from 'lucide-react';
 import {
   formatINR,
   materialOf,
@@ -36,6 +37,17 @@ function InfoRow({ label, value }) {
   );
 }
 
+/* Reference chart shown by the "Size guide" link beside the ring-size picker. */
+const sizeGuide = [
+  { us: '5', diameter: '15.7', circumference: '49.3', india: '9' },
+  { us: '6', diameter: '16.5', circumference: '51.9', india: '11' },
+  { us: '7', diameter: '17.3', circumference: '54.4', india: '13' },
+  { us: '8', diameter: '18.1', circumference: '57.0', india: '15' },
+  { us: '9', diameter: '18.9', circumference: '59.5', india: '17' },
+  { us: '10', diameter: '19.8', circumference: '62.1', india: '19' },
+  { us: '11', diameter: '20.6', circumference: '64.6', india: '21' },
+];
+
 export default function ProductInfo({
   product,
   categoryLabel,
@@ -57,6 +69,7 @@ export default function ProductInfo({
   const weight = weightOf(product);
   const needsSize = Boolean(sizes) && !selectedSize;
   const disabled = needsSize || adding;
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
 
   const metalLabel = finishes.map((finish) => finish.name).filter(Boolean).join(' / ') || materialOf(product);
   const sizeLabel = sizes ? sizes.join(', ') : null;
@@ -155,7 +168,19 @@ export default function ProductInfo({
             <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[#f2ece8]">
               Ring Size
             </p>
-            <span className="text-[11px] text-[#8f8a84]">Size guide</span>
+            <button
+              type="button"
+              onClick={() => setSizeGuideOpen((value) => !value)}
+              aria-expanded={sizeGuideOpen}
+              className="inline-flex items-center gap-1.5 text-[11px] text-[#8f8a84] transition-colors hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]"
+            >
+              Size guide
+              <ChevronDown
+                size={13}
+                strokeWidth={1.8}
+                className={`transition-transform duration-300 ${sizeGuideOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
           </div>
           <div className="mt-3 flex flex-wrap gap-2.5" role="group" aria-label="Select ring size">
             {sizes.map((size) => {
@@ -182,6 +207,37 @@ export default function ProductInfo({
             <p className="mt-2.5 text-[11px] text-[#C6A16A]" role="status">
               Please select a ring size to continue.
             </p>
+          )}
+
+          {sizeGuideOpen && (
+            <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-black/25">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[320px] text-left text-[12px]">
+                  <thead>
+                    <tr className="text-[9.5px] uppercase tracking-[0.14em] text-[#8f8a84]">
+                      <th className="px-3 py-2 font-medium">US</th>
+                      <th className="px-3 py-2 font-medium">Inner Ø (mm)</th>
+                      <th className="px-3 py-2 font-medium">Circumference (mm)</th>
+                      <th className="px-3 py-2 font-medium">India</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-[#e6e0d8]">
+                    {sizeGuide.map((row) => (
+                      <tr key={row.us} className="border-t border-white/10">
+                        <td className="px-3 py-2">{row.us}</td>
+                        <td className="px-3 py-2">{row.diameter}</td>
+                        <td className="px-3 py-2">{row.circumference}</td>
+                        <td className="px-3 py-2">{row.india}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="border-t border-white/10 px-3 py-2.5 text-[10.5px] font-light leading-relaxed text-[#a7a19b]">
+                Measure the inner diameter of a ring that already fits, or wrap a strip of paper
+                around your finger for the circumference. Between sizes? We recommend sizing up.
+              </p>
+            </div>
           )}
         </div>
       )}
