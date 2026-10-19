@@ -1,39 +1,17 @@
-import { Heart, Minus, Plus } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import SmartImage from '../common/SmartImage';
-import { formatINR, discountPercent, isOutOfStock } from '../../data/products';
-import { useCart } from '../../context/CartContext';
+import { formatINR, discountPercent, isOutOfStock, isLowStock } from '../../data/products';
 
 function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAddToBag = true }) {
   const off = discountPercent(product);
   const href = `#/product/${product.id}`;
-  const { bag, setBagQty } = useCart();
   const variants = Array.isArray(product.variants) ? product.variants : [];
   const soldOut = isOutOfStock(product);
-
-  const productLines = bag.filter((line) => line.id === product.id);
-  const cartLine =
-    productLines.find(
-      (line) => (line.size ?? null) === null && (line.metal ?? null) === null,
-    ) ||
-    productLines[0] ||
-    null;
-  const qty = productLines.reduce((sum, line) => sum + line.qty, 0);
+  const lowStock = !soldOut && isLowStock(product);
 
   const addToBag = (event) => {
     event.preventDefault();
     onAddToBag(product);
-  };
-
-  const decrement = (event) => {
-    event.preventDefault();
-    if (!cartLine) return;
-    setBagQty(cartLine, cartLine.qty - 1);
-  };
-
-  const increment = (event) => {
-    event.preventDefault();
-    if (!cartLine) return;
-    setBagQty(cartLine, cartLine.qty + 1);
   };
 
   const toggleWishlist = (event) => {
@@ -119,6 +97,12 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
           )}
         </div>
 
+        {lowStock && (
+          <p className="mt-1.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#e0a08f]">
+            Only {product.stock} left
+          </p>
+        )}
+
         {showAddToBag && (
           <div className="mt-auto pt-3.5">
             {soldOut ? (
@@ -129,31 +113,6 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
               >
                 Out of Stock
               </button>
-            ) : qty > 0 ? (
-              <div className="flex w-full items-stretch overflow-hidden rounded-[5px] border border-[#C6A16A]/50">
-                <button
-                  type="button"
-                  onClick={decrement}
-                  aria-label={`Decrease quantity of ${product.name}`}
-                  className="flex w-10 items-center justify-center py-2 text-[#f4eee8] transition-colors duration-300 hover:bg-white/[0.06] hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#C6A16A]"
-                >
-                  <Minus size={14} strokeWidth={1.8} />
-                </button>
-                <span
-                  aria-live="polite"
-                  className="flex flex-1 items-center justify-center text-[12px] tabular-nums text-[#f4eee8]"
-                >
-                  {qty}
-                </span>
-                <button
-                  type="button"
-                  onClick={increment}
-                  aria-label={`Increase quantity of ${product.name}`}
-                  className="flex w-10 items-center justify-center py-2 text-[#f4eee8] transition-colors duration-300 hover:bg-white/[0.06] hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#C6A16A]"
-                >
-                  <Plus size={14} strokeWidth={1.8} />
-                </button>
-              </div>
             ) : (
               <button
                 type="button"

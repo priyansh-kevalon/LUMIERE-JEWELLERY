@@ -645,6 +645,8 @@ export function getProductById(id) {
     return getProducts().find((product) => product.id === id) || null;
 }
 
+export const LOW_STOCK_THRESHOLD = 5;
+
 /* Made-to-order pieces are always available; everything else is sold out once
    its stock reaches zero. Missing stock is treated as available so legacy
    records never disappear from sale unexpectedly. */
@@ -652,6 +654,15 @@ export function isOutOfStock(product) {
     if (!product || product.stock == null) return false;
     if (String(product.availability || '').toLowerCase() === 'made to order') return false;
     return Number(product.stock) <= 0;
+}
+
+/* A piece is "low stock" once its remaining quantity drops to the warning
+   threshold (default five) but is still greater than zero. */
+export function isLowStock(product, threshold = LOW_STOCK_THRESHOLD) {
+    if (!product || product.stock == null) return false;
+    if (String(product.availability || '').toLowerCase() === 'made to order') return false;
+    const stock = Number(product.stock);
+    return Number.isFinite(stock) && stock > 0 && stock <= threshold;
 }
 
 export function getGallery(product) {
@@ -710,7 +721,14 @@ export function productSpecs(product) {
         ['Style', product.style],
         product.diamondShape ? ['Diamond Shape', product.diamondShape] : null,
         product.diamondType ? ['Diamond Type', `${product.diamondType} Diamonds`] : null,
-        ['Availability', isOutOfStock(product) ? 'Out of Stock' : product.availability],
+        [
+            'Availability',
+            isOutOfStock(product)
+                ? 'Out of Stock'
+                : isLowStock(product)
+                    ? `Only ${product.stock} left`
+                    : product.availability,
+        ],
         ['Certification', 'BIS Hallmarked · IGI Certified'],
         ['Product Code', `LUM-${String(product.id).padStart(3, '0')}`],
     ];

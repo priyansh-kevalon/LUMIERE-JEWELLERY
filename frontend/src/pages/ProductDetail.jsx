@@ -51,10 +51,9 @@ export default function ProductDetail({ productId }) {
   const products = useStorefrontProducts();
   const product = products.find((item) => item.id === productId);
 
-  const { addToBag, toggleWishlist, isWishlisted, openDrawer } = useCart();
+  const { bag, addToBag, setBagQty, toggleWishlist, isWishlisted, openDrawer } = useCart();
   const [toast, setToast] = useState(null);
   const [activeImage, setActiveImage] = useState(product ? product.image : '');
-  const [qty, setQty] = useState(1);
   const [finish, setFinish] = useState(null);
   const [size, setSize] = useState(null);
   const [adding, setAdding] = useState(false);
@@ -66,7 +65,6 @@ export default function ProductDetail({ productId }) {
     if (!product) return;
     const finishes = finishesOf(product);
     setActiveImage(product.image);
-    setQty(1);
     setFinish(finishes && finishes.length ? finishes[0] : null);
     setSize(null);
   }, [productId]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -81,6 +79,23 @@ export default function ProductDetail({ productId }) {
   const wishlisted = isWishlisted(product.id);
   const needsSize = Boolean(sizes) && !size;
   const soldOut = isOutOfStock(product);
+  const finishName = finish?.name || null;
+  const cartLine = bag.find(
+    (line) =>
+      line.id === product.id &&
+      (line.size ?? null) === (size ?? null) &&
+      (line.metal ?? null) === finishName,
+  );
+  const qty = cartLine ? cartLine.qty : 0;
+
+  const handleQtyChange = (next) => {
+    const target = Math.max(0, Math.min(9, next));
+    if (cartLine) {
+      setBagQty(cartLine, target);
+    } else if (target > 0) {
+      addToBag(product, { qty: target, size, metal: finishName });
+    }
+  };
 
   /* Related pieces, de-duplicated by image so the row never repeats a shot. */
   const related = (() => {
@@ -117,7 +132,7 @@ export default function ProductDetail({ productId }) {
       return;
     }
     setAdding(true);
-    addToBag(product, { qty, size, metal: finish?.name || null });
+    addToBag(product, { qty: 1, size, metal: finishName });
     openDrawer('bag');
     window.setTimeout(() => setAdding(false), 500);
   };
@@ -132,7 +147,7 @@ export default function ProductDetail({ productId }) {
       return;
     }
     setAdding(true);
-    addToBag(product, { qty, size, metal: finish?.name || null });
+    if (!cartLine) addToBag(product, { qty: 1, size, metal: finishName });
     window.location.hash = '#/checkout';
     window.setTimeout(() => setAdding(false), 400);
   };
@@ -241,7 +256,7 @@ export default function ProductDetail({ productId }) {
               selectedSize={size}
               onSelectSize={setSize}
               qty={qty}
-              onQtyChange={setQty}
+              onQtyChange={handleQtyChange}
               wishlisted={wishlisted}
               onToggleWishlist={() => handleToggleWishlist(product)}
               onAddToCart={handleAddToCart}

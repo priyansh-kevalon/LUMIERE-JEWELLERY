@@ -7,6 +7,7 @@ import {
   weightOf,
   finishesOf,
   isOutOfStock,
+  isLowStock,
 } from '../../data/products';
 
 function Stars({ rating, size = 14 }) {
@@ -69,6 +70,7 @@ export default function ProductInfo({
   const finishes = finishesOf(product);
   const weight = weightOf(product);
   const soldOut = isOutOfStock(product);
+  const lowStock = !soldOut && isLowStock(product);
   const needsSize = Boolean(sizes) && !selectedSize;
   const disabled = needsSize || adding || soldOut;
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
@@ -249,8 +251,8 @@ export default function ProductInfo({
         <div className="flex items-center rounded-full border border-white/15">
           <button
             type="button"
-            onClick={() => onQtyChange(Math.max(1, qty - 1))}
-            disabled={qty <= 1 || soldOut}
+            onClick={() => onQtyChange(Math.max(0, qty - 1))}
+            disabled={qty <= 0 || soldOut}
             aria-label="Decrease quantity"
             className="flex h-11 w-11 items-center justify-center text-[#f2ece8] transition-colors hover:text-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -272,14 +274,18 @@ export default function ProductInfo({
 
         <span
           className={`text-[11px] uppercase tracking-[0.14em] ${
-            soldOut
+            soldOut || lowStock
               ? 'text-[#e0a08f]'
               : product.availability === 'In Stock'
                 ? 'text-[#9fc6a2]'
                 : 'text-[#C6A16A]'
           }`}
         >
-          {soldOut ? 'Out of Stock' : product.availability}
+          {soldOut
+            ? 'Out of Stock'
+            : lowStock
+              ? `Only ${product.stock} left`
+              : product.availability}
         </span>
       </div>
 
