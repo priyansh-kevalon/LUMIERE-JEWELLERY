@@ -43,6 +43,7 @@ function readRoute() {
       name: 'collections',
       category: params.get('category') || null,
       occasion: params.get('occasion') || null,
+      type: params.get('type') || null,
       sort: params.get('sort') || null,
       search: params.get('q') || null,
     };
@@ -132,6 +133,7 @@ export default function App() {
           <Collections
             category={route.category}
             occasion={route.occasion}
+            type={route.type}
             sort={route.sort}
             search={route.search}
           />

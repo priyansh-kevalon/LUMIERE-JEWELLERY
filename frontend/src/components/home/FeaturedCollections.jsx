@@ -4,28 +4,28 @@ const collections = [
     name: 'NECKLACE',
     alt: 'Diamond pendant necklace',
     image: '/images/collections/necklace-photo.png',
-    href: '#collections',
+    href: '#/collections?type=Necklaces',
   },
   {
     key: 'rings',
     name: 'RINGS',
     alt: 'Diamond ring',
     image: '/images/collections/rings-photo.png',
-    href: '#collections',
+    href: '#/collections?type=Rings',
   },
   {
     key: 'bracelets',
     name: 'BRACELETS',
     alt: 'Diamond bracelet',
     image: '/images/collections/bracelets-photo.png',
-    href: '#collections',
+    href: '#/collections?type=Bracelets',
   },
   {
     key: 'earrings',
     name: 'EARRINGS',
     alt: 'Diamond earrings',
     image: '/images/collections/earrings-photo.png',
-    href: '#collections',
+    href: '#/collections?type=Earrings',
   },
 ];
 

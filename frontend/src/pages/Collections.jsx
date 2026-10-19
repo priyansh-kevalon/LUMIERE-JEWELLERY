@@ -318,11 +318,16 @@ function FilterDrawer({ open, onClose, filters, counts, onToggle, onClear, resul
   );
 }
 
-export default function Collections({ category = null, occasion = null, sort: sortPreset = null, search = null }) {
+export default function Collections({ category = null, occasion = null, type = null, sort: sortPreset = null, search = null }) {
   const products = useStorefrontProducts();
   const categories = useCategories();
   const [activeCategory, setActiveCategory] = useState(category || ALL_CATEGORY);
-  const [filters, setFilters] = useState(() => (occasion ? { occasion: [occasion] } : {}));
+  const [filters, setFilters] = useState(() => {
+    const initial = {};
+    if (occasion) initial.occasion = [occasion];
+    if (type) initial.type = [type];
+    return initial;
+  });
   const [sort, setSort] = useState(sortPreset || 'popularity');
   const [searchTerm, setSearchTerm] = useState(search || '');
   const [page, setPage] = useState(1);
@@ -336,11 +341,14 @@ export default function Collections({ category = null, occasion = null, sort: so
 
   useEffect(() => {
     setActiveCategory(category || ALL_CATEGORY);
-    setFilters(occasion ? { occasion: [occasion] } : {});
+    const initial = {};
+    if (occasion) initial.occasion = [occasion];
+    if (type) initial.type = [type];
+    setFilters(initial);
     setSort(sortPreset || 'popularity');
     setSearchTerm(search || '');
     setPage(1);
-  }, [category, occasion, sortPreset, search]);
+  }, [category, occasion, type, sortPreset, search]);
 
   useEffect(() => {
     return () => clearTimeout(toastTimer.current);
