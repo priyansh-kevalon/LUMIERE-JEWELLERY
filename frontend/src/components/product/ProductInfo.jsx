@@ -73,6 +73,11 @@ export default function ProductInfo({
   const lowStock = !soldOut && isLowStock(product);
   const needsSize = Boolean(sizes) && !selectedSize;
   const disabled = needsSize || adding || soldOut;
+  /* The bag is the source of truth. qty is 0 whenever this piece is not in
+     the cart, and the − qty + control is hidden entirely in that state so a
+     quantity of 0 is never shown. */
+  const inCart = qty > 0;
+  const safeQty = Math.max(1, qty);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
 
   const metalLabel = finishes.map((finish) => finish.name).filter(Boolean).join(' / ') || materialOf(product);
@@ -246,31 +251,15 @@ export default function ProductInfo({
         </div>
       )}
 
-      {/* Quantity + availability */}
+      {/* In-cart state + availability. The stepper itself lives with the
+          purchase actions and only renders once the piece is in the bag. */}
       <div className="mt-7 flex flex-wrap items-center gap-4">
-        <div className="flex items-center rounded-full border border-white/15">
-          <button
-            type="button"
-            onClick={() => onQtyChange(Math.max(0, qty - 1))}
-            disabled={qty <= 0 || soldOut}
-            aria-label="Decrease quantity"
-            className="flex h-11 w-11 items-center justify-center text-[#f2ece8] transition-colors hover:text-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <Minus size={15} strokeWidth={1.6} />
-          </button>
-          <span aria-live="polite" className="w-8 text-center text-[13px] text-[#f2ece8]">
-            {qty}
+        {inCart && (
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#C6A16A]/45 px-3.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.16em] text-[#C6A16A]">
+            <Check size={12} strokeWidth={2.4} />
+            In Cart
           </span>
-          <button
-            type="button"
-            onClick={() => onQtyChange(Math.min(9, qty + 1))}
-            disabled={qty >= 9 || soldOut}
-            aria-label="Increase quantity"
-            className="flex h-11 w-11 items-center justify-center text-[#f2ece8] transition-colors hover:text-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <Plus size={15} strokeWidth={1.6} />
-          </button>
-        </div>
+        )}
 
         <span
           className={`text-[11px] uppercase tracking-[0.14em] ${
@@ -295,36 +284,68 @@ export default function ProductInfo({
           <button
             type="button"
             disabled
-            className="inline-flex h-12 w-full cursor-not-allowed items-center justify-center rounded-full bg-[#303030] text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8f8a84] opacity-70"
+            className="inline-flex h-[68px] w-full cursor-not-allowed items-center justify-center rounded-full bg-[#303030] text-[12px] font-semibold uppercase tracking-[0.18em] text-[#8f8a84] opacity-70 sm:h-12 sm:text-[11px]"
           >
             Out of Stock
           </button>
         </div>
       ) : (
-      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:gap-3">
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:gap-3">
         <button
           type="button"
           onClick={onBuyNow}
           disabled={disabled}
-          className="inline-flex h-16 flex-1 items-center justify-center gap-2.5 rounded-full bg-[#eee5db] px-8 text-[15px] font-semibold uppercase tracking-[0.18em] text-[#171513] transition-colors duration-300 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:gap-2 sm:text-[11px]"
+          className="inline-flex h-[72px] flex-1 items-center justify-center gap-3 rounded-full bg-[#eee5db] px-8 text-[16px] font-semibold uppercase tracking-[0.18em] text-[#171513] transition-colors duration-300 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:gap-2 sm:text-[11px]"
         >
           {adding ? (
-            <Loader2 size={20} className="h-5 w-5 animate-spin sm:h-4 sm:w-4" />
+            <Loader2 size={22} className="h-[22px] w-[22px] animate-spin sm:h-4 sm:w-4" />
           ) : (
-            <Check size={20} strokeWidth={2} className="h-5 w-5 sm:h-4 sm:w-4" />
+            <Check size={22} strokeWidth={2} className="h-[22px] w-[22px] sm:h-4 sm:w-4" />
           )}
           Buy Now
         </button>
 
-        <button
-          type="button"
-          onClick={onAddToCart}
-          disabled={disabled}
-          className="inline-flex h-16 flex-1 items-center justify-center gap-2.5 rounded-full bg-[#303030] px-8 text-[15px] font-medium uppercase tracking-[0.16em] text-[#f2ece8] transition-colors duration-300 hover:bg-[#3a3a3a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:gap-2 sm:text-[11px]"
-        >
-          <ShoppingCart size={20} strokeWidth={1.8} className="h-5 w-5 sm:h-4 sm:w-4" />
-          Add To Cart
-        </button>
+        {inCart ? (
+          /* In the bag: the stepper replaces Add To Cart and never shows 0.
+             Minus at 1 removes the line (handled by setBagQty) and this
+             control disappears. */
+          <div className="flex h-[72px] w-full shrink-0 items-center justify-between rounded-full border border-[#C6A16A]/50 bg-[#1a1816] px-2 sm:h-12 sm:w-[190px] sm:justify-center sm:gap-1 sm:px-3">
+            <button
+              type="button"
+              onClick={() => onQtyChange(Math.max(0, safeQty - 1))}
+              disabled={soldOut}
+              aria-label="Decrease quantity"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-[#f2ece8] transition-colors hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Minus size={16} strokeWidth={1.6} />
+            </button>
+            <span
+              aria-live="polite"
+              className="w-10 shrink-0 text-center text-[16px] font-semibold tabular-nums text-[#f2ece8] sm:text-[13px]"
+            >
+              {safeQty}
+            </span>
+            <button
+              type="button"
+              onClick={() => onQtyChange(Math.min(9, safeQty + 1))}
+              disabled={safeQty >= 9 || soldOut}
+              aria-label="Increase quantity"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-[#f2ece8] transition-colors hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Plus size={16} strokeWidth={1.6} />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={onAddToCart}
+            disabled={disabled}
+            className="inline-flex h-[72px] flex-1 items-center justify-center gap-3 rounded-full bg-[#303030] px-8 text-[16px] font-medium uppercase tracking-[0.16em] text-[#f2ece8] transition-colors duration-300 hover:bg-[#3a3a3a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A] disabled:cursor-not-allowed disabled:opacity-50 sm:h-12 sm:gap-2 sm:text-[11px]"
+          >
+            <ShoppingCart size={22} strokeWidth={1.8} className="h-[22px] w-[22px] sm:h-4 sm:w-4" />
+            Add To Cart
+          </button>
+        )}
       </div>
       )}
     </div>

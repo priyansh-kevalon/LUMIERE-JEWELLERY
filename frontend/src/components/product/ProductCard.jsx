@@ -1,5 +1,6 @@
 import { Heart } from 'lucide-react';
 import SmartImage from '../common/SmartImage';
+import { useCart } from '../../context/CartContext';
 import { formatINR, discountPercent, isOutOfStock, isLowStock } from '../../data/products';
 
 function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAddToBag = true }) {
@@ -8,6 +9,14 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
   const variants = Array.isArray(product.variants) ? product.variants : [];
   const soldOut = isOutOfStock(product);
   const lowStock = !soldOut && isLowStock(product);
+
+  /* Quantity of this product currently in the bag (all variants combined).
+     The badge only renders when this is greater than zero. */
+  const { bag } = useCart();
+  const inBagQty = bag.reduce(
+    (sum, line) => (line.id === product.id ? sum + line.qty : sum),
+    0,
+  );
 
   const addToBag = (event) => {
     event.preventDefault();
@@ -117,9 +126,17 @@ function ProductCard({ product, wishlisted, onToggleWishlist, onAddToBag, showAd
               <button
                 type="button"
                 onClick={addToBag}
-                className="w-full rounded-[5px] border border-white/15 py-2 text-[9px] font-medium uppercase tracking-[0.18em] text-[#f4eee8] transition-all duration-300 hover:border-[#C6A16A] hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]"
+                className="relative w-full rounded-[5px] border border-white/15 py-2 text-[9px] font-medium uppercase tracking-[0.18em] text-[#f4eee8] transition-all duration-300 hover:border-[#C6A16A] hover:text-[#C6A16A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C6A16A]"
               >
                 Add to Cart
+                {inBagQty > 0 && (
+                  <span
+                    aria-label={`${inBagQty} in cart`}
+                    className="pointer-events-none absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#C6A16A] px-1 text-[10px] font-semibold leading-none text-[#0D0D0D] shadow-[0_2px_6px_rgba(0,0,0,0.45)]"
+                  >
+                    {inBagQty > 9 ? '9+' : inBagQty}
+                  </span>
+                )}
               </button>
             )}
           </div>

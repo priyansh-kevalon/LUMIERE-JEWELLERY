@@ -17,7 +17,9 @@ function QtyStepper({ value, onDec, onInc }) {
       >
         <Minus size={12} strokeWidth={2} />
       </button>
-      <span className="w-6 text-center text-[12px] tabular-nums text-[#f2ece8]">{value}</span>
+      <span className="w-6 text-center text-[12px] tabular-nums text-[#f2ece8]">
+        {Math.max(1, value)}
+      </span>
       <button
         type="button"
         onClick={onInc}
@@ -243,9 +245,11 @@ export default function ShopDrawer() {
             <h2 className="font-serif text-[16px] tracking-wide text-[#f2ece8]">
               {tab === 'bag' ? 'Your Cart' : 'Wishlist'}
             </h2>
-            <span className="text-[11px] tabular-nums text-[#C6A16A]">
-              {tab === 'bag' ? bagCount : wishlistCount}
-            </span>
+            {(tab === 'bag' ? bagCount : wishlistCount) > 0 && (
+              <span className="text-[11px] tabular-nums text-[#C6A16A]">
+                {tab === 'bag' ? bagCount : wishlistCount}
+              </span>
+            )}
           </div>
 
           <button
